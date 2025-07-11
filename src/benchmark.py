@@ -39,6 +39,7 @@ from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from ragas import evaluate, EvaluationDataset
 from ragas.metrics import answer_relevancy, context_precision, context_recall
+from tqdm import tqdm
 
 # Configuration
 DEFAULT_SAMPLE_SIZE = 3
@@ -452,6 +453,99 @@ class MemoryOptimizedBenchmarker:
             time.sleep(3)  # Allow system to stabilize
             self.log_memory_status("after cleanup")
 
+    def grade_answers(self, model_name: str, force_rerun: bool = False) -> Optional[Dict[str, Any]]:
+        """Run Ragas evaluation on previously generated answers for a given model"""
+
+        print(f"\n{'='*60}\nGRADING: {model_name}\n{'='*60}")
+        self.log_memory_status("before grading")
+
+        answers_file = os.path.join(RUNS_DIR, f"{model_name.replace(':', '_')}_answers.jsonl")
+        scores_file = os.path.join(RUNS_DIR, f"{model_name.replace(':', '_')}_scores.json")
+
+        if os.path.exists(scores_file) and not force_rerun:
+            print(f"Scores already exist at {scores_file}. Skipping (use force_rerun=True to regenerate)")
+            try:
+                with open(scores_file, "r") as f:
+                    return json.load(f)
+            except Exception:
+                pass  # fallthrough to recompute if file corrupted
+
+        if not os.path.exists(answers_file):
+            print(f"Error: answers file {answers_file} not found. Run answer generation first.")
+            return None
+
+        # Ensure embedding / grading model available
+        if not self.pull_model(self.embedding_model):
+            return None
+
+        start_time = time.time()
+
+        try:
+            # Read answers
+            records = []
+            with open(answers_file, "r") as f:
+                for line in f:
+                    try:
+                        records.append(json.loads(line))
+                    except Exception as e:
+                        print(f"Skipping malformed line: {e}")
+
+            if not records:
+                print("No answers to grade – skipping")
+                return None
+
+            evaluation_dataset = EvaluationDataset.from_list(records)
+            embeddings = OllamaEmbeddings(model=self.embedding_model)
+            llm = ChatOllama(model=self.embedding_model, temperature=0, timeout=DEFAULT_TIMEOUT)
+
+            metrics = [answer_relevancy, context_precision, context_recall]
+            scores: Dict[str, float] = {}
+
+            for metric in metrics:
+                metric_name = metric.__class__.__name__
+                print(f"  Evaluating {metric_name}…")
+                try:
+                    metric_result = evaluate(
+                        dataset=evaluation_dataset,
+                        metrics=[metric],
+                        llm=llm,
+                        embeddings=embeddings,
+                        raise_exceptions=True,
+                        batch_size=4
+                    )
+
+                    if hasattr(metric_result, "to_pandas"):
+                        df_result = metric_result.to_pandas()
+                        for col in df_result.columns:
+                            if col in ["answer_relevancy", "context_precision", "context_recall"]:
+                                scores[col] = float(df_result[col].mean())
+                                print(f"    {col}: {scores[col]:.4f}")
+                except Exception as e:
+                    print(f"    Error evaluating {metric_name}: {e}")
+                    scores[metric_name] = f"error: {str(e)}"
+
+            scores["questions_graded"] = len(records)
+            scores["grading_time_seconds"] = time.time() - start_time
+
+            # Persist scores
+            with open(scores_file, "w") as f:
+                json.dump(scores, f, indent=2)
+            print(f"Saved scores to {scores_file}")
+
+            return scores
+
+        except Exception as e:
+            print(f"Grading failed for {model_name}: {e}")
+            traceback.print_exc()
+            return None
+
+        finally:
+            # Unload grading model from RAM (but keep on disk)
+            print("Cleaning up grading model…")
+            self.unload_model(self.embedding_model)
+            gc.collect()
+            self.log_memory_status("after grading")
+
     def benchmark_all_models(self, testset_df: pd.DataFrame, docs: List,
                            target_models: Optional[List[str]] = None) -> Dict[str, Any]:
         """Benchmark all available models with memory optimization"""
@@ -488,14 +582,22 @@ class MemoryOptimizedBenchmarker:
         for i, model_name in enumerate(models_to_test, 1):
             print(f"\nProgress: {i}/{len(models_to_test)} models")
 
-            result = self.generate_answers(model_name, testset_df)
+            gen_info = self.generate_answers(model_name, testset_df)
 
-            if result:
-                all_results[model_name] = result
-                print(f"{model_name} completed successfully")
+            if gen_info is None:
+                failed_models.append(model_name)
+                print(f"{model_name} failed during answer generation")
+                continue
+
+            # After generating answers, run grading
+            score_info = self.grade_answers(model_name)
+
+            if score_info:
+                all_results[model_name] = score_info
+                print(f"{model_name} graded successfully")
             else:
                 failed_models.append(model_name)
-                print(f"{model_name} failed")
+                print(f"{model_name} failed during grading")
 
         # Summary
         print(f"\n{'='*70}")
@@ -581,10 +683,10 @@ def main():
         for model_name, model_results in results.items():
             print(f"\nModel: {model_name}:")
             for metric, score in model_results.items():
-                if isinstance(score, (int, float)) and metric != "benchmark_time_seconds":
+                if isinstance(score, (int, float)) and metric not in ["grading_time_seconds", "questions_graded"]:
                     print(f"  {metric}: {score:.4f}")
-                elif metric == "benchmark_time_seconds":
-                    print(f"  Time: {score:.1f}s")
+                elif metric == "grading_time_seconds":
+                    print(f"  Grading Time: {score:.1f}s")
 
 if __name__ == "__main__":
     main()
