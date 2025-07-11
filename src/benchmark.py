@@ -46,6 +46,10 @@ DEFAULT_SAMPLE_SIZE = 3
 DEFAULT_TIMEOUT = 60
 DEFAULT_TEMPERATURE = 0.1
 SHARED_EMBEDDING_MODEL = "phi3:mini"  # Fast, lightweight embedding model for all tests
+# Retrieval & chunking parameters
+CHUNK_SIZE = 400  # characters per chunk
+CHUNK_OVERLAP = 50  # overlap between chunks
+TOP_K = 5  # number of chunks retrieved per query
 # Directory where the persisted FAISS index (and associated metadata) will be stored
 INDEX_DIR = os.path.join(".rag_cache", "faiss_index")
 # Directory where raw answers and evaluation artefacts will be stored
@@ -191,7 +195,7 @@ class MemoryOptimizedBenchmarker:
                 try:
                     print("Found existing FAISS index on disk. Loading...")
                     self.shared_vectorstore = FAISS.load_local(INDEX_DIR, embeddings, allow_dangerous_deserialization=True)
-                    self.shared_retriever = self.shared_vectorstore.as_retriever(search_kwargs={"k": 3})
+                    self.shared_retriever = self.shared_vectorstore.as_retriever(search_kwargs={"k": TOP_K})
                     print("Shared vector store loaded successfully!")
                     return True
                 except Exception as e:
@@ -199,13 +203,13 @@ class MemoryOptimizedBenchmarker:
 
             # --- Build index from scratch ---
             print("Building new FAISS index (this may take a moment)…")
-            text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
             splits = text_splitter.split_documents(docs)
             print(f"Split documents into {len(splits)} chunks")
 
             # Create vector store
             self.shared_vectorstore = FAISS.from_documents(documents=splits, embedding=embeddings)
-            self.shared_retriever = self.shared_vectorstore.as_retriever(search_kwargs={"k": 3})
+            self.shared_retriever = self.shared_vectorstore.as_retriever(search_kwargs={"k": TOP_K})
 
             # Persist to disk for future runs
             try:
@@ -290,7 +294,7 @@ class MemoryOptimizedBenchmarker:
         finally:
             # Clean up model from RAM but keep on disk
             print("Cleaning up…")
-            if model_name != self.embedding_model:
+            if self.aggressive_cleanup and model_name != self.embedding_model:
                 self.unload_model(model_name)
             gc.collect()
             time.sleep(2)
@@ -541,8 +545,9 @@ class MemoryOptimizedBenchmarker:
 
         finally:
             # Unload grading model from RAM (but keep on disk)
-            print("Cleaning up grading model…")
-            self.unload_model(self.embedding_model)
+            if self.aggressive_cleanup:
+                print("Cleaning up grading model… (aggressive)")
+                self.unload_model(self.embedding_model)
             gc.collect()
             self.log_memory_status("after grading")
 
@@ -640,12 +645,7 @@ def main():
     print(f"Loaded {len(docs)} documents")
 
     # Define models to test (or leave None to test all available)
-    target_models = [
-        "phi3:mini",
-        "gemma3:4b",
-        "llama3.2:latest",
-        "deepseek-r1:latest"
-    ]
+    target_models = None  # Benchmark all models returned by `ollama list`
 
     # Initialize benchmarker
     # Note: aggressive_cleanup=False keeps models available for re-testing
