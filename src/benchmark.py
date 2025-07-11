@@ -49,6 +49,8 @@ SHARED_EMBEDDING_MODEL = "phi3:mini"  # Fast, lightweight embedding model for al
 INDEX_DIR = os.path.join(".rag_cache", "faiss_index")
 # Directory where raw answers and evaluation artefacts will be stored
 RUNS_DIR = "runs"
+# Directory for consolidated benchmark summaries
+RESULTS_DIR = "results"
 
 class MemoryOptimizedBenchmarker:
     """Memory-optimized benchmarking with shared embeddings and proper model lifecycle"""
@@ -64,6 +66,7 @@ class MemoryOptimizedBenchmarker:
         self.results = {}
         # Ensure output directories exist
         os.makedirs(RUNS_DIR, exist_ok=True)
+        os.makedirs(RESULTS_DIR, exist_ok=True)
 
     def get_memory_info(self) -> Dict[str, float]:
         """Get current memory usage information"""
@@ -560,7 +563,7 @@ def main():
 
     # Save consolidated results
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    consolidated_file = f"benchmark_results_consolidated_shared_emb_{timestamp}.json"
+    consolidated_file = os.path.join(RESULTS_DIR, f"benchmark_results_consolidated_shared_emb_{timestamp}.json")
 
     try:
         with open(consolidated_file, "w") as f:

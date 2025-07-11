@@ -39,3 +39,4 @@ wheels/
 # RAG Stuff
 .rag_cache/
 runs/
+results/
