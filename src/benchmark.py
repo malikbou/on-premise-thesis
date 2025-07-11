@@ -47,6 +47,8 @@ DEFAULT_TEMPERATURE = 0.1
 SHARED_EMBEDDING_MODEL = "phi3:mini"  # Fast, lightweight embedding model for all tests
 # Directory where the persisted FAISS index (and associated metadata) will be stored
 INDEX_DIR = os.path.join(".rag_cache", "faiss_index")
+# Directory where raw answers and evaluation artefacts will be stored
+RUNS_DIR = "runs"
 
 class MemoryOptimizedBenchmarker:
     """Memory-optimized benchmarking with shared embeddings and proper model lifecycle"""
@@ -60,6 +62,8 @@ class MemoryOptimizedBenchmarker:
         self.shared_vectorstore = None
         self.shared_retriever = None
         self.results = {}
+        # Ensure output directories exist
+        os.makedirs(RUNS_DIR, exist_ok=True)
 
     def get_memory_info(self) -> Dict[str, float]:
         """Get current memory usage information"""
@@ -212,6 +216,81 @@ class MemoryOptimizedBenchmarker:
         except Exception as e:
             print(f"Failed to create/load shared vector store: {e}")
             return False
+
+    def generate_answers(self, model_name: str, testset_df: pd.DataFrame,
+                         force_rerun: bool = False) -> Optional[Dict[str, Any]]:
+        """Generate answers for a single model using the shared retriever and persist them to disk"""
+
+        print(f"\n{'='*60}\nANSWER GENERATION: {model_name}\n{'='*60}")
+        self.log_memory_status("before generation")
+
+        answers_file = os.path.join(RUNS_DIR, f"{model_name.replace(':', '_')}_answers.jsonl")
+
+        if os.path.exists(answers_file) and not force_rerun:
+            print(f"Answers already exist at {answers_file}. Skipping (use force_rerun=True to regenerate)")
+            return {"answers_file": answers_file}
+
+        # Model lifecycle: pull → test → generate → unload
+        if not self.pull_model(model_name):
+            return None
+        if not self.test_model_basic(model_name):
+            return None
+
+        try:
+            llm = ChatOllama(model=model_name, temperature=DEFAULT_TEMPERATURE, timeout=DEFAULT_TIMEOUT)
+            rag_chain = RetrievalQA.from_chain_type(
+                llm=llm,
+                chain_type="stuff",
+                retriever=self.shared_retriever,
+                return_source_documents=True
+            )
+
+            answers = []
+            sample_df = testset_df.head(self.sample_size)
+            print(f"Processing {len(sample_df)} questions…")
+
+            for i, row in sample_df.iterrows():
+                question = row["user_input"]
+                ground_truth = row["reference"]
+                print(f"  Q{i+1}: {question[:50]}…")
+                try:
+                    result = rag_chain.invoke({"query": question})
+                    answer_data = {
+                        "user_input": question,
+                        "retrieved_contexts": [doc.page_content for doc in result["source_documents"]],
+                        "response": result["result"],
+                        "reference": ground_truth
+                    }
+                except Exception as e:
+                    print(f"    Error: {e}")
+                    answer_data = {
+                        "user_input": question,
+                        "retrieved_contexts": ["Error retrieving contexts"],
+                        "response": f"Error: {str(e)}",
+                        "reference": ground_truth
+                    }
+                answers.append(answer_data)
+
+            # Persist answers (jsonl for stream‐friendly processing later)
+            with open(answers_file, "w") as f:
+                for entry in answers:
+                    f.write(json.dumps(entry) + "\n")
+            print(f"Saved answers to {answers_file}")
+            return {"answers_file": answers_file, "questions_processed": len(answers)}
+
+        except Exception as e:
+            print(f"Answer generation failed for {model_name}: {e}")
+            traceback.print_exc()
+            return None
+
+        finally:
+            # Clean up model from RAM but keep on disk
+            print("Cleaning up…")
+            if model_name != self.embedding_model:
+                self.unload_model(model_name)
+            gc.collect()
+            time.sleep(2)
+            self.log_memory_status("after generation")
 
     def benchmark_single_model(self, model_name: str, testset_df: pd.DataFrame,
                              force_rerun: bool = False) -> Optional[Dict[str, Any]]:
@@ -406,7 +485,7 @@ class MemoryOptimizedBenchmarker:
         for i, model_name in enumerate(models_to_test, 1):
             print(f"\nProgress: {i}/{len(models_to_test)} models")
 
-            result = self.benchmark_single_model(model_name, testset_df)
+            result = self.generate_answers(model_name, testset_df)
 
             if result:
                 all_results[model_name] = result
