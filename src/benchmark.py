@@ -290,7 +290,7 @@ class MemoryOptimizedBenchmarker:
         finally:
             # Clean up model from RAM but keep on disk
             print("Cleaning up…")
-            if model_name != self.embedding_model:
+            if self.aggressive_cleanup and model_name != self.embedding_model:
                 self.unload_model(model_name)
             gc.collect()
             time.sleep(2)
@@ -541,8 +541,9 @@ class MemoryOptimizedBenchmarker:
 
         finally:
             # Unload grading model from RAM (but keep on disk)
-            print("Cleaning up grading model…")
-            self.unload_model(self.embedding_model)
+            if self.aggressive_cleanup:
+                print("Cleaning up grading model… (aggressive)")
+                self.unload_model(self.embedding_model)
             gc.collect()
             self.log_memory_status("after grading")
 
@@ -640,12 +641,7 @@ def main():
     print(f"Loaded {len(docs)} documents")
 
     # Define models to test (or leave None to test all available)
-    target_models = [
-        "phi3:mini",
-        "gemma3:4b",
-        "llama3.2:latest",
-        "deepseek-r1:latest"
-    ]
+    target_models = None  # Benchmark all models returned by `ollama list`
 
     # Initialize benchmarker
     # Note: aggressive_cleanup=False keeps models available for re-testing
