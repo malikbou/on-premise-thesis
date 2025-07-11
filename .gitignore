@@ -35,3 +35,6 @@ wheels/
 .vscode/
 *.swp
 *.swo
+
+# RAG Stuff
+.rag_cache/
