@@ -275,6 +275,15 @@ class MemoryOptimizedBenchmarker:
                 for entry in answers:
                     f.write(json.dumps(entry) + "\n")
             print(f"Saved answers to {answers_file}")
+
+            # Also save a human-readable pretty JSON for inspection
+            pretty_file = answers_file.replace("_answers.jsonl", "_answers.json")
+            try:
+                with open(pretty_file, "w") as f:
+                    json.dump(answers, f, indent=2)
+                print(f"Saved pretty answers to {pretty_file}")
+            except Exception as e:
+                print(f"Warning: could not write pretty answers file: {e}")
             return {"answers_file": answers_file, "questions_processed": len(answers)}
 
         except Exception as e:
