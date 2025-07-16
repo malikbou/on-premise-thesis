@@ -35,7 +35,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaEmbeddings, ChatOllama
 from ragas import evaluate, EvaluationDataset
-from ragas.metrics import context_precision, context_recall, ContextRelevance
+from ragas.metrics import context_precision, ContextRelevance, NonLLMContextRecall
 import re
 
 # -------- Constants (mirrored from benchmark.py) --------
@@ -45,6 +45,7 @@ EMBED_MODEL = "tazarov/all-MiniLM-L6-v2-f32"  # default embedding model
 
 DEFAULT_CHUNK_SIZE = 400
 DEFAULT_CHUNK_OVERLAP = 50
+JUDGE_TIMEOUT = 180
 
 # --------------------------------------------------------
 
@@ -82,7 +83,7 @@ def quick_retrieval_eval(retriever, testset_file: str, top_k: int, sample: int, 
     for _, row in df.iterrows():
         q = row["user_input"]
         gt_contexts = row["reference_contexts"]
-        docs = retriever.get_relevant_documents(q)
+        docs = retriever.invoke(q)
         rec = {
             "user_input": q,
             "retrieved_contexts": [d.page_content for d in docs],
@@ -96,10 +97,11 @@ def quick_retrieval_eval(retriever, testset_file: str, top_k: int, sample: int, 
     dataset = EvaluationDataset.from_list(records)
     embeddings = OllamaEmbeddings(model=EMBED_MODEL)
     # Use separate judge model for metrics that need chat capability
-    llm = ChatOllama(model=judge_model, temperature=0)
+    llm = ChatOllama(model=judge_model, temperature=0, timeout=JUDGE_TIMEOUT)
 
     relevance_metric = ContextRelevance()
-    metrics = [context_precision, context_recall, relevance_metric]
+    recall_metric = NonLLMContextRecall()
+    metrics = [context_precision, recall_metric, relevance_metric]
     results = {}
     for metric in metrics:
         print(f"Evaluating {metric.__class__.__name__} …")
@@ -123,6 +125,7 @@ def main():
     parser.add_argument("--docs", type=str, default=DOCS_PATH, help="Path to documents directory.")
     parser.add_argument("--eval", action="store_true", help="Run retrieval diagnostics using testset.")
     parser.add_argument("--judge-model", type=str, default="phi3:mini", help="Chat-capable model to act as judge for Ragas metrics.")
+    parser.add_argument("--judge-timeout", type=int, default=JUDGE_TIMEOUT, help="Timeout (seconds) for judge LLM during evaluation.")
     parser.add_argument("--testset", type=str, default="testset/ragas_testset.json")
     parser.add_argument("--sample", type=int, default=5, help="Number of questions to evaluate (0 = all).")
     parser.add_argument("--top-k", type=int, default=5)
