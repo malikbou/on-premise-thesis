@@ -36,11 +36,12 @@ from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaEmbeddings, ChatOllama
 from ragas import evaluate, EvaluationDataset
 from ragas.metrics import context_precision, context_recall, ContextRelevance
+import re
 
 # -------- Constants (mirrored from benchmark.py) --------
-INDEX_DIR = os.path.join(".rag_cache", "faiss_index")
+INDEX_DIR = os.path.join(".rag_cache", "faiss_index")  # will be overridden after CLI parse
 DOCS_PATH = "data/"  # default corpus directory
-EMBED_MODEL = "tazarov/all-MiniLM-L6-v2-f32"  # fixed embedding model
+EMBED_MODEL = "tazarov/all-MiniLM-L6-v2-f32"  # default embedding model
 
 DEFAULT_CHUNK_SIZE = 400
 DEFAULT_CHUNK_OVERLAP = 50
@@ -112,7 +113,10 @@ def quick_retrieval_eval(retriever, testset_file: str, top_k: int, sample: int, 
 
 
 def main():
+    global EMBED_MODEL, INDEX_DIR  # must appear before first use within function
+
     parser = argparse.ArgumentParser(description="Build or load FAISS index with fixed embeddings model.")
+    parser.add_argument("--embed-model", type=str, default=EMBED_MODEL, help="Ollama embedding model to use (will create separate cache per model).")
     parser.add_argument("--force", action="store_true", help="Rebuild index even if cached version exists.")
     parser.add_argument("--chunk-size", type=int, default=DEFAULT_CHUNK_SIZE)
     parser.add_argument("--chunk-overlap", type=int, default=DEFAULT_CHUNK_OVERLAP)
@@ -123,6 +127,11 @@ def main():
     parser.add_argument("--sample", type=int, default=5, help="Number of questions to evaluate (0 = all).")
     parser.add_argument("--top-k", type=int, default=5)
     args = parser.parse_args()
+
+    # ---- Dynamic embedding model + index dir ----
+    EMBED_MODEL = args.embed_model
+    slug = re.sub(r"[^A-Za-z0-9]+", "_", EMBED_MODEL.lower())
+    INDEX_DIR = os.path.join(".rag_cache", slug, "faiss_index")
 
     # ---- Load documents ----
     print(f"Loading documents from {args.docs} …")
@@ -147,7 +156,7 @@ def main():
         # Persist metrics to disk for later comparison
         os.makedirs("runs", exist_ok=True)
         ts = time.strftime("%Y%m%d_%H%M%S")
-        out_path = os.path.join("runs", f"embedding_metrics_{ts}.json")
+        out_path = os.path.join("runs", f"embedding_metrics_{slug}_{ts}.json")
         payload = {
             "embedding_model": EMBED_MODEL,
             "judge_model": args.judge_model,
