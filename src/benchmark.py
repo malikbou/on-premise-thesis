@@ -43,7 +43,7 @@ from ragas.metrics import (
     context_precision,
     context_recall,
     AnswerAccuracy,
-    ResponseGroundedness,
+    # ResponseGroundedness,
     ContextRelevance,
 )
 from tqdm import tqdm
@@ -397,7 +397,7 @@ class MemoryOptimizedBenchmarker:
             results = {}
             metrics = [
                 AnswerAccuracy(),
-                ResponseGroundedness(),
+                # ResponseGroundedness(),
                 ContextRelevance(),
                 context_precision,
                 context_recall,
@@ -514,7 +514,7 @@ class MemoryOptimizedBenchmarker:
 
             metrics = [
                 AnswerAccuracy(),
-                ResponseGroundedness(),
+                # ResponseGroundedness(),
                 ContextRelevance(),
                 context_precision,
                 context_recall,
@@ -661,7 +661,7 @@ def main():
 
     # Define models to test (or leave None to test all available)
     # target_models = None  # Benchmark all models returned by `ollama list`
-    target_models = ["mistral:7b", "phi4-mini-reasoning:3.8b"]
+    target_models = ["mistral:7b", "qwen3:4b"]
 
     # Initialize benchmarker
     # Note: aggressive_cleanup=False keeps models available for re-testing
