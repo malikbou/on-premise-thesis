@@ -71,10 +71,12 @@ class MemoryOptimizedBenchmarker:
 
     def __init__(self, sample_size: int = DEFAULT_SAMPLE_SIZE,
                  embedding_model: str = SHARED_EMBEDDING_MODEL,
-                 aggressive_cleanup: bool = False):
+                 aggressive_cleanup: bool = False,
+                 judge_model: str = "phi3:mini"):
         self.sample_size = sample_size
         self.embedding_model = embedding_model
         self.aggressive_cleanup = aggressive_cleanup  # Whether to completely remove models
+        self.judge_model = judge_model  # chat-capable model used for Ragas metric prompts
         self.shared_vectorstore = None
         self.shared_retriever = None
         self.results = {}
@@ -378,6 +380,11 @@ class MemoryOptimizedBenchmarker:
             # Use shared embedding model for evaluation consistency
             eval_embeddings = OllamaEmbeddings(model=self.embedding_model)
 
+            # Ensure judge model is available and instantiate it for metrics
+            if not self.pull_model(self.judge_model):
+                return None
+            judge_llm = ChatOllama(model=self.judge_model, temperature=0, timeout=DEFAULT_TIMEOUT)
+
             results = {}
             metrics = [
                 AnswerAccuracy(),
@@ -395,7 +402,7 @@ class MemoryOptimizedBenchmarker:
                     metric_result = evaluate(
                         dataset=evaluation_dataset,
                         metrics=[metric],
-                        llm=llm,
+                        llm=judge_llm,
                         embeddings=eval_embeddings,
                         raise_exceptions=True,
                         batch_size=1
@@ -472,8 +479,8 @@ class MemoryOptimizedBenchmarker:
             print(f"Error: answers file {answers_file} not found. Run answer generation first.")
             return None
 
-        # Ensure embedding / grading model available
-        if not self.pull_model(self.embedding_model):
+        # Ensure judge model available
+        if not self.pull_model(self.judge_model):
             return None
 
         start_time = time.time()
@@ -494,7 +501,7 @@ class MemoryOptimizedBenchmarker:
 
             evaluation_dataset = EvaluationDataset.from_list(records)
             embeddings = OllamaEmbeddings(model=self.embedding_model)
-            llm = ChatOllama(model=self.embedding_model, temperature=0, timeout=DEFAULT_TIMEOUT)
+            llm = ChatOllama(model=self.judge_model, temperature=0, timeout=DEFAULT_TIMEOUT)
 
             metrics = [
                 AnswerAccuracy(),
@@ -546,7 +553,7 @@ class MemoryOptimizedBenchmarker:
             # Unload grading model from RAM (but keep on disk)
             if self.aggressive_cleanup:
                 print("Cleaning up grading model… (aggressive)")
-                self.unload_model(self.embedding_model)
+                self.unload_model(self.judge_model) # Changed to judge_model
             gc.collect()
             self.log_memory_status("after grading")
 
@@ -653,7 +660,8 @@ def main():
     benchmarker = MemoryOptimizedBenchmarker(
         sample_size=3,  # Start with small sample for testing
         embedding_model=SHARED_EMBEDDING_MODEL,  # use same model as index
-        aggressive_cleanup=False  # Conservative mode: keep models available
+        aggressive_cleanup=False,  # Conservative mode: keep models available
+        judge_model="phi3:mini" # Use a chat-capable model for grading
     )
 
     # Run benchmarks
