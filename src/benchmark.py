@@ -38,7 +38,14 @@ from langchain.chains import RetrievalQA
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from ragas import evaluate, EvaluationDataset
-from ragas.metrics import answer_relevancy, context_precision, context_recall
+from ragas.metrics import (
+    answer_relevancy,  # keep legacy metric for backward-compatibility
+    context_precision,
+    context_recall,
+    AnswerAccuracy,
+    ResponseGroundedness,
+    ContextRelevance,
+)
 from tqdm import tqdm
 
 # Configuration
@@ -175,54 +182,34 @@ class MemoryOptimizedBenchmarker:
             print(f"Model test failed: {e}")
             return False
 
-    def setup_shared_vectorstore(self, docs: List) -> bool:
-        """Set up (or load) shared vector store using dedicated embedding model and persist it for reuse"""
-        print(f"\nSetting up shared vector store with {self.embedding_model}…")
+    def setup_shared_vectorstore(self, _docs: List) -> bool:
+        """Load the shared FAISS index built by build_embeddings.py.
 
-        # Ensure parent cache directory exists
-        os.makedirs(INDEX_DIR, exist_ok=True)
+        If the index is missing we exit early with instructions, rather than
+        re-building it here. This keeps the responsibilities separated: the
+        *embedding* script handles indexing; the *benchmark* script loads it.
+        """
+        print(f"\nLoading shared vector store built with {self.embedding_model} …")
+
+        # Path where build_embeddings.py saves the index
+        index_file = os.path.join(INDEX_DIR, "index.faiss")
+
+        if not os.path.exists(index_file):
+            print("ERROR: FAISS index not found. Run `python -m src.build_embeddings` first.")
+            return False
+
+        # Make sure the embedding model needed for loading is present
+        if not self.pull_model(self.embedding_model):
+            return False
 
         try:
-            # Ensure embedding model is available (needed both for building and for loading the index)
-            if not self.pull_model(self.embedding_model):
-                return False
-
-            # Create embeddings instance (needed for either load or create)
             embeddings = OllamaEmbeddings(model=self.embedding_model)
-
-            # If an index already exists on disk, load it to avoid recomputing embeddings
-            if os.path.exists(os.path.join(INDEX_DIR, "index.faiss")):
-                try:
-                    print("Found existing FAISS index on disk. Loading...")
-                    self.shared_vectorstore = FAISS.load_local(INDEX_DIR, embeddings, allow_dangerous_deserialization=True)
-                    self.shared_retriever = self.shared_vectorstore.as_retriever(search_kwargs={"k": TOP_K})
-                    print("Shared vector store loaded successfully!")
-                    return True
-                except Exception as e:
-                    print(f"Warning: Failed to load existing index ({e}). Rebuilding…")
-
-            # --- Build index from scratch ---
-            print("Building new FAISS index (this may take a moment)…")
-            text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
-            splits = text_splitter.split_documents(docs)
-            print(f"Split documents into {len(splits)} chunks")
-
-            # Create vector store
-            self.shared_vectorstore = FAISS.from_documents(documents=splits, embedding=embeddings)
+            self.shared_vectorstore = FAISS.load_local(INDEX_DIR, embeddings, allow_dangerous_deserialization=True)
             self.shared_retriever = self.shared_vectorstore.as_retriever(search_kwargs={"k": TOP_K})
-
-            # Persist to disk for future runs
-            try:
-                self.shared_vectorstore.save_local(INDEX_DIR)
-                print(f"Saved FAISS index to {INDEX_DIR}")
-            except Exception as e:
-                print(f"Warning: Failed to save FAISS index ({e}) – continuing without persistence")
-
-            print("Shared vector store created successfully!")
+            print("Shared vector store loaded successfully!")
             return True
-
         except Exception as e:
-            print(f"Failed to create/load shared vector store: {e}")
+            print(f"Failed to load shared vector store: {e}")
             return False
 
     def generate_answers(self, model_name: str, testset_df: pd.DataFrame,
@@ -390,7 +377,13 @@ class MemoryOptimizedBenchmarker:
             eval_embeddings = OllamaEmbeddings(model=self.embedding_model)
 
             results = {}
-            metrics = [answer_relevancy, context_precision, context_recall]
+            metrics = [
+                AnswerAccuracy(),
+                ResponseGroundedness(),
+                ContextRelevance(),
+                context_precision,
+                context_recall,
+            ]
 
             for metric in metrics:
                 try:
@@ -406,14 +399,13 @@ class MemoryOptimizedBenchmarker:
                         batch_size=1
                     )
 
-                    # Extract results properly
+                    # Extract numeric columns and average
                     if hasattr(metric_result, 'to_pandas'):
                         df_result = metric_result.to_pandas()
-                        for col in df_result.columns:
-                            if col in ['answer_relevancy', 'context_precision', 'context_recall']:
-                                score = df_result[col].mean()
-                                results[col] = float(score)
-                                print(f"  {col}: {score:.4f}")
+                        for col in df_result.select_dtypes(include="number").columns:
+                            score = df_result[col].mean()
+                            results[col] = float(score)
+                            print(f"  {col}: {score:.4f}")
 
                 except Exception as e:
                     print(f"  Error evaluating {metric_name}: {e}")
@@ -502,7 +494,13 @@ class MemoryOptimizedBenchmarker:
             embeddings = OllamaEmbeddings(model=self.embedding_model)
             llm = ChatOllama(model=self.embedding_model, temperature=0, timeout=DEFAULT_TIMEOUT)
 
-            metrics = [answer_relevancy, context_precision, context_recall]
+            metrics = [
+                AnswerAccuracy(),
+                ResponseGroundedness(),
+                ContextRelevance(),
+                context_precision,
+                context_recall,
+            ]
             scores: Dict[str, float] = {}
 
             for metric in metrics:
@@ -520,10 +518,9 @@ class MemoryOptimizedBenchmarker:
 
                     if hasattr(metric_result, "to_pandas"):
                         df_result = metric_result.to_pandas()
-                        for col in df_result.columns:
-                            if col in ["answer_relevancy", "context_precision", "context_recall"]:
-                                scores[col] = float(df_result[col].mean())
-                                print(f"    {col}: {scores[col]:.4f}")
+                        for col in df_result.select_dtypes(include="number").columns:
+                            scores[col] = float(df_result[col].mean())
+                            print(f"    {col}: {scores[col]:.4f}")
                 except Exception as e:
                     print(f"    Error evaluating {metric_name}: {e}")
                     scores[metric_name] = f"error: {str(e)}"
