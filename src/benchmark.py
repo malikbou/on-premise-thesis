@@ -29,6 +29,7 @@ import gc
 import subprocess
 import traceback
 import psutil
+import re
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
@@ -43,13 +44,13 @@ from ragas.metrics import (
     context_precision,
     context_recall,
     AnswerAccuracy,
-    # ResponseGroundedness,
+    ResponseGroundedness,
     ContextRelevance,
 )
 from tqdm import tqdm
 
 # Configuration
-DEFAULT_SAMPLE_SIZE = 3
+DEFAULT_SAMPLE_SIZE = 10
 DEFAULT_TIMEOUT = 180  # allow heavy local models more time to respond
 DEFAULT_TEMPERATURE = 0.1
 # SHARED_EMBEDDING_MODEL = "phi3:mini"  # Fast, lightweight embedding model for all tests
@@ -60,6 +61,7 @@ CHUNK_SIZE = 400  # characters per chunk
 CHUNK_OVERLAP = 50  # overlap between chunks
 TOP_K = 3  # number of chunks retrieved per query
 # Directory where the persisted FAISS index (and associated metadata) will be stored
+# Index dir will be derived from embedding model slug inside the benchmarker
 INDEX_DIR = os.path.join(".rag_cache", "faiss_index")
 # Directory where raw answers and evaluation artefacts will be stored
 RUNS_DIR = "runs"
@@ -77,10 +79,11 @@ class MemoryOptimizedBenchmarker:
         self.embedding_model = embedding_model
         self.aggressive_cleanup = aggressive_cleanup  # Whether to completely remove models
         self.judge_model = judge_model  # chat-capable model used for Ragas metric prompts
-        self.shared_vectorstore = None
-        self.shared_retriever = None
-        self.results = {}
-        # Ensure output directories exist
+
+        # Derive per-embedding-model cache directory
+        slug = re.sub(r"[^A-Za-z0-9]+", "_", self.embedding_model.lower())
+        self.index_dir = os.path.join(".rag_cache", slug, "faiss_index")
+        os.makedirs(self.index_dir, exist_ok=True)
         os.makedirs(RUNS_DIR, exist_ok=True)
         os.makedirs(RESULTS_DIR, exist_ok=True)
 
@@ -196,7 +199,7 @@ class MemoryOptimizedBenchmarker:
         print(f"\nLoading shared vector store built with {self.embedding_model} …")
 
         # Path where build_embeddings.py saves the index
-        index_file = os.path.join(INDEX_DIR, "index.faiss")
+        index_file = os.path.join(self.index_dir, "index.faiss")
 
         if not os.path.exists(index_file):
             print("ERROR: FAISS index not found. Run `python -m src.build_embeddings` first.")
@@ -208,7 +211,7 @@ class MemoryOptimizedBenchmarker:
 
         try:
             embeddings = OllamaEmbeddings(model=self.embedding_model)
-            self.shared_vectorstore = FAISS.load_local(INDEX_DIR, embeddings, allow_dangerous_deserialization=True)
+            self.shared_vectorstore = FAISS.load_local(self.index_dir, embeddings, allow_dangerous_deserialization=True)
             self.shared_retriever = self.shared_vectorstore.as_retriever(search_kwargs={"k": TOP_K})
             print("Shared vector store loaded successfully!")
             return True
@@ -311,7 +314,8 @@ class MemoryOptimizedBenchmarker:
         self.log_memory_status("before benchmark")
 
         # Check for existing results
-        results_file = f"benchmark_results_{model_name.replace(':', '_')}_shared_emb.json"
+        slug = re.sub(r"[^A-Za-z0-9]+", "_", self.embedding_model.lower())
+        results_file = f"benchmark_results_{slug}_{model_name.replace(':', '_')}.json"
 
         if os.path.exists(results_file) and not force_rerun:
             print(f"Loading existing results...")
@@ -397,11 +401,10 @@ class MemoryOptimizedBenchmarker:
             results = {}
             metrics = [
                 AnswerAccuracy(),
-                # ResponseGroundedness(),
                 ContextRelevance(),
                 context_precision,
                 context_recall,
-            ]
+            ]  # ResponseGroundedness removed for speed
 
             for metric in metrics:
                 try:
@@ -514,7 +517,6 @@ class MemoryOptimizedBenchmarker:
 
             metrics = [
                 AnswerAccuracy(),
-                # ResponseGroundedness(),
                 ContextRelevance(),
                 context_precision,
                 context_recall,
@@ -580,8 +582,8 @@ class MemoryOptimizedBenchmarker:
             print("Failed to setup shared vector store")
             return {}
 
-        # Get models to benchmark
-        available_models = self.get_available_models()
+        # Get models to benchmark (skip embedding-only entries quickly)
+        available_models = [m for m in self.get_available_models() if not m.startswith("tazarov/")]
 
         if target_models:
             models_to_test = [m for m in target_models if m in available_models]
@@ -643,6 +645,16 @@ class MemoryOptimizedBenchmarker:
 
 def main():
     """Main execution function"""
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run RAGAS benchmark with selectable embedding model")
+    parser.add_argument("--embedding-model", type=str, default=SHARED_EMBEDDING_MODEL)
+    parser.add_argument("--sample-size", type=int, default=DEFAULT_SAMPLE_SIZE)
+    args = parser.parse_args()
+
+    embedding_model_cli = args.embedding_model
+    sample_size_cli = args.sample_size
+
     print("RAGAS MEMORY-OPTIMIZED MULTI-MODEL BENCHMARKING")
     print("=" * 70)
 
@@ -667,8 +679,8 @@ def main():
     # Note: aggressive_cleanup=False keeps models available for re-testing
     # Set to True if you want to completely remove models to free disk space
     benchmarker = MemoryOptimizedBenchmarker(
-        sample_size=3,  # Start with small sample for testing
-        embedding_model=SHARED_EMBEDDING_MODEL,  # use same model as index
+        sample_size=sample_size_cli,
+        embedding_model=embedding_model_cli,
         aggressive_cleanup=False,  # Conservative mode: keep models available
         judge_model="phi3:mini" # Use a chat-capable model for grading
     )
@@ -682,7 +694,8 @@ def main():
 
     # Save consolidated results
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    consolidated_file = os.path.join(RESULTS_DIR, f"benchmark_results_consolidated_shared_emb_{timestamp}.json")
+    slug = re.sub(r"[^A-Za-z0-9]+", "_", embedding_model_cli.lower())
+    consolidated_file = os.path.join(RESULTS_DIR, f"benchmark_results_consolidated_{slug}_{timestamp}.json")
 
     try:
         with open(consolidated_file, "w") as f:
