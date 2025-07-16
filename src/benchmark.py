@@ -642,7 +642,8 @@ def main():
     print(f"Loaded {len(docs)} documents")
 
     # Define models to test (or leave None to test all available)
-    target_models = None  # Benchmark all models returned by `ollama list`
+    # target_models = None  # Benchmark all models returned by `ollama list`
+    target_models = ["mistral:7b", "phi4-mini-reasoning:3.8b"]
 
     # Initialize benchmarker
     # Note: aggressive_cleanup=False keeps models available for re-testing
