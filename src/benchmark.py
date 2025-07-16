@@ -50,13 +50,15 @@ from tqdm import tqdm
 
 # Configuration
 DEFAULT_SAMPLE_SIZE = 3
-DEFAULT_TIMEOUT = 60
+DEFAULT_TIMEOUT = 180  # allow heavy local models more time to respond
 DEFAULT_TEMPERATURE = 0.1
-SHARED_EMBEDDING_MODEL = "phi3:mini"  # Fast, lightweight embedding model for all tests
+# SHARED_EMBEDDING_MODEL = "phi3:mini"  # Fast, lightweight embedding model for all tests
+SHARED_EMBEDDING_MODEL = "tazarov/all-MiniLM-L6-v2-f32"  # fixed embedding model built by build_embeddings.py
+
 # Retrieval & chunking parameters
 CHUNK_SIZE = 400  # characters per chunk
 CHUNK_OVERLAP = 50  # overlap between chunks
-TOP_K = 5  # number of chunks retrieved per query
+TOP_K = 3  # number of chunks retrieved per query
 # Directory where the persisted FAISS index (and associated metadata) will be stored
 INDEX_DIR = os.path.join(".rag_cache", "faiss_index")
 # Directory where raw answers and evaluation artefacts will be stored
@@ -650,7 +652,7 @@ def main():
     # Set to True if you want to completely remove models to free disk space
     benchmarker = MemoryOptimizedBenchmarker(
         sample_size=3,  # Start with small sample for testing
-        embedding_model="phi3:mini",  # Use phi3:mini for shared embeddings
+        embedding_model=SHARED_EMBEDDING_MODEL,  # use same model as index
         aggressive_cleanup=False  # Conservative mode: keep models available
     )
 
