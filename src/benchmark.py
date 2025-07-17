@@ -50,11 +50,11 @@ from ragas.metrics import (
 from tqdm import tqdm
 
 # Configuration
-DEFAULT_SAMPLE_SIZE = 10
+DEFAULT_SAMPLE_SIZE = 3
 DEFAULT_TIMEOUT = 180  # allow heavy local models more time to respond
 DEFAULT_TEMPERATURE = 0.1
 # SHARED_EMBEDDING_MODEL = "phi3:mini"  # Fast, lightweight embedding model for all tests
-SHARED_EMBEDDING_MODEL = "tazarov/all-MiniLM-L6-v2-f32"  # fixed embedding model built by build_embeddings.py
+SHARED_EMBEDDING_MODEL = "all-minilm"  # updated default embedding model as requested
 
 # Retrieval & chunking parameters
 CHUNK_SIZE = 400  # characters per chunk
@@ -74,15 +74,20 @@ class MemoryOptimizedBenchmarker:
     def __init__(self, sample_size: int = DEFAULT_SAMPLE_SIZE,
                  embedding_model: str = SHARED_EMBEDDING_MODEL,
                  aggressive_cleanup: bool = False,
-                 judge_model: str = "phi3:mini"):
+                 judge_model: str = "phi3:mini",
+                 include_heavy_metrics: bool = False):
+        # Store config
         self.sample_size = sample_size
         self.embedding_model = embedding_model
         self.aggressive_cleanup = aggressive_cleanup  # Whether to completely remove models
         self.judge_model = judge_model  # chat-capable model used for Ragas metric prompts
+        self.include_heavy_metrics = include_heavy_metrics  # Toggle for heavyweight metrics
 
         # Derive per-embedding-model cache directory
         slug = re.sub(r"[^A-Za-z0-9]+", "_", self.embedding_model.lower())
         self.index_dir = os.path.join(".rag_cache", slug, "faiss_index")
+        # Save the slug so we can create unique filenames per embedding model
+        self.embed_slug = slug
         os.makedirs(self.index_dir, exist_ok=True)
         os.makedirs(RUNS_DIR, exist_ok=True)
         os.makedirs(RESULTS_DIR, exist_ok=True)
@@ -226,7 +231,9 @@ class MemoryOptimizedBenchmarker:
         print(f"\n{'='*60}\nANSWER GENERATION: {model_name}\n{'='*60}")
         self.log_memory_status("before generation")
 
-        answers_file = os.path.join(RUNS_DIR, f"{model_name.replace(':', '_')}_answers.jsonl")
+        # Build per-embedding, per-chat-model filename (JSON, not JSONL)
+        chat_slug = model_name.replace(":", "_")
+        answers_file = os.path.join(RUNS_DIR, f"{self.embed_slug}_{chat_slug}_answers.json")
 
         if os.path.exists(answers_file) and not force_rerun:
             print(f"Answers already exist at {answers_file}. Skipping (use force_rerun=True to regenerate)")
@@ -261,7 +268,8 @@ class MemoryOptimizedBenchmarker:
                         "user_input": question,
                         "retrieved_contexts": [doc.page_content for doc in result["source_documents"]],
                         "response": result["result"],
-                        "reference": ground_truth
+                        "reference": ground_truth,
+                        "reference_contexts": row.get("reference_contexts", [])
                     }
                 except Exception as e:
                     print(f"    Error: {e}")
@@ -269,24 +277,16 @@ class MemoryOptimizedBenchmarker:
                         "user_input": question,
                         "retrieved_contexts": ["Error retrieving contexts"],
                         "response": f"Error: {str(e)}",
-                        "reference": ground_truth
+                        "reference": ground_truth,
+                        "reference_contexts": row.get("reference_contexts", [])
                     }
                 answers.append(answer_data)
 
-            # Persist answers (jsonl for stream‐friendly processing later)
+            # Persist answers as a single, human-readable JSON file
             with open(answers_file, "w") as f:
-                for entry in answers:
-                    f.write(json.dumps(entry) + "\n")
+                json.dump(answers, f, indent=2)
             print(f"Saved answers to {answers_file}")
 
-            # Also save a human-readable pretty JSON for inspection
-            pretty_file = answers_file.replace("_answers.jsonl", "_answers.json")
-            try:
-                with open(pretty_file, "w") as f:
-                    json.dump(answers, f, indent=2)
-                print(f"Saved pretty answers to {pretty_file}")
-            except Exception as e:
-                print(f"Warning: could not write pretty answers file: {e}")
             return {"answers_file": answers_file, "questions_processed": len(answers)}
 
         except Exception as e:
@@ -374,7 +374,8 @@ class MemoryOptimizedBenchmarker:
                         "user_input": question,
                         "retrieved_contexts": [doc.page_content for doc in result['source_documents']],
                         "response": result['result'],
-                        "reference": ground_truth
+                        "reference": ground_truth,
+                        "reference_contexts": row.get("reference_contexts", [])
                     })
 
                 except Exception as e:
@@ -383,7 +384,8 @@ class MemoryOptimizedBenchmarker:
                         "user_input": question,
                         "retrieved_contexts": ["Error retrieving contexts"],
                         "response": f"Error: {str(e)}",
-                        "reference": ground_truth
+                        "reference": ground_truth,
+                        "reference_contexts": row.get("reference_contexts", [])
                     })
 
             # Run Ragas evaluation using shared embedding model
@@ -404,7 +406,13 @@ class MemoryOptimizedBenchmarker:
                 ContextRelevance(),
                 context_precision,
                 context_recall,
-            ]  # ResponseGroundedness removed for speed
+            ]
+            if self.include_heavy_metrics:
+                # Heavy / slower metrics that require additional LLM calls
+                try:
+                    metrics.append(ResponseGroundedness())
+                except Exception as metric_err:  # pragma: no cover – best-effort
+                    print(f"  Warning: could not add ResponseGroundedness – {metric_err}")
 
             for metric in metrics:
                 try:
@@ -476,8 +484,9 @@ class MemoryOptimizedBenchmarker:
         print(f"\n{'='*60}\nGRADING: {model_name}\n{'='*60}")
         self.log_memory_status("before grading")
 
-        answers_file = os.path.join(RUNS_DIR, f"{model_name.replace(':', '_')}_answers.jsonl")
-        scores_file = os.path.join(RUNS_DIR, f"{model_name.replace(':', '_')}_scores.json")
+        chat_slug = model_name.replace(":", "_")
+        answers_file = os.path.join(RUNS_DIR, f"{self.embed_slug}_{chat_slug}_answers.json")
+        scores_file = os.path.join(RUNS_DIR, f"{self.embed_slug}_{chat_slug}_scores.json")
 
         if os.path.exists(scores_file) and not force_rerun:
             print(f"Scores already exist at {scores_file}. Skipping (use force_rerun=True to regenerate)")
@@ -498,14 +507,13 @@ class MemoryOptimizedBenchmarker:
         start_time = time.time()
 
         try:
-            # Read answers
-            records = []
+            # Load answer records from JSON list (no longer JSONL)
             with open(answers_file, "r") as f:
-                for line in f:
-                    try:
-                        records.append(json.loads(line))
-                    except Exception as e:
-                        print(f"Skipping malformed line: {e}")
+                try:
+                    records = json.load(f)
+                except Exception as e:
+                    print(f"Error reading answers file: {e}")
+                    return None
 
             if not records:
                 print("No answers to grade – skipping")
@@ -521,6 +529,11 @@ class MemoryOptimizedBenchmarker:
                 context_precision,
                 context_recall,
             ]
+            if self.include_heavy_metrics:
+                try:
+                    metrics.append(ResponseGroundedness())
+                except Exception as metric_err:  # pragma: no cover
+                    print(f"    Warning: could not add ResponseGroundedness – {metric_err}")
             scores: Dict[str, float] = {}
 
             for metric in metrics:
@@ -604,7 +617,7 @@ class MemoryOptimizedBenchmarker:
         for i, model_name in enumerate(models_to_test, 1):
             print(f"\nProgress: {i}/{len(models_to_test)} models")
 
-            gen_info = self.generate_answers(model_name, testset_df)
+            gen_info = self.generate_answers(model_name, testset_df, force_rerun=True)
 
             if gen_info is None:
                 failed_models.append(model_name)
@@ -644,79 +657,114 @@ class MemoryOptimizedBenchmarker:
         return all_results
 
 def main():
-    """Main execution function"""
+    """Main execution function supporting multiple embedding models."""
     import argparse
 
-    parser = argparse.ArgumentParser(description="Run RAGAS benchmark with selectable embedding model")
-    parser.add_argument("--embedding-model", type=str, default=SHARED_EMBEDDING_MODEL)
-    parser.add_argument("--sample-size", type=int, default=DEFAULT_SAMPLE_SIZE)
+    parser = argparse.ArgumentParser(
+        description="Run RAGAS benchmark across one or many embedding vector stores."
+    )
+    parser.add_argument(
+        "--embedding-model",
+        action="append",
+        help=(
+            "Embedding model(s) to evaluate. "
+            "Can be provided multiple times or as a comma-separated list. "
+            f"Defaults to {SHARED_EMBEDDING_MODEL}."
+        ),
+    )
+    parser.add_argument(
+        "--sample-size",
+        type=int,
+        default=DEFAULT_SAMPLE_SIZE,
+        help="Number of questions from the test-set to benchmark against.",
+    )
+    parser.add_argument(
+        "--all-metrics",
+        action="store_true",
+        help="Include heavy metrics like ResponseGroundedness (slower).",
+    )
     args = parser.parse_args()
 
-    embedding_model_cli = args.embedding_model
-    sample_size_cli = args.sample_size
+    # ---------------- Prepare CLI inputs ----------------
+    sample_size_cli: int = args.sample_size
+    embedding_models: List[str] = []
+    if args.embedding_model:
+        for value in args.embedding_model:
+            embedding_models.extend([m.strip() for m in value.split(",") if m.strip()])
+    if not embedding_models:
+        embedding_models = [SHARED_EMBEDDING_MODEL]
 
-    print("RAGAS MEMORY-OPTIMIZED MULTI-MODEL BENCHMARKING")
+    print("RAGAS MEMORY-OPTIMIZED MULTI-EMBEDDING BENCHMARK")
     print("=" * 70)
+    print(f"Embedding models to evaluate: {embedding_models}")
+    print(f"Heavy metrics enabled: {args.all_metrics}")
+    print(f"Sample size: {sample_size_cli}")
 
-    # Load testset
-    print("Loading testset...")
+    # ---------------- Load static resources -------------
+    print("Loading test-set …")
     with open("testset/ragas_testset.json", "r") as f:
         testset_data = json.load(f)
     testset_df = pd.DataFrame(testset_data)
-    print(f"Loaded {len(testset_df)} questions")
+    print(f"Loaded {len(testset_df)} questions.")
 
-    # Load documents
-    print("Loading documents...")
+    print("Loading documents …")
     loader = DirectoryLoader("data/", glob="**/*.pdf")
     docs = loader.load()
-    print(f"Loaded {len(docs)} documents")
+    print(f"Loaded {len(docs)} documents.")
 
-    # Define models to test (or leave None to test all available)
-    # target_models = None  # Benchmark all models returned by `ollama list`
+    # Chat models to benchmark per embedding store – hard-coded for now
     target_models = ["mistral:7b", "qwen3:4b"]
 
-    # Initialize benchmarker
-    # Note: aggressive_cleanup=False keeps models available for re-testing
-    # Set to True if you want to completely remove models to free disk space
-    benchmarker = MemoryOptimizedBenchmarker(
-        sample_size=sample_size_cli,
-        embedding_model=embedding_model_cli,
-        aggressive_cleanup=False,  # Conservative mode: keep models available
-        judge_model="phi3:mini" # Use a chat-capable model for grading
-    )
+    consolidated_payload: Dict[str, Any] = {"embedding_model_runs": []}
 
-    # Run benchmarks
-    results = benchmarker.benchmark_all_models(
-        testset_df=testset_df,
-        docs=docs,
-        target_models=target_models
-    )
+    # ---------------- Main loop -------------------------
+    for emb_model in embedding_models:
+        print("\n" + "=" * 70)
+        print(f"BENCHMARKING EMBEDDING MODEL: {emb_model}")
+        print("=" * 70)
 
-    # Save consolidated results
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    slug = re.sub(r"[^A-Za-z0-9]+", "_", embedding_model_cli.lower())
-    consolidated_file = os.path.join(RESULTS_DIR, f"benchmark_results_consolidated_{slug}_{timestamp}.json")
+        benchmarker = MemoryOptimizedBenchmarker(
+            sample_size=sample_size_cli,
+            embedding_model=emb_model,
+            aggressive_cleanup=False,
+            judge_model="phi3:mini",
+            include_heavy_metrics=args.all_metrics,
+        )
 
-    try:
-        with open(consolidated_file, "w") as f:
-            json.dump(results, f, indent=2)
-        print(f"Results saved to {consolidated_file}")
-    except Exception as e:
-        print(f"Warning: Error saving consolidated results: {e}")
+        try:
+            results = benchmarker.benchmark_all_models(
+                testset_df=testset_df, docs=docs, target_models=target_models
+            )
+        except Exception as exc:  # pragma: no cover – top-level safety
+            print(f"Top-level failure while benchmarking {emb_model}: {exc}")
+            traceback.print_exc()
+            continue
 
-    # Display results summary
-    if results:
-        print(f"\n{'='*70}")
-        print("RESULTS SUMMARY")
-        print(f"{'='*70}")
+        # Consolidate per-chat-model scores
+        for chat_model_name, metrics in results.items():
+            consolidated_payload["embedding_model_runs"].append(
+                {
+                    "embedding_model": emb_model,
+                    "chat_model": chat_model_name,
+                    "sample_size": sample_size_cli,
+                    "metrics": metrics,
+                }
+            )
 
-        for model_name, model_results in results.items():
-            print(f"\nModel: {model_name}:")
-            for metric, score in model_results.items():
-                if isinstance(score, (int, float)) and metric not in ["grading_time_seconds", "questions_graded"]:
-                    print(f"  {metric}: {score:.4f}")
-                elif metric == "grading_time_seconds":
-                    print(f"  Grading Time: {score:.1f}s")
+    # ---------------- Persist consolidated results ------
+    if consolidated_payload["embedding_model_runs"]:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        out_file = os.path.join(
+            RESULTS_DIR, f"benchmark_results_{timestamp}_multi_emb.json"
+        )
+        try:
+            with open(out_file, "w") as fp:
+                json.dump(consolidated_payload, fp, indent=2)
+            print(f"\nSaved consolidated results to {out_file}")
+        except Exception as e:
+            print(f"Error saving consolidated results: {e}")
+    else:
+        print("No results produced – nothing to write.")
 
 if __name__ == "__main__":
     main()
