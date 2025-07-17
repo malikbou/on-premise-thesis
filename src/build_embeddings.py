@@ -41,7 +41,7 @@ import re
 # -------- Constants (mirrored from benchmark.py) --------
 INDEX_DIR = os.path.join(".rag_cache", "faiss_index")  # will be overridden after CLI parse
 DOCS_PATH = "data/"  # default corpus directory
-EMBED_MODEL = "tazarov/all-MiniLM-L6-v2-f32"  # default embedding model
+EMBED_MODEL = "all_minilm"  # updated default embedding model
 
 DEFAULT_CHUNK_SIZE = 400
 DEFAULT_CHUNK_OVERLAP = 50
