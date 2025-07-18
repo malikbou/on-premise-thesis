@@ -1,0 +1,82 @@
+[
+  {
+    "user_input": "What is Science and Technology Studies?",
+    "reference_contexts": [
+      "Student Handbook\n2024-25\nLorem ipsum\nDepartment of \nScience and Technology Studies (STS)"
+    ],
+    "reference": "Science and Technology Studies (STS) is a department focused on the interdisciplinary study of science, technology, and society.",
+    "synthesizer_name": "single_hop_specifc_query_synthesizer"
+  },
+  {
+    "user_input": "What information can I find about UCL's Student Support Framework?",
+    "reference_contexts": [
+      "Contents:  1 Welcome to UCL .................................................................................................................... 2 2 Introduction to the department and parent faculty ................................................................. 3 3 Departmental staff related to the programme ........................................................................ 5 4 Key dates ............................................................................................................................... 6 5 Hours of Study ....................................................................................................................... 8 6 Our expectations of students ................................................................................................. 9 7 UCL\u2019s Student Support Framework ..................................................................................... 10 8 Programme structure"
+    ],
+    "reference": "UCL's Student Support Framework is detailed in the contents, providing information on the support available to students at the university.",
+    "synthesizer_name": "single_hop_specifc_query_synthesizer"
+  },
+  {
+    "user_input": "What tutorials and supervision are available for students?",
+    "reference_contexts": [
+      "10 8 Programme structure ........................................................................................................... 13 9 Tutorials and supervision ..................................................................................................... 14 10 Advice on choosing module options and electives .............................................................. 15 11 Changes to Registration Status ........................................................................................... 17 12 Progression, Award and Classification ................................................................................ 19 13 Information on assessment .................................................................................................. 20 14 Learning resources and key facilities ................................................................................... 27 15 Student support and wellbeing"
+    ],
+    "reference": "Tutorials and supervision are part of the programme structure, providing support and guidance to students.",
+    "synthesizer_name": "single_hop_specifc_query_synthesizer"
+  },
+  {
+    "user_input": "What is You Shape UCL and how does it involve students in partnership with staff?",
+    "reference_contexts": [
+      "27 15 Student support and wellbeing ............................................................................................ 31 16 Employability and Careers ................................................................................................... 38 17 Student representation ........................................................................................................ 39 18 Student feedback and working in partnership with staff through You Shape UCL .............. 42 19 Sport and Physical Activity ............................................................................................... 44 20 Volunteering Services .......................................................................................................... 45 21 Data Protection and Intellectual Property ............................................................................ 46 22 Health, Safety and Security"
+    ],
+    "reference": "Student feedback and working in partnership with staff through You Shape UCL is a part of student representation at the university.",
+    "synthesizer_name": "single_hop_specifc_query_synthesizer"
+  },
+  {
+    "user_input": "What information is provided about 'After study' in the document?",
+    "reference_contexts": [
+      "46 22 Health, Safety and Security ................................................................................................. 47 23 After study ............................................................................................................................ 48 24 Appendix 1: STS Local Rules .............................................................................................. 50 25 Appendix 2: STS Undergraduate Criteria for Assessment .................................................. 55 26 Appendix 3: STS Postgraduate Criteria for Assessment ..................................................... 56"
+    ],
+    "reference": "The document includes information about 'After study' on page 48.",
+    "synthesizer_name": "single_hop_specifc_query_synthesizer"
+  },
+  {
+    "user_input": "What are the research opportunities and academic progression like in Asia?",
+    "reference_contexts": [
+      "1 Welcome to UCL 1.1 Provost\u2019s Welcome  Dear students,\u2009\u2009  \u2009  A warm welcome to those of you who are new and congratulations on making UCL your university of choice.\u2009To those of you returning, welcome back. \u2009  \u2009  Your UCL education will take you deep into your chosen field and give you its broader context in our rich multidisciplinary academic culture. It will help you develop skills and networks to prepare you for your future.\u2009\u2009  \u2009  We want you to learn how to think, not what to think, through UCL\u2019s research-based approach to education.\u2009Our students are our partners and contributors, working alongside world-leading academic staff to pursue excellence, break boundaries and make an impact on global challenges.\u2009\u2009     I warmly encourage you to shape your journey at UCL. Take our university-wide surveys and work in partnership with academics to make your programme of study even better.\u2009 Each programme also has opportunities for you to volunteer as an academic representative to work closely"
+    ],
+    "reference": "Asia offers a rich multidisciplinary academic culture that provides research opportunities and academic progression for graduate students. It encourages students to work alongside academic staff to pursue excellence and make an impact on global challenges.",
+    "synthesizer_name": "single_hop_specifc_query_synthesizer"
+  },
+  {
+    "user_input": "What is the significance of bicentennial in UCL's history?",
+    "reference_contexts": [
+      "programme also has opportunities for you to volunteer as an academic representative to work closely with your department to improve the student experience.   This is an exciting time to make your voice heard, with UCL East, the biggest development in UCL\u2019s history, welcoming its second cohort of students and work continuing on implementing our 2022-2027 strategic plan for education. Preparations are also in train on marking UCL\u2019s bicentennial in 2026, with our student partners involved in planning an inspiring programme of events to celebrate this landmark anniversary.  UCL is a community of great minds. You are a valuable member of that community. I hope you will take every opportunity to shape your time with us, so that your experience is the best possible.\u2009\u2009    Dr Michael Spence\u2009  UCL President and Provost"
+    ],
+    "reference": "Preparations are in train on marking UCL\u2019s bicentennial in 2026, with student partners involved in planning an inspiring programme of events to celebrate this landmark anniversary.",
+    "synthesizer_name": "single_hop_specifc_query_synthesizer"
+  },
+  {
+    "user_input": "What is the role of 'Science' in the UCL Department of Science and Technology Studies?",
+    "reference_contexts": [
+      "2 Introduction to the department and parent faculty 2.1 Introduction to the department and its history UCL Department of Science and Technology Studies (STS) is an academic unit for research and teaching made at a \u2018crossroads\u2019 of different disciplinary perspectives.  As a Department, we were first established in 1921 specialising in history and philosophy of science, with social science approaches being added in more recent years. STS is now unique in the UK in combining \u2013 in one Department \u2013 teaching and research in history and philosophy of science with social studies of science including science policy, public understanding of science and science communication.  During the 2021/22 Academic Session, we celebrated our Centenary and we have collated some of the highlights from our past in the History of STS page on our website.  STS is part of UCL Faculty of Mathematical and Physical Sciences (MAPS), which is part of UCL School of the Built Environment, Engineering and Mathematical"
+    ],
+    "reference": "UCL Department of Science and Technology Studies (STS) is an academic unit that specializes in history and philosophy of science, with social science approaches being added in recent years. It combines teaching and research in history and philosophy of science with social studies of science, including science policy, public understanding of science, and science communication.",
+    "synthesizer_name": "single_hop_specifc_query_synthesizer"
+  },
+  {
+    "user_input": "Can you explain what BEAMS stands for and its relation to UCL School of the Built Environment?",
+    "reference_contexts": [
+      "Sciences (MAPS), which is part of UCL School of the Built Environment, Engineering and Mathematical and Physical Sciences (BEAMS)."
+    ],
+    "reference": "BEAMS stands for Built Environment, Engineering and Mathematical and Physical Sciences. It is a part of UCL School of the Built Environment.",
+    "synthesizer_name": "single_hop_specifc_query_synthesizer"
+  },
+  {
+    "user_input": "Where can I find general information about UCL regulations?",
+    "reference_contexts": [
+      "2.2 Explanation of the relationship between department and faculty Your degree is defined by three layers of regulations. Students are expected to familiarise themselves with documents applying to their degrees. These are: \u2022 Regulations set by UCL \u2013 general information is can be found on the Student and Registry Services web page and specific information can be found in the UCL Academic Manual. \u2022 Regulations set by MAPS Faculty. \u2022 Regulations set by STS \u201clocal rules.  These are available in the appendices and on the STS Moodle page."
+    ],
+    "reference": "General information about UCL regulations can be found on the Student and Registry Services web page and specific information can be found in the UCL Academic Manual.",
+    "synthesizer_name": "single_hop_specifc_query_synthesizer"
+  }
+]
