@@ -27,13 +27,16 @@ from typing import List
 from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from ragas.llms import LangchainLLMWrapper
-from ragas.embeddings import LangchainEmbeddingsWrapper
+from ragas.llms import LangchainLLMWrapper, BaseRagasLLM
+from ragas.embeddings import LangchainEmbeddingsWrapper, BaseRagasEmbeddings
 from ragas.testset import TestsetGenerator
 from ragas.testset.graph import KnowledgeGraph, Node
 from ragas.testset.synthesizers import QueryDistribution
-from ragas.testset.synthesizers.single_hop import SingleHopQuerySynthesizer
-from ragas.testset.synthesizers.multi_hop import MultiHopQuerySynthesizer
+from ragas.testset.synthesizers.single_hop.specific import SingleHopSpecificQuerySynthesizer
+from ragas.testset.synthesizers.multi_hop import (
+    MultiHopAbstractQuerySynthesizer,
+    MultiHopSpecificQuerySynthesizer,
+)
 from ragas.testset.persona import Persona
 
 
@@ -45,7 +48,10 @@ from ragas.testset.transforms import (
     SummaryExtractor,
     EmbeddingExtractor,
 )
-from ragas.testset.transforms.relationship_builders.cosine import SummaryCosineSimilarityBuilder
+from ragas.testset.transforms.extractors import NERExtractor
+from ragas.testset.transforms.relationship_builders.cosine import (
+    SummaryCosineSimilarityBuilder,
+)
 
 
 # Increased chunk size to avoid "documents too short" error
@@ -80,14 +86,23 @@ def chunk_documents(docs):
 # Custom query distribution
 # ---------------------------------------------------------------------------
 
-def custom_query_distribution() -> QueryDistribution:
-    """Create a custom query distribution with 60% single-hop and 40% multi-hop questions."""
-    return QueryDistribution(
-        distributions={
-            SingleHopQuerySynthesizer: 0.6,
-            MultiHopQuerySynthesizer: 0.4,
-        }
-    )
+
+def custom_query_distribution(
+    llm: BaseRagasLLM, force_single_hop: bool = False
+) -> QueryDistribution:
+    """Create a custom query distribution with a mix of question types."""
+    single_hop_specific = SingleHopSpecificQuerySynthesizer(llm=llm)
+
+    if not force_single_hop:
+        multi_hop_specific = MultiHopSpecificQuerySynthesizer(llm=llm)
+        multi_hop_abstract = MultiHopAbstractQuerySynthesizer(llm=llm)
+        return [
+            (single_hop_specific, 0.5),
+            (multi_hop_specific, 0.25),
+            (multi_hop_abstract, 0.25),
+        ]
+    else:
+        return [(single_hop_specific, 1.0)]
 
 
 # ---------------------------------------------------------------------------
@@ -121,37 +136,25 @@ def main():
 
     # Wrap OpenAI models for Ragas
     generator_llm = LangchainLLMWrapper(ChatOpenAI(model=args.generator_model, temperature=0))
-    critic_llm = LangchainLLMWrapper(ChatOpenAI(model=args.critic_model, temperature=0))
     embedding_model = LangchainEmbeddingsWrapper(OpenAIEmbeddings())
 
-    # --- Knowledge Graph Construction ---
-    print("Building Knowledge Graph from documents…")
-
-    # 1. Convert documents to Ragas Nodes
-    nodes = [Node(properties={"page_content": doc.page_content}) for doc in docs]
-    kg = KnowledgeGraph(nodes=nodes)
-
-    # 2. Define graph transformation pipeline
+    # --- Define Knowledge Graph Transformations ---
+    print("Defining Knowledge Graph transformations…")
     transforms = [
         Parallel(
             KeyphrasesExtractor(llm=generator_llm),
             SummaryExtractor(llm=generator_llm),
+            NERExtractor(llm=generator_llm),
         ),
         EmbeddingExtractor(
             embedding_model=embedding_model,
-            embed_property_name="summary" # Embed summaries, not full content
+            embed_property_name="summary",  # Embed summaries, not full content
+            property_name="summary_embedding",  # Store embeddings in this property
         ),
         SummaryCosineSimilarityBuilder(
-            embedding_model=embedding_model,
-            threshold=0.85 # Stricter threshold for higher quality links
-        )
+            threshold=0.7  # Lowered threshold to encourage relationship formation
+        ),
     ]
-
-    # 3. Apply transformations to build the graph
-    apply_transforms(kg, transforms)
-
-    print(f"Knowledge Graph built with {len(kg.nodes)} nodes and {len(kg.relationships)} relationships.")
-
 
     # --- Testset Generation ---
 
@@ -173,28 +176,43 @@ def main():
 
     generator = TestsetGenerator(
         llm=generator_llm,
-        critic_llm=critic_llm,
         embedding_model=embedding_model,
         persona_list=personas,
-        knowledge_graph=kg  # Pass the graph to the generator
     )
 
-    # Create custom query distribution
-    query_distribution = custom_query_distribution()
+    # Define ideal and fallback distributions
+    ideal_distribution = custom_query_distribution(generator_llm)
+    fallback_distribution = custom_query_distribution(generator_llm, force_single_hop=True)
 
-    print("Generating test-set from Knowledge Graph… this may take a few minutes.")
-    dataset = generator.generate(
-        testset_size=args.size,
-        query_distribution=query_distribution,
-    )
+    print("Generating test-set… this may take a few minutes.")
+    try:
+        print("Attempting to generate test set with multi-hop questions...")
+        dataset = generator.generate_with_langchain_docs(
+            documents=docs,
+            testset_size=args.size,
+            transforms=transforms,
+            query_distribution=ideal_distribution,
+        )
+    except ValueError as e:
+        if "No clusters found" in str(e):
+            print("WARN: Could not generate multi-hop questions. Falling back to single-hop only.")
+            dataset = generator.generate_with_langchain_docs(
+                documents=docs,
+                testset_size=args.size,
+                transforms=transforms,
+                query_distribution=fallback_distribution,
+            )
+        else:
+            # Re-raise any other unexpected errors
+            raise e
 
     out_dir = "testset"
     os.makedirs(out_dir, exist_ok=True)
     out_path = os.path.join(out_dir, f"{args.dept}_testset.json")
 
     with open(out_path, "w") as f:
-        json.dump(dataset.to_dict(), f, indent=2)
-    print(f"Saved {len(dataset)} samples to {out_path}")
+        json.dump(dataset.to_list(), f, indent=2)
+    print(f"Saved {len(dataset.to_list())} samples to {out_path}")
 
 
 if __name__ == "__main__":
