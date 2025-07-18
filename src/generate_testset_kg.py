@@ -22,14 +22,17 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 from typing import List
 
+from langchain.docstore.document import Document
 from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from ragas.llms import LangchainLLMWrapper, BaseRagasLLM
 from ragas.embeddings import LangchainEmbeddingsWrapper, BaseRagasEmbeddings
 from ragas.testset import TestsetGenerator
+from ragas.run_config import RunConfig
 from ragas.testset.graph import KnowledgeGraph, Node
 from ragas.testset.synthesizers import QueryDistribution
 from ragas.testset.synthesizers.single_hop.specific import SingleHopSpecificQuerySynthesizer
@@ -75,11 +78,59 @@ def load_documents(path: str) -> List:
     return loader.load()
 
 
-def chunk_documents(docs):
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
-    )
-    return splitter.split_documents(docs)
+def chunk_documents(docs: List[Document]) -> List[Document]:
+    """
+    Chunks documents based on semantic headings rather than fixed size.
+    It assumes headings are numbered (e.g., "1. Introduction", "2.1 Key Policies")
+    and uses these as boundaries for creating meaningful chunks.
+
+    If no numbered headings are found, it falls back to the original fixed-size
+    chunking method.
+    """
+    print("Attempting to chunk documents by semantic headings...")
+
+    # 1. Combine all page content into a single string to handle sections
+    # that span across pages.
+    full_text = "\n\n".join(doc.page_content for doc in docs)
+
+    # 2. Define a regex pattern to find numbered headings (e.g., 1. , 1.1 , 1.1.1)
+    # This pattern looks for lines starting with digits, followed by a dot, a space,
+    # and then the title.
+    heading_pattern = re.compile(r"^\d+(\.\d+)*\s.*$", re.MULTILINE)
+
+    # Find the start index of all headings
+    heading_indices = [match.start() for match in heading_pattern.finditer(full_text)]
+
+    # 3. If no headings are found, fall back to the original method.
+    if not heading_indices:
+        print("WARN: No numbered headings found. Falling back to fixed-size chunking.")
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=100
+        )
+        return splitter.split_documents(docs)
+
+    # 4. Create chunks based on the text between headings.
+    semantic_chunks = []
+    for i in range(len(heading_indices)):
+        # The start of the chunk is the start of the current heading
+        start_index = heading_indices[i]
+        # The end of the chunk is the start of the next heading, or the end of the document
+        end_index = heading_indices[i+1] if i + 1 < len(heading_indices) else len(full_text)
+
+        chunk_text = full_text[start_index:end_index].strip()
+
+        if chunk_text:
+            # Create a new Document for each semantic chunk.
+            # We lose the specific page number but gain immense semantic value.
+            # The source metadata is preserved from the first document.
+            semantic_chunks.append(Document(
+                page_content=chunk_text,
+                metadata={"source": docs[0].metadata.get("source", "Unknown")}
+            ))
+
+    print(f"Successfully created {len(semantic_chunks)} semantic chunks.")
+    return semantic_chunks
 
 
 # ---------------------------------------------------------------------------
@@ -117,13 +168,26 @@ def custom_query_distribution(
 # Main routine
 # ---------------------------------------------------------------------------
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Generate a synthetic Ragas test-set from a handbook PDF.")
-    parser.add_argument("--docs", required=True, help="Path to PDF or directory with documents.")
-    parser.add_argument("--dept", default="STS", help="Dept slug used in output filename.")
-    parser.add_argument("--size", type=int, default=10, help="Number of questions to generate.")
+    parser = argparse.ArgumentParser(
+        description="Generate a synthetic Ragas test-set from a handbook PDF."
+    )
+    parser.add_argument(
+        "--docs", required=True, help="Path to PDF or directory with documents."
+    )
+    parser.add_argument(
+        "--dept", default="STS", help="Dept slug used in output filename."
+    )
+    parser.add_argument(
+        "--size", type=int, default=10, help="Number of questions to generate."
+    )
     parser.add_argument("--generator-model", default="gpt-3.5-turbo-16k")
-    parser.add_argument("--critic-model", default="gpt-4o")
+    parser.add_argument(
+        "--force-single-hop",
+        action="store_true",
+        help="Force single-hop question generation only.",
+    )
     args = parser.parse_args()
 
     print(f"Loading documents from {args.docs} …")
@@ -138,38 +202,20 @@ def main():
     generator_llm = LangchainLLMWrapper(ChatOpenAI(model=args.generator_model, temperature=0))
     embedding_model = LangchainEmbeddingsWrapper(OpenAIEmbeddings())
 
-    # --- Define Knowledge Graph Transformations ---
-    print("Defining Knowledge Graph transformations…")
-    transforms = [
-        Parallel(
-            KeyphrasesExtractor(llm=generator_llm),
-            SummaryExtractor(llm=generator_llm),
-            NERExtractor(llm=generator_llm),
-        ),
-        EmbeddingExtractor(
-            embedding_model=embedding_model,
-            embed_property_name="summary",  # Embed summaries, not full content
-            property_name="summary_embedding",  # Store embeddings in this property
-        ),
-        SummaryCosineSimilarityBuilder(
-            threshold=0.7  # Lowered threshold to encourage relationship formation
-        ),
-    ]
-
     # --- Testset Generation ---
 
     # Create UCL student personas
     persona_new_student = Persona(
         name="New Student",
-        role_description="A first-year student looking for information about university policies and procedures."
+        role_description="A first-year student looking for information about university policies and procedures. You write in clear, complete sentences with no slang or typos.",
     )
     persona_international = Persona(
         name="International Student",
-        role_description="An international student seeking information about visa requirements, accommodation, and support services."
+        role_description="An international student seeking information about visa requirements, accommodation, and support services. You write in clear, complete sentences with no slang or typos.",
     )
     persona_graduate = Persona(
         name="Graduate Student",
-        role_description="A graduate student interested in research opportunities, funding, and academic progression."
+        role_description="A graduate student interested in research opportunities, funding, and academic progression. You write in clear, complete sentences with no slang or typos.",
     )
 
     personas = [persona_new_student, persona_international, persona_graduate]
@@ -180,31 +226,85 @@ def main():
         persona_list=personas,
     )
 
-    # Define ideal and fallback distributions
-    ideal_distribution = custom_query_distribution(generator_llm)
-    fallback_distribution = custom_query_distribution(generator_llm, force_single_hop=True)
+    # Define a RunConfig to control the parallelism of API calls
+    run_config = RunConfig(max_workers=2) # A safer default
 
-    print("Generating test-set… this may take a few minutes.")
-    try:
-        print("Attempting to generate test set with multi-hop questions...")
+    if args.force_single_hop:
+        print("Forcing single-hop question generation.")
+        # Simplified transformations for single-hop
+        transforms = [
+            Parallel(
+                KeyphrasesExtractor(llm=generator_llm),
+                SummaryExtractor(llm=generator_llm),
+                NERExtractor(llm=generator_llm),
+            ),
+        ]
+        query_distribution = custom_query_distribution(
+            generator_llm, force_single_hop=True
+        )
         dataset = generator.generate_with_langchain_docs(
             documents=docs,
             testset_size=args.size,
             transforms=transforms,
-            query_distribution=ideal_distribution,
+            query_distribution=query_distribution,
+            run_config=run_config,
         )
-    except ValueError as e:
-        if "No clusters found" in str(e):
-            print("WARN: Could not generate multi-hop questions. Falling back to single-hop only.")
+    else:
+        # Full pipeline with fallback for multi-hop
+        print("Defining Knowledge Graph transformations for multi-hop attempt...")
+        transforms = [
+            Parallel(
+                KeyphrasesExtractor(llm=generator_llm),
+                SummaryExtractor(llm=generator_llm),
+                NERExtractor(llm=generator_llm),
+            ),
+            EmbeddingExtractor(
+                embedding_model=embedding_model,
+                embed_property_name="summary",  # Embed summaries, not full content
+                property_name="summary_embedding",  # Store embeddings in this property
+            ),
+            SummaryCosineSimilarityBuilder(
+                threshold=0.7  # Lowered threshold to encourage relationship formation
+            ),
+        ]
+        # Define ideal and fallback distributions
+        ideal_distribution = custom_query_distribution(generator_llm)
+        fallback_distribution = custom_query_distribution(
+            generator_llm, force_single_hop=True
+        )
+        print("Generating test-set… this may take a few minutes.")
+        try:
+            print("Attempting to generate test set with multi-hop questions...")
             dataset = generator.generate_with_langchain_docs(
                 documents=docs,
                 testset_size=args.size,
                 transforms=transforms,
-                query_distribution=fallback_distribution,
+                query_distribution=ideal_distribution,
+                run_config=run_config,
             )
-        else:
-            # Re-raise any other unexpected errors
-            raise e
+        except ValueError as e:
+            if "No clusters found" in str(e):
+                print(
+                    "WARN: Could not generate multi-hop questions. Falling back to single-hop only."
+                )
+                # Re-run with simplified transforms for the fallback
+                single_hop_transforms = [
+                    Parallel(
+                        KeyphrasesExtractor(llm=generator_llm),
+                        SummaryExtractor(llm=generator_llm),
+                        NERExtractor(llm=generator_llm),
+                    ),
+                ]
+                dataset = generator.generate_with_langchain_docs(
+                    documents=docs,
+                    testset_size=args.size,
+                    transforms=single_hop_transforms,
+                    query_distribution=fallback_distribution,
+                    run_config=run_config,
+                )
+            else:
+                # Re-raise any other unexpected errors
+                raise e
 
     out_dir = "testset"
     os.makedirs(out_dir, exist_ok=True)
