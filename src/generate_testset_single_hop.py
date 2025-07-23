@@ -90,9 +90,13 @@ def chunk_documents(docs: List[Document]) -> List[Document]:
     heading_indices = [match.start() for match in heading_pattern.finditer(full_text)]
 
     if not heading_indices:
-        print("WARN: No numbered headings found. Falling back to fixed-size chunking.")
+        print("WARN: No numbered headings found. Falling back to improved fixed-size chunking.")
+        # The fallback is now more robust. It combines all text first.
         splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-        return splitter.split_documents(docs)
+        split_texts = splitter.split_text(full_text)
+        # Convert the split strings back into Document objects
+        source_metadata = {"source": docs[0].metadata.get("source", "Unknown")}
+        return [Document(page_content=t, metadata=source_metadata) for t in split_texts]
 
     semantic_chunks = []
     for i in range(len(heading_indices)):
@@ -108,6 +112,21 @@ def chunk_documents(docs: List[Document]) -> List[Document]:
 
     print(f"Successfully created {len(semantic_chunks)} semantic chunks.")
     return semantic_chunks
+
+
+def filter_chunks(docs: List[Document], min_length: int = 50) -> List[Document]:
+    """Filters out documents that are too short or lack meaningful content."""
+    original_count = len(docs)
+    filtered_docs = []
+    for doc in docs:
+        if len(doc.page_content) < min_length:
+            continue  # Skip docs that are too short
+        if not re.search(r'[a-zA-Z]', doc.page_content):
+            continue  # Skip docs that contain no alphabetic characters
+        filtered_docs.append(doc)
+
+    print(f"Filtered out {original_count - len(filtered_docs)} low-quality chunks.")
+    return filtered_docs
 
 
 def configure_synthesizer(
@@ -159,7 +178,8 @@ def main():
     raw_docs = load_documents(args.docs)
     print(f"Loaded {len(raw_docs)} source documents")
     docs = chunk_documents(raw_docs)
-    print(f"Chunked to {len(docs)} passages")
+    docs = filter_chunks(docs)  # Add the filtering step here
+    print(f"Chunked and filtered to {len(docs)} passages")
 
     # Initialize models
     generator_llm = LangchainLLMWrapper(ChatOpenAI(model=args.generator_model, temperature=0))
