@@ -29,6 +29,7 @@ import gc
 import subprocess
 import traceback
 import psutil
+import re
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
@@ -38,15 +39,29 @@ from langchain.chains import RetrievalQA
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from ragas import evaluate, EvaluationDataset
-from ragas.metrics import answer_relevancy, context_precision, context_recall
+from ragas.metrics import (
+    answer_relevancy,  # keep legacy metric for backward-compatibility
+    context_precision,
+    context_recall,
+    AnswerAccuracy,
+    ResponseGroundedness,
+    ContextRelevance,
+)
 from tqdm import tqdm
 
 # Configuration
 DEFAULT_SAMPLE_SIZE = 3
-DEFAULT_TIMEOUT = 60
+DEFAULT_TIMEOUT = 180  # allow heavy local models more time to respond
 DEFAULT_TEMPERATURE = 0.1
-SHARED_EMBEDDING_MODEL = "phi3:mini"  # Fast, lightweight embedding model for all tests
+# SHARED_EMBEDDING_MODEL = "phi3:mini"  # Fast, lightweight embedding model for all tests
+SHARED_EMBEDDING_MODEL = "all-minilm"  # updated default embedding model as requested
+
+# Retrieval & chunking parameters
+CHUNK_SIZE = 400  # characters per chunk
+CHUNK_OVERLAP = 50  # overlap between chunks
+TOP_K = 3  # number of chunks retrieved per query
 # Directory where the persisted FAISS index (and associated metadata) will be stored
+# Index dir will be derived from embedding model slug inside the benchmarker
 INDEX_DIR = os.path.join(".rag_cache", "faiss_index")
 # Directory where raw answers and evaluation artefacts will be stored
 RUNS_DIR = "runs"
@@ -58,14 +73,22 @@ class MemoryOptimizedBenchmarker:
 
     def __init__(self, sample_size: int = DEFAULT_SAMPLE_SIZE,
                  embedding_model: str = SHARED_EMBEDDING_MODEL,
-                 aggressive_cleanup: bool = False):
+                 aggressive_cleanup: bool = False,
+                 judge_model: str = "phi3:mini",
+                 include_heavy_metrics: bool = False):
+        # Store config
         self.sample_size = sample_size
         self.embedding_model = embedding_model
         self.aggressive_cleanup = aggressive_cleanup  # Whether to completely remove models
-        self.shared_vectorstore = None
-        self.shared_retriever = None
-        self.results = {}
-        # Ensure output directories exist
+        self.judge_model = judge_model  # chat-capable model used for Ragas metric prompts
+        self.include_heavy_metrics = include_heavy_metrics  # Toggle for heavyweight metrics
+
+        # Derive per-embedding-model cache directory
+        slug = re.sub(r"[^A-Za-z0-9]+", "_", self.embedding_model.lower())
+        self.index_dir = os.path.join(".rag_cache", slug, "faiss_index")
+        # Save the slug so we can create unique filenames per embedding model
+        self.embed_slug = slug
+        os.makedirs(self.index_dir, exist_ok=True)
         os.makedirs(RUNS_DIR, exist_ok=True)
         os.makedirs(RESULTS_DIR, exist_ok=True)
 
@@ -171,54 +194,34 @@ class MemoryOptimizedBenchmarker:
             print(f"Model test failed: {e}")
             return False
 
-    def setup_shared_vectorstore(self, docs: List) -> bool:
-        """Set up (or load) shared vector store using dedicated embedding model and persist it for reuse"""
-        print(f"\nSetting up shared vector store with {self.embedding_model}…")
+    def setup_shared_vectorstore(self, _docs: List) -> bool:
+        """Load the shared FAISS index built by build_embeddings.py.
 
-        # Ensure parent cache directory exists
-        os.makedirs(INDEX_DIR, exist_ok=True)
+        If the index is missing we exit early with instructions, rather than
+        re-building it here. This keeps the responsibilities separated: the
+        *embedding* script handles indexing; the *benchmark* script loads it.
+        """
+        print(f"\nLoading shared vector store built with {self.embedding_model} …")
+
+        # Path where build_embeddings.py saves the index
+        index_file = os.path.join(self.index_dir, "index.faiss")
+
+        if not os.path.exists(index_file):
+            print("ERROR: FAISS index not found. Run `python -m src.build_embeddings` first.")
+            return False
+
+        # Make sure the embedding model needed for loading is present
+        if not self.pull_model(self.embedding_model):
+            return False
 
         try:
-            # Ensure embedding model is available (needed both for building and for loading the index)
-            if not self.pull_model(self.embedding_model):
-                return False
-
-            # Create embeddings instance (needed for either load or create)
             embeddings = OllamaEmbeddings(model=self.embedding_model)
-
-            # If an index already exists on disk, load it to avoid recomputing embeddings
-            if os.path.exists(os.path.join(INDEX_DIR, "index.faiss")):
-                try:
-                    print("Found existing FAISS index on disk. Loading...")
-                    self.shared_vectorstore = FAISS.load_local(INDEX_DIR, embeddings, allow_dangerous_deserialization=True)
-                    self.shared_retriever = self.shared_vectorstore.as_retriever(search_kwargs={"k": 3})
-                    print("Shared vector store loaded successfully!")
-                    return True
-                except Exception as e:
-                    print(f"Warning: Failed to load existing index ({e}). Rebuilding…")
-
-            # --- Build index from scratch ---
-            print("Building new FAISS index (this may take a moment)…")
-            text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-            splits = text_splitter.split_documents(docs)
-            print(f"Split documents into {len(splits)} chunks")
-
-            # Create vector store
-            self.shared_vectorstore = FAISS.from_documents(documents=splits, embedding=embeddings)
-            self.shared_retriever = self.shared_vectorstore.as_retriever(search_kwargs={"k": 3})
-
-            # Persist to disk for future runs
-            try:
-                self.shared_vectorstore.save_local(INDEX_DIR)
-                print(f"Saved FAISS index to {INDEX_DIR}")
-            except Exception as e:
-                print(f"Warning: Failed to save FAISS index ({e}) – continuing without persistence")
-
-            print("Shared vector store created successfully!")
+            self.shared_vectorstore = FAISS.load_local(self.index_dir, embeddings, allow_dangerous_deserialization=True)
+            self.shared_retriever = self.shared_vectorstore.as_retriever(search_kwargs={"k": TOP_K})
+            print("Shared vector store loaded successfully!")
             return True
-
         except Exception as e:
-            print(f"Failed to create/load shared vector store: {e}")
+            print(f"Failed to load shared vector store: {e}")
             return False
 
     def generate_answers(self, model_name: str, testset_df: pd.DataFrame,
@@ -228,7 +231,9 @@ class MemoryOptimizedBenchmarker:
         print(f"\n{'='*60}\nANSWER GENERATION: {model_name}\n{'='*60}")
         self.log_memory_status("before generation")
 
-        answers_file = os.path.join(RUNS_DIR, f"{model_name.replace(':', '_')}_answers.jsonl")
+        # Build per-embedding, per-chat-model filename (JSON, not JSONL)
+        chat_slug = model_name.replace(":", "_")
+        answers_file = os.path.join(RUNS_DIR, f"{self.embed_slug}_{chat_slug}_answers.json")
 
         if os.path.exists(answers_file) and not force_rerun:
             print(f"Answers already exist at {answers_file}. Skipping (use force_rerun=True to regenerate)")
@@ -263,7 +268,8 @@ class MemoryOptimizedBenchmarker:
                         "user_input": question,
                         "retrieved_contexts": [doc.page_content for doc in result["source_documents"]],
                         "response": result["result"],
-                        "reference": ground_truth
+                        "reference": ground_truth,
+                        "reference_contexts": row.get("reference_contexts", [])
                     }
                 except Exception as e:
                     print(f"    Error: {e}")
@@ -271,15 +277,16 @@ class MemoryOptimizedBenchmarker:
                         "user_input": question,
                         "retrieved_contexts": ["Error retrieving contexts"],
                         "response": f"Error: {str(e)}",
-                        "reference": ground_truth
+                        "reference": ground_truth,
+                        "reference_contexts": row.get("reference_contexts", [])
                     }
                 answers.append(answer_data)
 
-            # Persist answers (jsonl for stream‐friendly processing later)
+            # Persist answers as a single, human-readable JSON file
             with open(answers_file, "w") as f:
-                for entry in answers:
-                    f.write(json.dumps(entry) + "\n")
+                json.dump(answers, f, indent=2)
             print(f"Saved answers to {answers_file}")
+
             return {"answers_file": answers_file, "questions_processed": len(answers)}
 
         except Exception as e:
@@ -290,7 +297,7 @@ class MemoryOptimizedBenchmarker:
         finally:
             # Clean up model from RAM but keep on disk
             print("Cleaning up…")
-            if model_name != self.embedding_model:
+            if self.aggressive_cleanup and model_name != self.embedding_model:
                 self.unload_model(model_name)
             gc.collect()
             time.sleep(2)
@@ -307,7 +314,8 @@ class MemoryOptimizedBenchmarker:
         self.log_memory_status("before benchmark")
 
         # Check for existing results
-        results_file = f"benchmark_results_{model_name.replace(':', '_')}_shared_emb.json"
+        slug = re.sub(r"[^A-Za-z0-9]+", "_", self.embedding_model.lower())
+        results_file = f"benchmark_results_{slug}_{model_name.replace(':', '_')}.json"
 
         if os.path.exists(results_file) and not force_rerun:
             print(f"Loading existing results...")
@@ -366,7 +374,8 @@ class MemoryOptimizedBenchmarker:
                         "user_input": question,
                         "retrieved_contexts": [doc.page_content for doc in result['source_documents']],
                         "response": result['result'],
-                        "reference": ground_truth
+                        "reference": ground_truth,
+                        "reference_contexts": row.get("reference_contexts", [])
                     })
 
                 except Exception as e:
@@ -375,7 +384,8 @@ class MemoryOptimizedBenchmarker:
                         "user_input": question,
                         "retrieved_contexts": ["Error retrieving contexts"],
                         "response": f"Error: {str(e)}",
-                        "reference": ground_truth
+                        "reference": ground_truth,
+                        "reference_contexts": row.get("reference_contexts", [])
                     })
 
             # Run Ragas evaluation using shared embedding model
@@ -385,8 +395,24 @@ class MemoryOptimizedBenchmarker:
             # Use shared embedding model for evaluation consistency
             eval_embeddings = OllamaEmbeddings(model=self.embedding_model)
 
+            # Ensure judge model is available and instantiate it for metrics
+            if not self.pull_model(self.judge_model):
+                return None
+            judge_llm = ChatOllama(model=self.judge_model, temperature=0, timeout=DEFAULT_TIMEOUT)
+
             results = {}
-            metrics = [answer_relevancy, context_precision, context_recall]
+            metrics = [
+                AnswerAccuracy(),
+                ContextRelevance(),
+                context_precision,
+                context_recall,
+            ]
+            if self.include_heavy_metrics:
+                # Heavy / slower metrics that require additional LLM calls
+                try:
+                    metrics.append(ResponseGroundedness())
+                except Exception as metric_err:  # pragma: no cover – best-effort
+                    print(f"  Warning: could not add ResponseGroundedness – {metric_err}")
 
             for metric in metrics:
                 try:
@@ -396,20 +422,19 @@ class MemoryOptimizedBenchmarker:
                     metric_result = evaluate(
                         dataset=evaluation_dataset,
                         metrics=[metric],
-                        llm=llm,
+                        llm=judge_llm,
                         embeddings=eval_embeddings,
                         raise_exceptions=True,
                         batch_size=1
                     )
 
-                    # Extract results properly
+                    # Extract numeric columns and average
                     if hasattr(metric_result, 'to_pandas'):
                         df_result = metric_result.to_pandas()
-                        for col in df_result.columns:
-                            if col in ['answer_relevancy', 'context_precision', 'context_recall']:
-                                score = df_result[col].mean()
-                                results[col] = float(score)
-                                print(f"  {col}: {score:.4f}")
+                        for col in df_result.select_dtypes(include="number").columns:
+                            score = df_result[col].mean()
+                            results[col] = float(score)
+                            print(f"  {col}: {score:.4f}")
 
                 except Exception as e:
                     print(f"  Error evaluating {metric_name}: {e}")
@@ -459,8 +484,9 @@ class MemoryOptimizedBenchmarker:
         print(f"\n{'='*60}\nGRADING: {model_name}\n{'='*60}")
         self.log_memory_status("before grading")
 
-        answers_file = os.path.join(RUNS_DIR, f"{model_name.replace(':', '_')}_answers.jsonl")
-        scores_file = os.path.join(RUNS_DIR, f"{model_name.replace(':', '_')}_scores.json")
+        chat_slug = model_name.replace(":", "_")
+        answers_file = os.path.join(RUNS_DIR, f"{self.embed_slug}_{chat_slug}_answers.json")
+        scores_file = os.path.join(RUNS_DIR, f"{self.embed_slug}_{chat_slug}_scores.json")
 
         if os.path.exists(scores_file) and not force_rerun:
             print(f"Scores already exist at {scores_file}. Skipping (use force_rerun=True to regenerate)")
@@ -474,21 +500,20 @@ class MemoryOptimizedBenchmarker:
             print(f"Error: answers file {answers_file} not found. Run answer generation first.")
             return None
 
-        # Ensure embedding / grading model available
-        if not self.pull_model(self.embedding_model):
+        # Ensure judge model available
+        if not self.pull_model(self.judge_model):
             return None
 
         start_time = time.time()
 
         try:
-            # Read answers
-            records = []
+            # Load answer records from JSON list (no longer JSONL)
             with open(answers_file, "r") as f:
-                for line in f:
-                    try:
-                        records.append(json.loads(line))
-                    except Exception as e:
-                        print(f"Skipping malformed line: {e}")
+                try:
+                    records = json.load(f)
+                except Exception as e:
+                    print(f"Error reading answers file: {e}")
+                    return None
 
             if not records:
                 print("No answers to grade – skipping")
@@ -496,9 +521,19 @@ class MemoryOptimizedBenchmarker:
 
             evaluation_dataset = EvaluationDataset.from_list(records)
             embeddings = OllamaEmbeddings(model=self.embedding_model)
-            llm = ChatOllama(model=self.embedding_model, temperature=0, timeout=DEFAULT_TIMEOUT)
+            llm = ChatOllama(model=self.judge_model, temperature=0, timeout=DEFAULT_TIMEOUT)
 
-            metrics = [answer_relevancy, context_precision, context_recall]
+            metrics = [
+                AnswerAccuracy(),
+                ContextRelevance(),
+                context_precision,
+                context_recall,
+            ]
+            if self.include_heavy_metrics:
+                try:
+                    metrics.append(ResponseGroundedness())
+                except Exception as metric_err:  # pragma: no cover
+                    print(f"    Warning: could not add ResponseGroundedness – {metric_err}")
             scores: Dict[str, float] = {}
 
             for metric in metrics:
@@ -516,10 +551,9 @@ class MemoryOptimizedBenchmarker:
 
                     if hasattr(metric_result, "to_pandas"):
                         df_result = metric_result.to_pandas()
-                        for col in df_result.columns:
-                            if col in ["answer_relevancy", "context_precision", "context_recall"]:
-                                scores[col] = float(df_result[col].mean())
-                                print(f"    {col}: {scores[col]:.4f}")
+                        for col in df_result.select_dtypes(include="number").columns:
+                            scores[col] = float(df_result[col].mean())
+                            print(f"    {col}: {scores[col]:.4f}")
                 except Exception as e:
                     print(f"    Error evaluating {metric_name}: {e}")
                     scores[metric_name] = f"error: {str(e)}"
@@ -541,8 +575,9 @@ class MemoryOptimizedBenchmarker:
 
         finally:
             # Unload grading model from RAM (but keep on disk)
-            print("Cleaning up grading model…")
-            self.unload_model(self.embedding_model)
+            if self.aggressive_cleanup:
+                print("Cleaning up grading model… (aggressive)")
+                self.unload_model(self.judge_model) # Changed to judge_model
             gc.collect()
             self.log_memory_status("after grading")
 
@@ -560,8 +595,8 @@ class MemoryOptimizedBenchmarker:
             print("Failed to setup shared vector store")
             return {}
 
-        # Get models to benchmark
-        available_models = self.get_available_models()
+        # Get models to benchmark (skip embedding-only entries quickly)
+        available_models = [m for m in self.get_available_models() if not m.startswith("tazarov/")]
 
         if target_models:
             models_to_test = [m for m in target_models if m in available_models]
@@ -582,7 +617,7 @@ class MemoryOptimizedBenchmarker:
         for i, model_name in enumerate(models_to_test, 1):
             print(f"\nProgress: {i}/{len(models_to_test)} models")
 
-            gen_info = self.generate_answers(model_name, testset_df)
+            gen_info = self.generate_answers(model_name, testset_df, force_rerun=True)
 
             if gen_info is None:
                 failed_models.append(model_name)
@@ -622,71 +657,114 @@ class MemoryOptimizedBenchmarker:
         return all_results
 
 def main():
-    """Main execution function"""
-    print("RAGAS MEMORY-OPTIMIZED MULTI-MODEL BENCHMARKING")
-    print("=" * 70)
+    """Main execution function supporting multiple embedding models."""
+    import argparse
 
-    # Load testset
-    print("Loading testset...")
+    parser = argparse.ArgumentParser(
+        description="Run RAGAS benchmark across one or many embedding vector stores."
+    )
+    parser.add_argument(
+        "--embedding-model",
+        action="append",
+        help=(
+            "Embedding model(s) to evaluate. "
+            "Can be provided multiple times or as a comma-separated list. "
+            f"Defaults to {SHARED_EMBEDDING_MODEL}."
+        ),
+    )
+    parser.add_argument(
+        "--sample-size",
+        type=int,
+        default=DEFAULT_SAMPLE_SIZE,
+        help="Number of questions from the test-set to benchmark against.",
+    )
+    parser.add_argument(
+        "--all-metrics",
+        action="store_true",
+        help="Include heavy metrics like ResponseGroundedness (slower).",
+    )
+    args = parser.parse_args()
+
+    # ---------------- Prepare CLI inputs ----------------
+    sample_size_cli: int = args.sample_size
+    embedding_models: List[str] = []
+    if args.embedding_model:
+        for value in args.embedding_model:
+            embedding_models.extend([m.strip() for m in value.split(",") if m.strip()])
+    if not embedding_models:
+        embedding_models = [SHARED_EMBEDDING_MODEL]
+
+    print("RAGAS MEMORY-OPTIMIZED MULTI-EMBEDDING BENCHMARK")
+    print("=" * 70)
+    print(f"Embedding models to evaluate: {embedding_models}")
+    print(f"Heavy metrics enabled: {args.all_metrics}")
+    print(f"Sample size: {sample_size_cli}")
+
+    # ---------------- Load static resources -------------
+    print("Loading test-set …")
     with open("testset/ragas_testset.json", "r") as f:
         testset_data = json.load(f)
     testset_df = pd.DataFrame(testset_data)
-    print(f"Loaded {len(testset_df)} questions")
+    print(f"Loaded {len(testset_df)} questions.")
 
-    # Load documents
-    print("Loading documents...")
+    print("Loading documents …")
     loader = DirectoryLoader("data/", glob="**/*.pdf")
     docs = loader.load()
-    print(f"Loaded {len(docs)} documents")
+    print(f"Loaded {len(docs)} documents.")
 
-    # Define models to test (or leave None to test all available)
-    target_models = [
-        "phi3:mini",
-        "gemma3:4b",
-        "llama3.2:latest",
-        "deepseek-r1:latest"
-    ]
+    # Chat models to benchmark per embedding store – hard-coded for now
+    target_models = ["mistral:7b", "qwen3:4b"]
 
-    # Initialize benchmarker
-    # Note: aggressive_cleanup=False keeps models available for re-testing
-    # Set to True if you want to completely remove models to free disk space
-    benchmarker = MemoryOptimizedBenchmarker(
-        sample_size=3,  # Start with small sample for testing
-        embedding_model="phi3:mini",  # Use phi3:mini for shared embeddings
-        aggressive_cleanup=False  # Conservative mode: keep models available
-    )
+    consolidated_payload: Dict[str, Any] = {"embedding_model_runs": []}
 
-    # Run benchmarks
-    results = benchmarker.benchmark_all_models(
-        testset_df=testset_df,
-        docs=docs,
-        target_models=target_models
-    )
+    # ---------------- Main loop -------------------------
+    for emb_model in embedding_models:
+        print("\n" + "=" * 70)
+        print(f"BENCHMARKING EMBEDDING MODEL: {emb_model}")
+        print("=" * 70)
 
-    # Save consolidated results
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    consolidated_file = os.path.join(RESULTS_DIR, f"benchmark_results_consolidated_shared_emb_{timestamp}.json")
+        benchmarker = MemoryOptimizedBenchmarker(
+            sample_size=sample_size_cli,
+            embedding_model=emb_model,
+            aggressive_cleanup=False,
+            judge_model="phi3:mini",
+            include_heavy_metrics=args.all_metrics,
+        )
 
-    try:
-        with open(consolidated_file, "w") as f:
-            json.dump(results, f, indent=2)
-        print(f"Results saved to {consolidated_file}")
-    except Exception as e:
-        print(f"Warning: Error saving consolidated results: {e}")
+        try:
+            results = benchmarker.benchmark_all_models(
+                testset_df=testset_df, docs=docs, target_models=target_models
+            )
+        except Exception as exc:  # pragma: no cover – top-level safety
+            print(f"Top-level failure while benchmarking {emb_model}: {exc}")
+            traceback.print_exc()
+            continue
 
-    # Display results summary
-    if results:
-        print(f"\n{'='*70}")
-        print("RESULTS SUMMARY")
-        print(f"{'='*70}")
+        # Consolidate per-chat-model scores
+        for chat_model_name, metrics in results.items():
+            consolidated_payload["embedding_model_runs"].append(
+                {
+                    "embedding_model": emb_model,
+                    "chat_model": chat_model_name,
+                    "sample_size": sample_size_cli,
+                    "metrics": metrics,
+                }
+            )
 
-        for model_name, model_results in results.items():
-            print(f"\nModel: {model_name}:")
-            for metric, score in model_results.items():
-                if isinstance(score, (int, float)) and metric not in ["grading_time_seconds", "questions_graded"]:
-                    print(f"  {metric}: {score:.4f}")
-                elif metric == "grading_time_seconds":
-                    print(f"  Grading Time: {score:.1f}s")
+    # ---------------- Persist consolidated results ------
+    if consolidated_payload["embedding_model_runs"]:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        out_file = os.path.join(
+            RESULTS_DIR, f"benchmark_results_{timestamp}_multi_emb.json"
+        )
+        try:
+            with open(out_file, "w") as fp:
+                json.dump(consolidated_payload, fp, indent=2)
+            print(f"\nSaved consolidated results to {out_file}")
+        except Exception as e:
+            print(f"Error saving consolidated results: {e}")
+    else:
+        print("No results produced – nothing to write.")
 
 if __name__ == "__main__":
     main()
