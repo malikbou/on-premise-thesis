@@ -40,3 +40,6 @@ wheels/
 .rag_cache/
 runs/
 results/
+testset/
+get_github_context.sh
+ragas_context.md
