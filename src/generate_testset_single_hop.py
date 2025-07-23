@@ -33,6 +33,7 @@ import json
 import os
 import re
 from typing import List, Optional
+from datetime import datetime
 
 from langchain.docstore.document import Document
 from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader, TextLoader
@@ -42,6 +43,7 @@ from ragas.llms import LangchainLLMWrapper, BaseRagasLLM
 from ragas.embeddings import LangchainEmbeddingsWrapper
 from ragas.testset import TestsetGenerator
 from ragas.run_config import RunConfig
+from ragas.testset.graph import KnowledgeGraph, Node, NodeType
 from ragas.testset.synthesizers.single_hop.specific import (
     SingleHopSpecificQuerySynthesizer,
 )
@@ -112,13 +114,20 @@ def configure_synthesizer(
     llm: BaseRagasLLM, instruction: Optional[str] = None
 ) -> SingleHopSpecificQuerySynthesizer:
     """Configures the single-hop synthesizer, optionally with a custom prompt."""
-    synthesizer = SingleHopSpecificQuerySynthesizer(llm=llm)
+    # Explicitly tell the synthesizer to use our new list-based property
+    synthesizer = SingleHopSpecificQuerySynthesizer(
+        llm=llm, property_name="content_as_theme"
+    )
     if instruction:
         try:
-            prompt = synthesizer.get_prompts()["question_generation"]
+            # Use the correct prompt key found via debugging
+            key = "query_answer_generation_prompt"
+            prompt = synthesizer.get_prompts()[key]
             prompt.instruction = instruction
-            synthesizer.set_prompts({"question_generation": prompt})
+            # Unpack the dictionary into keyword arguments
+            synthesizer.set_prompts(**{key: prompt})
         except KeyError:
+            # This warning should no longer appear
             print(f"WARN: Could not set custom prompt for {type(synthesizer).__name__}")
     return synthesizer
 
@@ -156,7 +165,7 @@ def main():
     generator_llm = LangchainLLMWrapper(ChatOpenAI(model=args.generator_model, temperature=0))
     embedding_model = LangchainEmbeddingsWrapper(OpenAIEmbeddings())
 
-    # Create UCL student personas
+    # Create UCL student personas with detailed, problem-oriented descriptions
     personas = [
         Persona(
             name="Stressed Fresher",
@@ -177,20 +186,33 @@ def main():
     synthesizer = configure_synthesizer(generator_llm, instruction)
     query_distribution = [(synthesizer, 1.0)]
 
-    # Initialize the generator
+    # Manually create a simple KnowledgeGraph to avoid default transformations
+    nodes = []
+    for doc in docs:
+        nodes.append(Node(
+            type=NodeType.CHUNK,
+            properties={
+                "page_content": doc.page_content,
+                # Create a new property that is a list, as required by the synthesizer
+                "content_as_theme": [doc.page_content],
+                "document_metadata": doc.metadata
+            }
+        ))
+    knowledge_graph = KnowledgeGraph(nodes=nodes)
+
+    # Initialize the generator with the simple graph
     generator = TestsetGenerator(
         llm=generator_llm,
         embedding_model=embedding_model,
         persona_list=personas,
+        knowledge_graph=knowledge_graph,
     )
 
-    # Generate the testset (no transforms needed for this simple case)
+    # Generate the testset using the core `generate` method
     print("Generating test-set… this may take a few minutes.")
     run_config = RunConfig(max_workers=2)
-    dataset = generator.generate_with_langchain_docs(
-        documents=docs,
+    dataset = generator.generate(
         testset_size=args.size,
-        transforms=[],  # Add this to prevent default transformations
         query_distribution=query_distribution,
         run_config=run_config,
     )
@@ -198,8 +220,15 @@ def main():
     # Save the results
     out_dir = "testset"
     os.makedirs(out_dir, exist_ok=True)
-    filename_suffix = "single_hop_perfect" if args.query_style == "perfect" else f"single_hop_{args.query_style}"
-    out_path = os.path.join(out_dir, f"{args.dept}_testset_{filename_suffix}.json")
+
+    # Create a detailed, timestamped filename for better tracking
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    model_slug = args.generator_model.replace(":", "_").replace("/", "_")
+    style_slug = f"_{args.query_style}" if args.query_style != "perfect" else ""
+    out_path = os.path.join(
+        out_dir,
+        f"{args.dept}_testset_single_hop{style_slug}_{model_slug}_{timestamp}.json"
+    )
 
     with open(out_path, "w") as f:
         json.dump(dataset.to_list(), f, indent=2)
