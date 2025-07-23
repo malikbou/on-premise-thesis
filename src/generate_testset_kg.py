@@ -23,7 +23,7 @@ import argparse
 import json
 import os
 import re
-from typing import List
+from typing import List, Optional
 
 from langchain.docstore.document import Document
 from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader, TextLoader
@@ -35,7 +35,9 @@ from ragas.testset import TestsetGenerator
 from ragas.run_config import RunConfig
 from ragas.testset.graph import KnowledgeGraph, Node
 from ragas.testset.synthesizers import QueryDistribution
-from ragas.testset.synthesizers.single_hop.specific import SingleHopSpecificQuerySynthesizer
+from ragas.testset.synthesizers.single_hop.specific import (
+    SingleHopSpecificQuerySynthesizer,
+)
 from ragas.testset.synthesizers.multi_hop import (
     MultiHopAbstractQuerySynthesizer,
     MultiHopSpecificQuerySynthesizer,
@@ -138,22 +140,54 @@ def chunk_documents(docs: List[Document]) -> List[Document]:
 # ---------------------------------------------------------------------------
 
 
+# Define a new, stricter instruction that enforces high-quality questions.
+# This instruction will be injected into the default Ragas prompts.
+quality_instruction = """
+Generate a question and a corresponding answer based on the provided context.
+
+Your task is to act as a university administrator creating an official FAQ document. The questions you generate must be:
+- **Grammatically flawless:** Adhere to perfect English grammar.
+- **Clearly worded:** The question should be unambiguous and easy to understand.
+- **Formal in tone:** Avoid slang, contractions, or informal language.
+- **Directly answerable from the context:** The answer must be found verbatim in the provided text.
+
+Do not invent any information. Do not include any misspellings or typos.
+"""
+
+
 def custom_query_distribution(
-    llm: BaseRagasLLM, force_single_hop: bool = False
+    llm: BaseRagasLLM,
+    force_single_hop: bool = False,
+    instruction: Optional[str] = None,
 ) -> QueryDistribution:
     """Create a custom query distribution with a mix of question types."""
-    single_hop_specific = SingleHopSpecificQuerySynthesizer(llm=llm)
+    single_hop = SingleHopSpecificQuerySynthesizer(llm=llm)
 
+    synthesizers = [single_hop]
     if not force_single_hop:
         multi_hop_specific = MultiHopSpecificQuerySynthesizer(llm=llm)
         multi_hop_abstract = MultiHopAbstractQuerySynthesizer(llm=llm)
+        synthesizers.extend([multi_hop_specific, multi_hop_abstract])
+
+    # If a custom instruction is provided, get the default prompt from each
+    # synthesizer, overwrite its instruction, and set it back.
+    if instruction:
+        for synthesizer in synthesizers:
+            try:
+                prompt = synthesizer.get_prompts()["generate_query_reference_prompt"]
+                prompt.instruction = instruction
+                synthesizer.set_prompts({"generate_query_reference_prompt": prompt})
+            except KeyError:
+                print(f"WARN: Could not set custom prompt for {type(synthesizer).__name__}")
+
+    if not force_single_hop:
         return [
-            (single_hop_specific, 0.5),
-            (multi_hop_specific, 0.25),
-            (multi_hop_abstract, 0.25),
+            (synthesizers[0], 0.5),  # single_hop
+            (synthesizers[1], 0.25), # multi_hop_specific
+            (synthesizers[2], 0.25), # multi_hop_abstract
         ]
     else:
-        return [(single_hop_specific, 1.0)]
+        return [(single_hop, 1.0)]
 
 
 # ---------------------------------------------------------------------------
@@ -240,7 +274,7 @@ def main():
             ),
         ]
         query_distribution = custom_query_distribution(
-            generator_llm, force_single_hop=True
+            generator_llm, force_single_hop=True, instruction=quality_instruction
         )
         dataset = generator.generate_with_langchain_docs(
             documents=docs,
@@ -268,9 +302,11 @@ def main():
             ),
         ]
         # Define ideal and fallback distributions
-        ideal_distribution = custom_query_distribution(generator_llm)
+        ideal_distribution = custom_query_distribution(
+            generator_llm, instruction=quality_instruction
+        )
         fallback_distribution = custom_query_distribution(
-            generator_llm, force_single_hop=True
+            generator_llm, force_single_hop=True, instruction=quality_instruction
         )
         print("Generating test-set… this may take a few minutes.")
         try:
