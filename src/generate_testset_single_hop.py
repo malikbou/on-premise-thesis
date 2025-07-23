@@ -115,9 +115,9 @@ def configure_synthesizer(
     synthesizer = SingleHopSpecificQuerySynthesizer(llm=llm)
     if instruction:
         try:
-            prompt = synthesizer.get_prompts()["generate_query_reference_prompt"]
+            prompt = synthesizer.get_prompts()["question_generation"]
             prompt.instruction = instruction
-            synthesizer.set_prompts({"generate_query_reference_prompt": prompt})
+            synthesizer.set_prompts({"question_generation": prompt})
         except KeyError:
             print(f"WARN: Could not set custom prompt for {type(synthesizer).__name__}")
     return synthesizer
@@ -159,16 +159,16 @@ def main():
     # Create UCL student personas
     personas = [
         Persona(
-            name="New Student",
-            role_description="A first-year student looking for information about university policies and procedures.",
+            name="Stressed Fresher",
+            role_description="A first-year undergraduate who is overwhelmed by the start of term. You are urgently trying to figure out key deadlines for course registration, find your timetable, understand the attendance policy, and locate where to get administrative help. You ask direct, practical questions to solve immediate problems.",
         ),
         Persona(
-            name="International Student",
-            role_description="An international student seeking information about visa requirements, accommodation, and support services.",
+            name="Anxious International Student",
+            role_description="An international student who has just arrived in the UK. You are worried about your Student Visa requirements, especially rules about working and attendance. You also need to find out about setting up a bank account and registering with a doctor (GP). Your questions are focused on compliance and settling in.",
         ),
         Persona(
-            name="Graduate Student",
-            role_description="A graduate student interested in research opportunities, funding, and academic progression.",
+            name="Ambitious Masters Student",
+            role_description="A postgraduate student planning their year. You need to know the exact dates for dissertation submission, the process for getting an extension, the rules for academic misconduct, and where to find information about PhD funding. You ask precise questions to plan your academic future.",
         ),
     ]
 
