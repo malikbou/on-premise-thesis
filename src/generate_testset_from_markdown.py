@@ -50,19 +50,19 @@ from ragas.testset.persona import Persona
 
 
 # This instruction is used when `--query-style` is set to 'perfect'.
-# It forces the LLM to generate high-quality, grammatically correct questions.
-PERFECT_GRAMMAR_INSTRUCTION = """
-Generate a question and a corresponding answer based on the provided context.
+# It guides the LLM to generate high-quality, realistic student questions.
+STUDENT_QUERY_INSTRUCTION = """
+You are a master of prompt engineering, tasked with generating synthetic data.
+Your goal is to generate a question and a corresponding answer based on the provided context, from the perspective of the given student persona.
 
-Your task is to act as a university administrator creating an official FAQ document.
-The questions you generate must be:
-- **Grammatically flawless:** Adhere to perfect English grammar.
-- **Clearly worded:** The question should be unambiguous and easy to understand.
-- **Formal in tone:** Avoid slang, contractions, or informal language.
-- **Directly answerable from the context:** The answer must be found verbatim
-  in the provided text.
+Your task is to FULLY EMBODY the persona. The question you generate should reflect their specific situation, their emotional state (e.g., anxious, ambitious, confused), and the kind of language they would use. It should sound like a real question a student would ask, not a formal FAQ.
 
-Do not invent any information. Do not include any misspellings or typos.
+The answer you generate MUST:
+- Be found verbatim in the provided text.
+- Be concise and directly answer the user's question.
+- **If the context contains a relevant URL, you must include the full URL in the answer.**
+
+Do not invent any information. The question should be natural-sounding, but the answer must be grounded truth from the text.
 """
 
 
@@ -181,20 +181,28 @@ def main():
     personas = [
         Persona(
             name="Stressed Fresher",
-            role_description="A first-year undergraduate who is overwhelmed by the start of term. You are urgently trying to figure out key deadlines for course registration, find your timetable, understand the attendance policy, and locate where to get administrative help. You ask direct, practical questions to solve immediate problems.",
+            role_description="I'm a first-year, totally overwhelmed and feeling lost. I think I've missed a deadline for choosing my modules, and I can't find my timetable. I'm scared I'll get in trouble for my attendance. I need to ask urgent, slightly panicked questions about who to talk to for administrative help and how to fix my registration before it's too late. My questions might be simple, like 'Who can I talk to about...' or 'What happens if I missed...'.",
         ),
         Persona(
             name="Anxious International Student",
-            role_description="An international student who has just arrived in the UK. You are worried about your Student Visa requirements, especially rules about working and attendance. You also need to find out about setting up a bank account and registering with a doctor (GP). Your questions are focused on compliance and settling in.",
+            role_description="I'm an international student and I'm very worried about my visa and settling in. What are the rules about working part-time? What happens if my attendance drops? I also urgently need to know practical things, like how to set up a UK bank account or register with a doctor (GP). My questions are driven by anxiety about staying compliant and navigating a new country. They might sound like 'I'm worried about my visa, what are the attendance rules?' or 'How do I even start to see a doctor here?'",
         ),
         Persona(
             name="Ambitious Masters Student",
-            role_description="A postgraduate student planning their year. You need to know the exact dates for dissertation submission, the process for getting an extension, the rules for academic misconduct, and where to find information about PhD funding. You ask precise questions to plan your academic future.",
+            role_description="I'm a postgraduate student focused on my dissertation and future career. I need to find the exact submission deadlines and the official process for requesting an extension. I'm also concerned about academic misconduct rules, research ethics, and finding funding for a PhD. My questions are precise and goal-oriented, like 'What's the formal procedure for getting an extension on my dissertation?' or 'I'm planning research with human participants, what ethics approval do I need?'",
+        ),
+        Persona(
+            name="Financially Concerned Student",
+            role_description="I'm struggling to manage my finances and I'm worried about making ends meet. I need to know if there's any financial support, bursaries, or loans I can apply for. I'm also looking for tips on budgeting and managing my money in London. My questions are practical and driven by financial stress, like 'Are there any hardship funds for students?' or 'Who can I talk to about financial problems?'"
+        ),
+        Persona(
+            name="Student Needing Support",
+            role_description="I'm dealing with a long-term health condition that affects my studies, and I'm not sure what support is available. I need to ask about reasonable adjustments, like getting extra time in exams or flexible deadlines. I'm also interested in mental health support and counseling services. My questions are about accessibility and wellbeing, such as 'How can I get exam adjustments for my disability?' or 'What kind of mental health support does UCL offer?'"
         ),
     ]
 
     # Configure the synthesizer based on the chosen query style
-    instruction = PERFECT_GRAMMAR_INSTRUCTION if args.query_style == "perfect" else None
+    instruction = STUDENT_QUERY_INSTRUCTION if args.query_style == "perfect" else None
     synthesizer = configure_synthesizer(generator_llm, instruction)
     query_distribution = [(synthesizer, 1.0)]
 
