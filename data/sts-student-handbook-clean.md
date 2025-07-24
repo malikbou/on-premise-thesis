@@ -1,48 +1,48 @@
 ## 1.1 Provost’s Welcome
 Dear students,         A warm welcome to those of you who are new and congratulations on making UCL your  university of choice. To those of you returning, welcome back.         Your UCL education will take you deep into your chosen field and give you its broader  context in our rich multidisciplinary academic culture. It will help you develop skills and  networks to prepare you for your future.         We want you to learn how to think, not what to think, through UCL’s research-based  approach to education. Our students are our partners and contributors, working  alongside world-leading academic staff to pursue excellence, break boundaries and  make an impact on global challenges.         I warmly encourage you to shape your journey at UCL. Take our university-wide surveys  and work in partnership with academics to make your programme of study even better.   Each programme also has opportunities for you to volunteer as an academic  representative to work closely with your department to improve the student experience.
-[This is an exciting time to make your voice heard, with ](https://www.ucl.ac.uk/ucl-east/)[UCL East](https://www.ucl.ac.uk/ucl-east/)[, the biggest ](https://www.ucl.ac.uk/ucl-east/) development in UCL’s history, welcoming its second cohort of students and work  continuing on implementing our 2022-2027 strategic plan for education. Preparations are  also in train on marking UCL’s bicentennial in 2026, with our student partners involved in  planning an inspiring programme of events to celebrate this landmark anniversary.
+[This is an exciting time to make your voice heard, with UCL East, the biggest ](https://www.ucl.ac.uk/ucl-east/) development in UCL’s history, welcoming its second cohort of students and work  continuing on implementing our 2022-2027 strategic plan for education. Preparations are  also in train on marking UCL’s bicentennial in 2026, with our student partners involved in  planning an inspiring programme of events to celebrate this landmark anniversary.
 UCL is a community of great minds. You are a valuable member of that community. I  hope you will take every opportunity to shape your time with us, so that your experience  is the best possible.         Dr Michael Spence    UCL President and Provost
 
 #################################################################
 
 ## 2.1 Introduction to the department and its history
-UCL Department of Science and Technology Studies (STS) is an academic unit for  research and teaching made at a ‘crossroads’ of different disciplinary perspectives.    As a Department, we were first established in 1921 specialising in history and philosophy  of science, with social science approaches being added in more recent years. STS is  now unique in the UK in combining – in one Department – teaching and research in  history and philosophy of science with social studies of science including science policy,  public understanding of science and science communication.    During the 2021/22 Academic Session, we celebrated our Centenary and we have  [collated some of the highlights from our past in the ](http://www.ucl.ac.uk/sts/about-sts)[History of STS](http://www.ucl.ac.uk/sts/about-sts)[ page on our website. ](http://www.ucl.ac.uk/sts/about-sts)
+UCL Department of Science and Technology Studies (STS) is an academic unit for  research and teaching made at a ‘crossroads’ of different disciplinary perspectives.    As a Department, we were first established in 1921 specialising in history and philosophy  of science, with social science approaches being added in more recent years. STS is  now unique in the UK in combining – in one Department – teaching and research in  history and philosophy of science with social studies of science including science policy,  public understanding of science and science communication.    During the 2021/22 Academic Session, we celebrated our Centenary and we have  [collated some of the highlights from our past in the History of STS page on our website. ](http://www.ucl.ac.uk/sts/about-sts)
 STS is part of UCL Faculty of Mathematical and Physical Sciences (MAPS), which is part  of UCL School of the Built Environment, Engineering and Mathematical and Physical  Sciences (BEAMS).
 
 #################################################################
 
 ## 2.2 Explanation of the relationship between department and faculty
 Your degree is defined by three layers of regulations. Students are expected to  [familiarise themselves with documents applying to their degrees. These are: ](https://www.ucl.ac.uk/srs/)
-•[ Regulations set by UCL – general information is can be found on the ](https://www.ucl.ac.uk/srs/)[Student and ](https://www.ucl.ac.uk/srs/)
-[Registry Services web page](https://www.ucl.ac.uk/srs/)[ and specific information can be found in the ](https://www.ucl.ac.uk/srs/)[UCL ](http://www.ucl.ac.uk/srs/academic-manual) [Academic Manual](http://www.ucl.ac.uk/srs/academic-manual)[. ](http://www.ucl.ac.uk/srs/academic-manual) [•](http://www.ucl.ac.uk/srs/academic-manual)[ Regulations set by ](http://www.ucl.ac.uk/mathematical-physical-sciences)[MAPS Faculty](http://www.ucl.ac.uk/mathematical-physical-sciences)[. ](http://www.ucl.ac.uk/mathematical-physical-sciences) • Regulations set by STS “local rules.  These are available in the appendices and
-[on the ](https://moodle.ucl.ac.uk/course/view.php?id=30690)[STS Moodle page](https://moodle.ucl.ac.uk/course/view.php?id=30690)[.  ](https://moodle.ucl.ac.uk/course/view.php?id=30690)
+•[ Regulations set by UCL – general information is can be found on the Student and ](https://www.ucl.ac.uk/srs/)
+[Registry Services web page and specific information can be found in the ](https://www.ucl.ac.uk/srs/)[UCL ](http://www.ucl.ac.uk/srs/academic-manual) [Academic Manual. ](http://www.ucl.ac.uk/srs/academic-manual) [•](http://www.ucl.ac.uk/srs/academic-manual)[ Regulations set by MAPS Faculty. ](http://www.ucl.ac.uk/mathematical-physical-sciences) • Regulations set by STS “local rules.  These are available in the appendices and
+[on the STS Moodle page.  ](https://moodle.ucl.ac.uk/course/view.php?id=30690)
 
 The hierarchy of these rules is simple: UCL rules in the Academic Manual override all  rules and regulations set by faculties and departments. Faculty rules override rules set by  departments.
 
 #################################################################
 
 ## 2.3 Key staff members within the department and faculty
-Head of Department  Dr Jean-Baptiste Gouyon  [j.gouyon@ucl.ac.uk](mailto:j.gouyon@ucl.ac.uk)[ ](mailto:j.gouyon@ucl.ac.uk)
-Department Manager  Giuseppe La Rosa  [sts-dm@ucl.ac.uk](mailto:sts-dm@ucl.ac.uk)[  ](mailto:sts-dm@ucl.ac.uk)
-Director of Education &  Student Experience  Francesca Scott  [francesca.scott@ucl.ac.uk](mailto:francesca.scott@ucl.ac.uk)[  ](mailto:francesca.scott@ucl.ac.uk)
-Faculty Student  Experience Officer  Sophia MacBlain  [s.macblain@ucl.ac.uk](mailto:s.macblain@ucl.ac.uk)[  ](mailto:s.macblain@ucl.ac.uk)
+Head of Department  Dr Jean-Baptiste Gouyon  [j.gouyon@ucl.ac.uk ](mailto:j.gouyon@ucl.ac.uk)
+Department Manager  Giuseppe La Rosa  [sts-dm@ucl.ac.uk  ](mailto:sts-dm@ucl.ac.uk)
+Director of Education &  Student Experience  Francesca Scott  [francesca.scott@ucl.ac.uk  ](mailto:francesca.scott@ucl.ac.uk)
+Faculty Student  Experience Officer  Sophia MacBlain  [s.macblain@ucl.ac.uk  ](mailto:s.macblain@ucl.ac.uk)
 
 #################################################################
 
 ## and other key staff involved in programme delivery
 Role  Person  Email
 Director of Education  UG Careers Officer
-Professor Joe Cain  [j.cain@ucl.ac.uk](mailto:j.cain@ucl.ac.uk)[  ](mailto:j.cain@ucl.ac.uk)
-Undergraduate Programme Tutor  Dr Charlotte Sleigh  [c.sleigh@ucl.ac.uk](mailto:c.sleigh@ucl.ac.uk)[ ](mailto:c.sleigh@ucl.ac.uk)
+Professor Joe Cain  [j.cain@ucl.ac.uk  ](mailto:j.cain@ucl.ac.uk)
+Undergraduate Programme Tutor  Dr Charlotte Sleigh  [c.sleigh@ucl.ac.uk ](mailto:c.sleigh@ucl.ac.uk)
 MSc History and Philosophy of  Science & MSc Science,  Technology and Society Programme  Tutor
-Dr Rory Jubber  [rory.jubber@ucl.ac.uk](mailto:rory.jubber@ucl.ac.uk)[ ](mailto:rory.jubber@ucl.ac.uk)
+Dr Rory Jubber  [rory.jubber@ucl.ac.uk ](mailto:rory.jubber@ucl.ac.uk)
 MSc Science Communication  Programme Tutor
 Professor Melanie  Smallman
-[m.smallman@ucl.ac.uk](mailto:m.smallman@ucl.ac.uk)[  ](mailto:m.smallman@ucl.ac.uk)
-iBSc Programmes Tutor  Dr Erman Sözüdoğru  [erman.sozudogru@ucl.ac.uk](mailto:erman.sozudogru@ucl.ac.uk)[  ](mailto:erman.sozudogru@ucl.ac.uk)
-Affiliate Student Tutor  Dr Michel Wahome  [m.wahome@ucl.ac.uk](mailto:m.wahome@ucl.ac.uk)[    ](mailto:m.wahome@ucl.ac.uk)
-Student Success Adviser  Tekla Palladino  [t.palladino@ucl.ac.uk](mailto:t.palladino@ucl.ac.uk)[  ](mailto:t.palladino@ucl.ac.uk)
-Teaching Administrator  Randalle Roberts  [sts-aa@ucl.ac.uk](mailto:sts-aa@ucl.ac.uk)[  ](mailto:sts-aa@ucl.ac.uk)
+[m.smallman@ucl.ac.uk  ](mailto:m.smallman@ucl.ac.uk)
+iBSc Programmes Tutor  Dr Erman Sözüdoğru  [erman.sozudogru@ucl.ac.uk  ](mailto:erman.sozudogru@ucl.ac.uk)
+Affiliate Student Tutor  Dr Michel Wahome  [m.wahome@ucl.ac.uk    ](mailto:m.wahome@ucl.ac.uk)
+Student Success Adviser  Tekla Palladino  [t.palladino@ucl.ac.uk  ](mailto:t.palladino@ucl.ac.uk)
+Teaching Administrator  Randalle Roberts  [sts-aa@ucl.ac.uk  ](mailto:sts-aa@ucl.ac.uk)
 
 #################################################################
 
@@ -64,7 +64,7 @@ Bank Holidays  Closed - Monday 05 May 2025
 Closed - Monday 26 May 2025
 Closed - Monday 25 August 2025
 Further information:
-• [Term Dates 2024-25](https://www.ucl.ac.uk/students/life-ucl/term-dates-and-closures/provisional-term-dates-and-closures-2024-25)[  ](https://www.ucl.ac.uk/students/life-ucl/term-dates-and-closures/provisional-term-dates-and-closures-2024-25)   Students on full-time Taught Masters programmes study for 45 weeks of the full calendar  year and students are expected to study beyond the end of the third term to prepare their  dissertation in time for submission in September.
+• [Term Dates 2024-25  ](https://www.ucl.ac.uk/students/life-ucl/term-dates-and-closures/provisional-term-dates-and-closures-2024-25)   Students on full-time Taught Masters programmes study for 45 weeks of the full calendar  year and students are expected to study beyond the end of the third term to prepare their  dissertation in time for submission in September.
 4.1.2 UCL Examination Periods 2024-25
 The centrally organised examinations will take place from 29 April until 30 May 2025.    The examination timetable is published via Portico (the Student Information system),  usually in late February. Students will receive an email from Student Registry Services  (Exams) asking you to confirm that you have been registered for the correct modules and  the correct exams. It is essential that you check your personal timetable to ensure that  you are entered for the correct examinations.
 STS students who require special examination arrangements, (i.e., students with  conditions such as dyslexia, visual impairment, or other medical conditions) may request  reasonable adjustments to complete an exam. The process for students to apply for
@@ -79,9 +79,9 @@ Key dates for HPSC modules are posted in the module syllabus and, normally, on t
 #################################################################
 
 ## 4.3 How UCL and the department will communicate with students
-UCL will communicate with students via:  §  UCL student email – Students should check their UCL email regularly.  • [UCL student email  ](http://www.ucl.ac.uk/isd/services/email-calendar)    §  UCL Moodle – UCL's online learning space, used by module organisers, programme  leaders, departments and faculties to provide essential information in addition to  learning resources.  • [UCL Moodle](https://moodle.ucl.ac.uk/)[ ](https://moodle.ucl.ac.uk/)     §  myUCL – A weekly term-time e-newsletter to all students (undergraduate and  postgraduate) at UCL, which covers key internal announcements, events and  opportunities.  •[  ](http://www.ucl.ac.uk/news/student/what-is-myucl)[myUCL](http://www.ucl.ac.uk/news/student/what-is-myucl)[ ](http://www.ucl.ac.uk/news/student/what-is-myucl)     §  UCL Instagram – UCL’s official Instagram channel, featuring news, events,  competitions and images from across the UCL community.  •[  ](https://www.instagram.com/ucl/)[UCL Instagram](https://www.instagram.com/ucl/)[ ](https://www.instagram.com/ucl/)
-§  X.com/ucl - Sharing highlights of life at UCL from across UCL’s diverse community.  • [X.com/ucl](https://x.com/ucl)[ ](https://x.com/ucl)
-The department will communicate with students via UCL student email and UCL Moodle.  [STS also has a social media presence ](https://twitter.com/stsucl?lang=en)[@STSUCL](https://twitter.com/stsucl?lang=en)[ X.com channel, ](https://twitter.com/stsucl?lang=en)[STSUCL](http://www.facebook.com/STSUCL)[ Facebook ](http://www.facebook.com/STSUCL) [page, ](https://www.instagram.com/ucl_sts)[STS Instagram ](https://www.instagram.com/ucl_sts)and[ STS YouTube channel](mailto:https://www.youtube.com/c/STSUCL)[. ](mailto:https://www.youtube.com/c/STSUCL)
+UCL will communicate with students via:  §  UCL student email – Students should check their UCL email regularly.  • [UCL student email  ](http://www.ucl.ac.uk/isd/services/email-calendar)    §  UCL Moodle – UCL's online learning space, used by module organisers, programme  leaders, departments and faculties to provide essential information in addition to  learning resources.  • [UCL Moodle ](https://moodle.ucl.ac.uk/)     §  myUCL – A weekly term-time e-newsletter to all students (undergraduate and  postgraduate) at UCL, which covers key internal announcements, events and  opportunities.  •[  myUCL ](http://www.ucl.ac.uk/news/student/what-is-myucl)     §  UCL Instagram – UCL’s official Instagram channel, featuring news, events,  competitions and images from across the UCL community.  •[  UCL Instagram ](https://www.instagram.com/ucl/)
+§  X.com/ucl - Sharing highlights of life at UCL from across UCL’s diverse community.  • [X.com/ucl ](https://x.com/ucl)
+The department will communicate with students via UCL student email and UCL Moodle.  [STS also has a social media presence @STSUCL X.com channel, ](https://twitter.com/stsucl?lang=en)[STSUCL Facebook ](http://www.facebook.com/STSUCL) [page, STS Instagram ](https://www.instagram.com/ucl_sts)and[ STS YouTube channel. ](mailto:https://www.youtube.com/c/STSUCL)
 
 #################################################################
 
@@ -100,12 +100,12 @@ Studying a subject in a module involves much more than class time. Students are 
 5.3.1 Attendance Requirements
 UCL expects students to attend all the scheduled learning events which appear on their  timetable as this gives students the best chance of academic success. This includes all  events set out in the programme handbook or those provided to students during a  module, including personal tutorials.
 Further information:
-• [Attendance at UCL](https://www.ucl.ac.uk/students/life-ucl/attendance-ucl)[ ](https://www.ucl.ac.uk/students/life-ucl/attendance-ucl)
+• [Attendance at UCL ](https://www.ucl.ac.uk/students/life-ucl/attendance-ucl)
 5.3.2 Student Visa students: Absence from teaching and learning activities
 In line with UCL’s obligations under UK immigration laws, UCL is required to report to UK  Visas and Immigration (UKVI) when a student has not been engaging with their studies.  RegisterUCL is used by departments and the central Student Immigration Compliance  team to report on student attendance. This is not only to meet the UKVI requirements,  but also to identify any problems as early as possible to ensure action is taken to advise  or assist the student.
 Further information:
-• [Student visa responsibilities](https://www.ucl.ac.uk/students/immigration-and-visas/student-visa/student-visa-responsibilities#attendance)[ ](https://www.ucl.ac.uk/students/immigration-and-visas/student-visa/student-visa-responsibilities#attendance)
-[ ](https://www.ucl.ac.uk/students/life-ucl/attendance-ucl) • [Attendance at UCL](https://www.ucl.ac.uk/students/life-ucl/attendance-ucl)[ ](https://www.ucl.ac.uk/students/life-ucl/attendance-ucl)
+• [Student visa responsibilities ](https://www.ucl.ac.uk/students/immigration-and-visas/student-visa/student-visa-responsibilities#attendance)
+[ ](https://www.ucl.ac.uk/students/life-ucl/attendance-ucl) • [Attendance at UCL ](https://www.ucl.ac.uk/students/life-ucl/attendance-ucl)
 
 #################################################################
 
@@ -114,34 +114,34 @@ UCL enjoys a reputation as a world-class university. It was founded on the basis
 Further information:
 • [UCL Code of Conduct for Students ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-6-student-casework-framework/section-1-code-conduct-students)
 • [UCL Disciplinary Code and Procedure in Respect of Students ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-6-student-casework-framework/section-8-disciplinary-code-and-procedure-respect)
-• [UCL Prevention of Bullying, Harassment and Sexual Misconduct Policy](https://www.ucl.ac.uk/equality-diversity-inclusion/dignity-ucl/prevention-bullying-harassment-and-sexual-misconduct-policy)[ ](https://www.ucl.ac.uk/equality-diversity-inclusion/dignity-ucl/prevention-bullying-harassment-and-sexual-misconduct-policy)
+• [UCL Prevention of Bullying, Harassment and Sexual Misconduct Policy ](https://www.ucl.ac.uk/equality-diversity-inclusion/dignity-ucl/prevention-bullying-harassment-and-sexual-misconduct-policy)
 • [UCL Code of Practice on Freedom of Speech ](https://www.ucl.ac.uk/srs/sites/srs/files/ucl_code_of_practice_on_freedom_of_speech_v1.0.pdf)
-• [Religion and Belief Equality Policy for Students](https://www.ucl.ac.uk/students/policies/equality/religion)[ ](https://www.ucl.ac.uk/students/policies/equality/religion)
+• [Religion and Belief Equality Policy for Students ](https://www.ucl.ac.uk/students/policies/equality/religion)
 
 #################################################################
 
 # 7 UCL’s Student Support Framework
 UCL is committed to providing the support you need in order to make the most out of your studies.  The Student Support Framework draws together our main academic support processes under one  banner to help you understand the options open to you.
-• [UCL’s Student Support Framework](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
+• [UCL’s Student Support Framework ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
 The Framework includes the following components:
 Part 1: How to Use this Framework helps you find your way around the different support  options open to you. It includes:
 •  Where to find help and advice    •  Information about when to use this framework (for example if you are an affiliate, study  abroad or placement student)  •  Advice on confidentiality and how UCL will look after your data  •  Information on providing supporting evidence  •  Links to other support options that are available to you.
 Part 2: Types of Support explains how each of the following processes works:
 Support process:  Use this if:  What this covers:
-[Delayed ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Assessment ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Scheme](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
+[Delayed ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Assessment ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Scheme ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
 You need a small amount of  flexibility to help you manage  your wellbeing, student life, and  workload due to reasons which  are not grounds for evidenced  EC’s.
 Taught students have a maximum of 3  Delayed Assessment Permits to use  during the year. Each permit grants you  a set mitigation such as a 5working day  extension or deferral. There are no  minimum grounds, but you should think  carefully before using your permit.
 Make sure to review the restrictions of  the scheme, and note that not all  assessments are eligible.
-[Short-term Illness ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [and other ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Extenuating ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Circumstances](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
+[Short-term Illness ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [and other ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Extenuating ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Circumstances ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
 You have a short-term illness,  bereavement or other unexpected  emergency. Normally you must  provide evidence.
 
 ‘Extenuating Circumstances’ (often  know as ‘ECs’) are events which are  sudden, unexpected, significantly  disruptive and beyond your control and  which may affect your performance at  summative assessment, such as a  serious illness or the death of a close  relative. You can submit an Extenuating  Circumstances claim to access  ‘mitigation’ such as an extension or  deferring an assessment to a later date.
-[Reasonable ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Adjustments for ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Disabilities and ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Long-term ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Conditions](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
+[Reasonable ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Adjustments for ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Disabilities and ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Long-term ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Conditions ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
 You have a disability or long-term  physical or mental health  condition.
 UCL can provide longer-term  ‘Reasonable Adjustments’ to support  your learning and assessment. This  includes setting up a ‘SoRA’ (Summary  of Reasonable Adjustments) with UCL’s  Student Support and Wellbeing team.
 
 Support process:  Use this if:  What this covers:
-[Academic ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Adjustments](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
+[Academic ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) [Adjustments ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
 You need long-term or ongoing  support with one or more of the  following:
 • You or your partner is
 pregnant or planning  maternity, paternity or adoption  leave  • You are a parent or carer  • You observe religious beliefs
@@ -150,13 +150,13 @@ of harassment or  discrimination   • You are affected by traumatic
 world events such as war or  terrorism   • You are a critical worker (e.g.
 NHS staff).
 Academic Adjustments include long- term reasonable adjustments arranged  by your Department if you need  additional support with learning,  teaching and assessment.
-[Exam Adjustments](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) You need additional support to sit  an online or face-to-face exam.
+[Exam Adjustments ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework) You need additional support to sit  an online or face-to-face exam.
 Exam Adjustments are specifically for  Controlled Condition Exams and Take- Home Papers, and include adjustments  such as extra time, rest breaks, a more  comfortable chair and specialist  equipment. These are available to  students with a longer-term disability or  health condition, and to students who  need shorter-term support e.g. if you are  pregnant, or have a broken arm.
-[Interruption of Study](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
+[Interruption of Study ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
 
 You are thinking of taking time  out from your studies  .
 Interruption of Study is for students who  wish to take a break from their studies  and return at a later date. You can take  time out from your studies for a wide  range of reasons - you might want to  take up an internship or placement, take  time out to travel, be planning to have  children, or be facing personal  challenges which are making it hard to  study.
-[Support to Study](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
+[Support to Study ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
 
 You are having persistent or  ongoing difficulties and UCL’s  other support processes are not  providing the right level of help.
 Support to Study aims to help you if you  are having significant, persistent, longer- term difficulties and UCL’s normal  mechanisms (e.g. Reasonable  Adjustments, Extenuating  Circumstances, Interruption of Study)  are not providing enough support. We  will work with you to put together a  Support Plan to help you get the most  out of your studies.
@@ -177,17 +177,17 @@ The Students’ Union UCL  provides a free, confidential  and independent advice
 
 ## 7.1 Key contacts in the department for assistance with any of the above
 Role  Person  Email
-Undergraduate Programme Tutor  Dr Charlotte Sleigh  [c.sleigh@ucl.ac.uk](mailto:c.sleigh@ucl.ac.uk)[ ](mailto:c.sleigh@ucl.ac.uk)
+Undergraduate Programme Tutor  Dr Charlotte Sleigh  [c.sleigh@ucl.ac.uk ](mailto:c.sleigh@ucl.ac.uk)
 MSc History and Philosophy of  Science & MSc Science,  Technology and Society Programme  Tutor
-Dr Rory Jubber  [rory.jubber@ucl.ac.uk](mailto:rory.jubber@ucl.ac.uk)[ ](mailto:rory.jubber@ucl.ac.uk)
+Dr Rory Jubber  [rory.jubber@ucl.ac.uk ](mailto:rory.jubber@ucl.ac.uk)
 MSc Science Communication  Programme Tutor
 Professor Melanie  Smallman
-[m.smallman@ucl.ac.uk](mailto:m.smallman@ucl.ac.uk)[  ](mailto:m.smallman@ucl.ac.uk)
-iBSc Programmes Tutor  Dr Erman Sözüdoğru  [erman.sozudogru@ucl.ac.uk](mailto:erman.sozudogru@ucl.ac.uk)[  ](mailto:erman.sozudogru@ucl.ac.uk)
-Affiliate Student Tutor  Dr Michel Wahome  [m.wahome@ucl.ac.uk](mailto:m.wahome@ucl.ac.uk)[    ](mailto:m.wahome@ucl.ac.uk)
+[m.smallman@ucl.ac.uk  ](mailto:m.smallman@ucl.ac.uk)
+iBSc Programmes Tutor  Dr Erman Sözüdoğru  [erman.sozudogru@ucl.ac.uk  ](mailto:erman.sozudogru@ucl.ac.uk)
+Affiliate Student Tutor  Dr Michel Wahome  [m.wahome@ucl.ac.uk    ](mailto:m.wahome@ucl.ac.uk)
 Student Success Advisor (year 1  undergraduate students)
-Tekla Palladino  [t.palladino@ucl.ac.uk](mailto:t.palladino@ucl.ac.uk)[  ](mailto:t.palladino@ucl.ac.uk)
-Teaching Administrator  Randalle Roberts  [sts-aa@ucl.ac.uk](mailto:sts-aa@ucl.ac.uk)[  ](mailto:sts-aa@ucl.ac.uk)
+Tekla Palladino  [t.palladino@ucl.ac.uk  ](mailto:t.palladino@ucl.ac.uk)
+Teaching Administrator  Randalle Roberts  [sts-aa@ucl.ac.uk  ](mailto:sts-aa@ucl.ac.uk)
 
 #################################################################
 
@@ -202,14 +202,14 @@ If a compulsory module becomes unavailable during the normal course of study, ST
 8.2.1 Information on study abroad options
 Students may have the option of study abroad in Year 3 of the degree. Please note that  the opportunity to apply for or secure a place on a year abroad is not guaranteed.  This  will depend on whether UCL can put in place appropriate arrangements for study abroad  with a suitable partner institution. The list of partner institutions abroad that you may be  able to apply for will be made available in the Autumn Term of your second year of study  at UCL. If there is an opportunity to apply for a year abroad, the success of your  application will depend on the number of study abroad places available at the relevant  partner institution, your academic standing and the strength of your study abroad  application, which will set out your motivations for studying abroad and your reasons for  applying for your preferred universities abroad. If a year is spent abroad in your third  year, then you will return to UCL for an additional fourth year of your UCL programme. In  such event your three-year UCL programme would automatically become a four-year  programme.
 Further information:
-• [Go Abroad](https://www.ucl.ac.uk/students/go-abroad)[ ](https://www.ucl.ac.uk/students/go-abroad) • STS Study Abroad Tutor: Dr Simon Lock – simon.lock@ucl.ac.uk
+• [Go Abroad ](https://www.ucl.ac.uk/students/go-abroad) • STS Study Abroad Tutor: Dr Simon Lock – simon.lock@ucl.ac.uk
 8.2.2 Information on summer internships
 STS has a summer studentship programme, which supports students working with STS  academics on research projects directly related to their research programmes. These  opportunities are circulated in the Spring, and STS students will be encouraged to apply.
 8.2.3 Information on internships from UCL Careers
 UCL has web resources, a student toolkit and bookable appointments for students to  support them with applications for internships, and guidance in sourcing opportunities.
 
 Further information:
-• [Internships](https://www.ucl.ac.uk/careers/internships)[ ](https://www.ucl.ac.uk/careers/internships)
+• [Internships ](https://www.ucl.ac.uk/careers/internships)
 
 #################################################################
 
@@ -219,7 +219,7 @@ UCL is committed to providing all students with the academic guidance and person
 STS prides itself on our personal tutoring system. Personal tutors are members of  academic staff trained to provide tailored academic advice (related to degrees and  university). They know about resources available elsewhere in UCL for support. This  includes physical and mental health, careers, rights and advice, and financial assistance.  UCL also is well-supported with academic and welfare teams for students in need.
 Make the most of this relationship by meeting with your personal tutor on a regular basis.  We will invite you to termly meetings but take the initiative and ask for more if that suits  your needs. Meet monthly, for instance. Keep the conversation moving. Help your  personal tutor get to know you, your academic work and your aspirations. Personal tutors  are most effective when kept in conversation.
 Further information:
-• [Personal Tutors](https://www.ucl.ac.uk/students/academic-support/personal-tutors)[ ](https://www.ucl.ac.uk/students/academic-support/personal-tutors)
+• [Personal Tutors ](https://www.ucl.ac.uk/students/academic-support/personal-tutors)
 
 #################################################################
 
@@ -227,7 +227,7 @@ Further information:
 9.2.1 Transition Mentors
 The UCL Transition Programme supports new first-year students at UCL, helping them  to settle in quickly and achieve their potential. Each first-year student is assigned a  Transition Mentor for their first term. Transition mentors are later-year students within  each department who work with small groups of students on a weekly basis to help them  settle in to UCL and London as well as focussing on academic issues and topics specific  to their degree programme. First-year students meet their Transition Mentor during the  first week of term at their department’s ‘Meet your Mentor’ session.
 Further information:
-• [UCL Transition Mentors](https://www.ucl.ac.uk/students/academic-support/transition-mentors)[ ](https://www.ucl.ac.uk/students/academic-support/transition-mentors)
+• [UCL Transition Mentors ](https://www.ucl.ac.uk/students/academic-support/transition-mentors)
 
 #################################################################
 
@@ -243,31 +243,31 @@ Continuing undergraduate students and postgraduate students on programmes of mor
 10.1.3 UCL Module Catalogue
 UCL‘s Module Catalogue gives access to a comprehensive catalogue of all modules  across the whole of UCL, published in a consistent, searchable and accessible format.
 Further information:
-• [Module Catalogue](https://www.ucl.ac.uk/module-catalogue/?collection=drupal-module-catalogue&facetsort=alpha&num_ranks=20&daat=10000&sort=title)[ ](https://www.ucl.ac.uk/module-catalogue/?collection=drupal-module-catalogue&facetsort=alpha&num_ranks=20&daat=10000&sort=title)
+• [Module Catalogue ](https://www.ucl.ac.uk/module-catalogue/?collection=drupal-module-catalogue&facetsort=alpha&num_ranks=20&daat=10000&sort=title)
 10.1.4 Module Selection and Verification Deadlines
 You will receive an email through the Student Records system, Portico, with details of  module registration deadlines. Later on, you will also be asked to check in Portico and  confirm that your module registrations are correct. It is important that you check that you  are registered for the correct modules so that you are entered for the right assessments.
 Further information:
-• [Module Registration](https://www.ucl.ac.uk/students/student-status/module-registration)[  ](https://www.ucl.ac.uk/students/student-status/module-registration)
+• [Module Registration  ](https://www.ucl.ac.uk/students/student-status/module-registration)
 10.1.5 Change of Module Selection
 
 If a student wishes to change a module selection, requests need to be submitted and  approved by the department.    Exact deadlines will be published each year in the ‘Module Selection Task’ on Portico.  On Online Programmes, exact deadlines will be set, managed and communicated by the  Department.
 Further information:
-• [Portico Login](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)[ ](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)
-• [Academic Manual Chapter 3, Section 2: Module Selection](https://www.ucl.ac.uk/academic-manual/chapters/chapter-3-registration-framework-taught-programmes/section-2-module-selection)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-3-registration-framework-taught-programmes/section-2-module-selection)
+• [Portico Login ](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)
+• [Academic Manual Chapter 3, Section 2: Module Selection ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-3-registration-framework-taught-programmes/section-2-module-selection)
 
 #################################################################
 
 ## 10.2 Contact details for staff who can give advice
 Role  Person  Email
-Undergraduate Programme Tutor  Dr Charlotte Sleigh  [c.sleigh@ucl.ac.uk](mailto:c.sleigh@ucl.ac.uk)[ ](mailto:c.sleigh@ucl.ac.uk)
+Undergraduate Programme Tutor  Dr Charlotte Sleigh  [c.sleigh@ucl.ac.uk ](mailto:c.sleigh@ucl.ac.uk)
 MSc History and Philosophy of  Science & MSc Science,  Technology and Society Programme  Tutor
-Dr Rory Jubber  [rory.jubber@ucl.ac.uk](mailto:rory.jubber@ucl.ac.uk)[ ](mailto:rory.jubber@ucl.ac.uk)
+Dr Rory Jubber  [rory.jubber@ucl.ac.uk ](mailto:rory.jubber@ucl.ac.uk)
 MSc Science Communication  Programme Tutor
 Professor Melanie  Smallman
-[m.smallman@ucl.ac.uk](mailto:m.smallman@ucl.ac.uk)[  ](mailto:m.smallman@ucl.ac.uk)
-iBSc Programmes Tutor  Dr Erman Sözüdoğru  [erman.sozudogru@ucl.ac.uk](mailto:erman.sozudogru@ucl.ac.uk)[  ](mailto:erman.sozudogru@ucl.ac.uk)
-Affiliate Student Tutor  Dr Michel Wahome  [m.wahome@ucl.ac.uk](mailto:m.wahome@ucl.ac.uk)[    ](mailto:m.wahome@ucl.ac.uk)
-Teaching Administrator  Randalle Roberts  [sts-aa@ucl.ac.uk](mailto:sts-aa@ucl.ac.uk)[  ](mailto:sts-aa@ucl.ac.uk)
+[m.smallman@ucl.ac.uk  ](mailto:m.smallman@ucl.ac.uk)
+iBSc Programmes Tutor  Dr Erman Sözüdoğru  [erman.sozudogru@ucl.ac.uk  ](mailto:erman.sozudogru@ucl.ac.uk)
+Affiliate Student Tutor  Dr Michel Wahome  [m.wahome@ucl.ac.uk    ](mailto:m.wahome@ucl.ac.uk)
+Teaching Administrator  Randalle Roberts  [sts-aa@ucl.ac.uk  ](mailto:sts-aa@ucl.ac.uk)
 
 #################################################################
 
@@ -277,13 +277,13 @@ Students wishing to make changes to their registration status should first discu
 11.1.1 Changing programme
 If a student wishes to transfer from one UCL degree programme to another, they must  make a formal application. The usual deadline for change of degree programme during  the academic session is the end of October each year (for students registering in  September, with a later date for students registering in January) to be compatible with  module selection deadlines, although later transfers may be possible, where the transfer  does not affect module selections. Students should log in to their Portico account and  complete the online application. Students are strongly advised to discuss their plan with  the departments involved before requesting a change of programme on Portico.
 Further information:
-• [Changing your degree programme or modules](https://www.ucl.ac.uk/students/status/change-your-studies/change-your-degree-programme-or-modules)[ ](https://www.ucl.ac.uk/students/status/change-your-studies/change-your-degree-programme-or-modules)
-• [Academic Manual Chapter 3, Section 5 Programme Transfers](https://www.ucl.ac.uk/academic-manual/chapters/chapter-3-registration-framework-taught-programmes/section-5-programme-transfers)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-3-registration-framework-taught-programmes/section-5-programme-transfers)
+• [Changing your degree programme or modules ](https://www.ucl.ac.uk/students/status/change-your-studies/change-your-degree-programme-or-modules)
+• [Academic Manual Chapter 3, Section 5 Programme Transfers ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-3-registration-framework-taught-programmes/section-5-programme-transfers)
 11.1.2 Withdrawing from a programme
 If a student wishes to leave their degree programme prior to completing their final  examinations they must apply for a formal withdrawal from their studies. Applications  must be made in advance of the effective date of change. Students should log in to their  Portico account and complete the online application.
 Further information:
-• [Interrupting or withdrawing from your studies](https://www.ucl.ac.uk/students/student-status/changes-your-studies/interrupting-or-withdrawing-your-studies)[ ](https://www.ucl.ac.uk/students/student-status/changes-your-studies/interrupting-or-withdrawing-your-studies)
-[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-3-registration-framework-taught-programmes/section-7-withdrawing-programme) • [Academic Manual Chapter 3, Section 7: Withdrawing from a programme](https://www.ucl.ac.uk/academic-manual/chapters/chapter-3-registration-framework-taught-programmes/section-7-withdrawing-programme)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-3-registration-framework-taught-programmes/section-7-withdrawing-programme)
+• [Interrupting or withdrawing from your studies ](https://www.ucl.ac.uk/students/student-status/changes-your-studies/interrupting-or-withdrawing-your-studies)
+[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-3-registration-framework-taught-programmes/section-7-withdrawing-programme) • [Academic Manual Chapter 3, Section 7: Withdrawing from a programme ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-3-registration-framework-taught-programmes/section-7-withdrawing-programme)
 11.1.3 Informing the Student Loans Company of changes to your student status
 If a student makes a change to their programme or registration status during the course  of the academic year, it is important that the Student Loans Company (SLC) is notified.  The SLC can then re-assess and update its records. Changes could include a student  withdrawing from their academic programme, an interruption in studies or transferring to  a new programme. The SLC must also be notified when there is a change in mode of  study or when a student has returned from an interruption.    To inform the SLC of a change in your student status, a Change of Circumstance (CoC)  form must be completed online by your Faculty. See the Key Contacts section for details
 
@@ -293,17 +293,17 @@ of who to contact in the Faculty if you require a CoC form to be submitted on yo
 
 ## above
 Role  Person  Email
-Undergraduate Programme Tutor  Dr Charlotte Sleigh  [c.sleigh@ucl.ac.uk](mailto:c.sleigh@ucl.ac.uk)[ ](mailto:c.sleigh@ucl.ac.uk)
+Undergraduate Programme Tutor  Dr Charlotte Sleigh  [c.sleigh@ucl.ac.uk ](mailto:c.sleigh@ucl.ac.uk)
 MSc History and Philosophy of  Science & MSc Science,  Technology and Society Programme  Tutor
-Dr Rory Jubber  [rory.jubber@ucl.ac.uk](mailto:rory.jubber@ucl.ac.uk)[ ](mailto:rory.jubber@ucl.ac.uk)
+Dr Rory Jubber  [rory.jubber@ucl.ac.uk ](mailto:rory.jubber@ucl.ac.uk)
 MSc Science Communication  Programme Tutor
 Professor Melanie  Smallman
-[m.smallman@ucl.ac.uk](mailto:m.smallman@ucl.ac.uk)[  ](mailto:m.smallman@ucl.ac.uk)
-iBSc Programmes Tutor  Dr Erman Sözüdoğru  [erman.sozudogru@ucl.ac.uk](mailto:erman.sozudogru@ucl.ac.uk)[  ](mailto:erman.sozudogru@ucl.ac.uk)
-Affiliate Student Tutor  Dr Michel Wahome  [m.wahome@ucl.ac.uk](mailto:m.wahome@ucl.ac.uk)[    ](mailto:m.wahome@ucl.ac.uk)
+[m.smallman@ucl.ac.uk  ](mailto:m.smallman@ucl.ac.uk)
+iBSc Programmes Tutor  Dr Erman Sözüdoğru  [erman.sozudogru@ucl.ac.uk  ](mailto:erman.sozudogru@ucl.ac.uk)
+Affiliate Student Tutor  Dr Michel Wahome  [m.wahome@ucl.ac.uk    ](mailto:m.wahome@ucl.ac.uk)
 Student Success Advisor (year 1  undergraduate students)
-Tekla Palladino  [t.palladino@ucl.ac.uk](mailto:t.palladino@ucl.ac.uk)[  ](mailto:t.palladino@ucl.ac.uk)
-Teaching Administrator  Randalle Roberts  [sts-aa@ucl.ac.uk](mailto:sts-aa@ucl.ac.uk)[  ](mailto:sts-aa@ucl.ac.uk)
+Tekla Palladino  [t.palladino@ucl.ac.uk  ](mailto:t.palladino@ucl.ac.uk)
+Teaching Administrator  Randalle Roberts  [sts-aa@ucl.ac.uk  ](mailto:sts-aa@ucl.ac.uk)
 
 #################################################################
 
@@ -311,7 +311,7 @@ Teaching Administrator  Randalle Roberts  [sts-aa@ucl.ac.uk](mailto:sts-aa@ucl.a
 UCL’s Progression and Award Requirements define how many credits and modules  students need to pass to progress from one year of study to the next and to be awarded  a UCL qualification.    STS Bachelors Degrees:  These programmes use the Honours Degree Progression and Award Requirements in  the UCL Academic Manual, Chapter 4, Section 6: Progression and Award.     STS Masters Degrees:  These programmes use the Masters Progression and Award Requirements in the UCL  Academic Manual, Chapter 4, Section 6: Progression and Award.    The regulations work slightly differently depending on the programme structure. Specific  regulations for each individual programme are published in the Portico Progression and  Award Rules Tool. Students will be notified when their regulations are available. To find  the Tool, students should click on the 'My Programme' box on the 'My Studies' page in  Portico. The 'Progression and Award Rules' link is below the programme information.
 Further information:
 • [Academic Manual Chapter 4, Section 6: Progression and Award ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-6-progression-award)
-• [Portico Login](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)[ ](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)
+• [Portico Login ](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)
 
 #################################################################
 
@@ -320,8 +320,8 @@ Students who have successfully completed the Progression and Award Requirements 
 The regulations work slightly differently depending on the programme structure. Specific  regulations for each individual programme are published in the Portico Progression and  Award Rules Tool. Students will be notified when their regulations are available. To find  the Tool, students should click on the 'My Programme' box on the 'My Studies' page in  Portico. The 'Progression and Award Rules' link is below the programme information.    STS Bachelors Degrees:  These programmes use UCL Honours Degree Classification Scheme B in the UCL  Academic Manual, Chapter 4, Section 7: Classification.
 STS Masters Degrees:  These programmes use the Numeric Grade Taught Postgraduate Classification Scheme  in the UCL Academic Manual, Chapter 4, Section 7: Classification.
 Further information:
-• [Academic Manual Chapter 4, Section 7: Classification](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-7-classification)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-7-classification)
-• [Portico Login](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)[ ](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)
+• [Academic Manual Chapter 4, Section 7: Classification ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-7-classification)
+• [Portico Login ](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)
 
 #################################################################
 
@@ -358,16 +358,16 @@ Further information:
 
 ## Examinations and Awards website
 Please check the Students’ webpages for the most up-to-date information:
-• [Students’ webpages](https://www.ucl.ac.uk/students/)[ ](https://www.ucl.ac.uk/students/)
+• [Students’ webpages ](https://www.ucl.ac.uk/students/)
 13.6.1 Assessment Regulations
 Students must ensure that they are aware of the regulations governing assessments and  examinations on the Examinations and Assessment website.
 Further information:
-• [Examinations and Assessments](https://www.ucl.ac.uk/students/exams-and-assessments)[ ](https://www.ucl.ac.uk/students/exams-and-assessments)
+• [Examinations and Assessments ](https://www.ucl.ac.uk/students/exams-and-assessments)
 
 #################################################################
 
 ## the technical support available
-Unless otherwise specified, coursework is submitted through Moodle. In the event that  [there are issues with Moodle and it is not possible to submit, the student will be expected ](mailto:sts-aa@ucl.ac.uk) [to e-mail their coursework to the module tutor, copied to the Teaching Administrator (](mailto:sts-aa@ucl.ac.uk)[sts-](mailto:sts-aa@ucl.ac.uk) [aa@ucl.ac.uk](mailto:sts-aa@ucl.ac.uk)[), prior to the advertised deadline. A screen shot of the error message ](mailto:sts-aa@ucl.ac.uk) (including date/time) will be required as supporting evidence. Students are responsible  for ensuring that their work is submitted on time.
+Unless otherwise specified, coursework is submitted through Moodle. In the event that  [there are issues with Moodle and it is not possible to submit, the student will be expected ](mailto:sts-aa@ucl.ac.uk) [to e-mail their coursework to the module tutor, copied to the Teaching Administrator (sts-](mailto:sts-aa@ucl.ac.uk) [aa@ucl.ac.uk), prior to the advertised deadline. A screen shot of the error message ](mailto:sts-aa@ucl.ac.uk) (including date/time) will be required as supporting evidence. Students are responsible  for ensuring that their work is submitted on time.
 Students should be aware that some file types (e.g. Apple pages) cannot be viewed by  many staff. Students should therefore submit coursework as Microsoft Word or PDF files.  If an attachment cannot be opened by UCL’s standard package of software - for  example, Apple Pages - it may be deemed as not submitted. Please remember to keep a  copy of all material uploaded or e-mailed.
 UCL policy requires STS to mark coursework anonymously wherever possible. To  facilitate this, please submit assessed coursework without your name on the item. Use  only your student number/candidate number. Students who have added other identifiers  will be deemed to have waived their anonymity in that instance.
 
@@ -381,8 +381,8 @@ However, to support you in being autonomous learners and balance the challenges 
 providing you with tools to access mitigations when you need, you can develop healthy  and resilient approaches to your studies.     The Delayed Assessment Scheme provide students a maximum of 3 permits to use  during each year of study. Each Delayed Assessment Permit (DAP) entitles you to a pre- determined mitigation for an assessment such as a 5 working day extension or deferral.  Please note; mitigations are pre-determined and not all assessment are eligible.
 If a student experiences something which prevents them from meeting a deadline that is  sudden, unexpected, significantly disruptive and beyond their control, they should submit  an Extenuating Circumstances (EC) Form. If the request is accepted, the student may be  granted an extension. If the deadline has already passed, the late submission may be  condoned i.e. there will be no penalty for submitting late.
 Further information:
-• [Academic Manual Chapter 4, Section 3: Module Assessment](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-3-module-assessment)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-3-module-assessment)
-• [UCL’s Student Support Framework](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
+• [Academic Manual Chapter 4, Section 3: Module Assessment ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-3-module-assessment)
+• [UCL’s Student Support Framework ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
 
 #################################################################
 
@@ -391,7 +391,7 @@ Further information:
 Any student who is absent from an assessment without prior permission will receive a  mark of 0.00%/ Grade F unless they formally request to defer their assessment to a later  date by submitting a claim for Extenuating Circumstances with appropriate  supporting evidence. If Extenuating Circumstances are not approved, the mark of  0.00%/ Grade F will stand and the student will be considered to have made an attempt.
 Further information:
 • [Academic Manual Chapter 2, Section 2: Short Term Illness and Other Extenuating ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework/section-2-short-term-illness-and-other-extenuating)
-[Circumstances](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework/section-2-short-term-illness-and-other-extenuating)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework/section-2-short-term-illness-and-other-extenuating)
+[Circumstances ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework/section-2-short-term-illness-and-other-extenuating)
 
 #################################################################
 
@@ -400,7 +400,7 @@ Word Counts
 Assignment briefs will include clear instructions about word counts, the inclusion of  footnotes, diagrams, images, tables, figures and bibliographies etc. Students are  expected to adhere to the requirements for each assessment. Students exceeding these  parameters may receive a reduction in marks.
 STS will specify word counts in their assessments where appropriate. If students submit  work in excess of the word count, markers are not obliged to mark beyond the maximum  word count and proportionate penalties may apply but will not exceed 10 percentage  points (or equivalent).
 Further information:
-• [Academic Manual Chapter 4, Section 3: Module Assessment](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-3-module-assessment)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-3-module-assessment)
+• [Academic Manual Chapter 4, Section 3: Module Assessment ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-3-module-assessment)
 
 #################################################################
 
@@ -412,19 +412,19 @@ Condonement allows a student to progress from one year to the next and/ or to be
 Further information:
 •[ Academic Manual Chapter 4, Section 6: Progression and Award ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-6-progression-award)
 Student Guides to Condonement
-• [Undergraduate Student Guide to Condonement](https://www.ucl.ac.uk/students/student-guide-undergraduate-condonement)[ ](https://www.ucl.ac.uk/students/student-guide-undergraduate-condonement)
-• [Taught Postgraduate Student Guide to Condonement](https://www.ucl.ac.uk/students/student-guide-postgraduate-condonement)[ ](https://www.ucl.ac.uk/students/student-guide-postgraduate-condonement)
+• [Undergraduate Student Guide to Condonement ](https://www.ucl.ac.uk/students/student-guide-undergraduate-condonement)
+• [Taught Postgraduate Student Guide to Condonement ](https://www.ucl.ac.uk/students/student-guide-postgraduate-condonement)
 Reassessment
 Depending on the amount of failure, Reassessment may take the form of either a Resit,  which usually takes place in the Late Summer, or a Repeat in the following academic  session. The marks for modules successfully completed at the second attempt will be  capped at the Pass Mark – 40.00% for modules at UG Level/ Levels 4, 5 and 6; 50.00%  for PGT modules at Masters Level/ Level 7.     Taught Postgraduate students:  Students who fail a Masters dissertation/ research project will normally resit by 31  January (30 April for January-start programmes). Exceptionally, the Exam Board may  decide that the extent of failure is such that the student needs to repeat the dissertation  with tuition and fees.
 Further information:
-• [Academic Manual Chapter 4, Section 9: Consequences of Failure](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-11-consequences-failure)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-11-consequences-failure)
+• [Academic Manual Chapter 4, Section 9: Consequences of Failure ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-11-consequences-failure)
 Deferred Assessment
 If an assessment has been affected by Extenuating Circumstances (ECs) students may  be offered a Deferral i.e. a ‘new first attempt’ or a ‘new second attempt’. Students may be  able to use a Delayed Assessment Permit to defer an assessment, if eligible. If the
 
 student successfully completes a Deferral of their first attempt, their module marks will  not be capped. If the student successfully completes a Deferral of their second attempt  (i.e. they have ECs on a Resit or Repeat), their module marks will be capped at the Pass  Mark (i.e. the existing cap will not be removed).
 Further information:
-• [UCL’s Student Support Framework](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
-• [Academic Manual Chapter 4, Section 8: Deferred Assessment](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-8-deferred-assessment)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-8-deferred-assessment)
+• [UCL’s Student Support Framework ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework)
+• [Academic Manual Chapter 4, Section 8: Deferred Assessment ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-4-assessment-framework-taught-programmes/section-8-deferred-assessment)
 
 #################################################################
 
@@ -432,10 +432,10 @@ Further information:
 High academic standards are fundamental to ensuring continued trust and confidence in  UCL’s world-leading research and teaching, as well as the individuals who work and  study at UCL. UCL takes Academic Integrity very seriously, and expects students to  familiarise themselves with UCL’s referencing and citation requirements. A good starting  point is the UCL Library Guide to References, Citations and Avoiding Plagiarism.  Students should also ensure that they are familiar with the specific referencing  requirements of their discipline, as these may vary.    Candidates for controlled condition examinations should also familiarise themselves with  the requirements set out in the Academic Manual, Chapter 6, Section 9.2 (weblink  provided below). It is also very important that students are aware of what items they are  permitted to bring into the Examination Halls, so they can ensure they do not  unintentionally breach the examination rules.
 UCL has a zero tolerance approach to the use of essay mills and contract cheating, as  they go against every principle that UCL stands for. These types of service disadvantage  honest students and devalue standards in our universities.    The vast majority of students at UCL will maintain their Academic Integrity throughout  their studies, but it is important to be aware that UCL may consider breaches to your  Academic Integrity as an instance of Academic Misconduct. When Academic Misconduct  occurs there can potentially be penalties imposed, and it is important to note that  repeated breaches will be taken very seriously and could result in exclusion from UCL  (see Academic Manual, Chapter 6, Section 9.3, web-link provided below). For students  who are unsure of what may be considered as Academic Misconduct, the procedures in  Chapter 6 of the Academic Manual define all such behaviour and how this is taken  forwards. UCL also has online tools available to help students identify what behaviours  may be considered as Academic Misconduct.
 Further information:
-• [Academic Integrity](https://www.ucl.ac.uk/students/exams-and-assessments/academic-integrity)[ ](https://www.ucl.ac.uk/students/exams-and-assessments/academic-integrity)
-• [Library Guide to References, Citations and Avoiding Plagiarism](http://www.ucl.ac.uk/library/training/guides/webguides/refscitesplag)[ ](http://www.ucl.ac.uk/library/training/guides/webguides/refscitesplag)
-• [Academic Manual Chapter 6, Section 9: Student Academic Misconduct Procedure](https://www.ucl.ac.uk/academic-manual/chapters/chapter-6-student-casework-framework)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-6-student-casework-framework)
-• [Examinations and Assessments](https://www.ucl.ac.uk/students/exams-and-assessments)[ ](https://www.ucl.ac.uk/students/exams-and-assessments)
+• [Academic Integrity ](https://www.ucl.ac.uk/students/exams-and-assessments/academic-integrity)
+• [Library Guide to References, Citations and Avoiding Plagiarism ](http://www.ucl.ac.uk/library/training/guides/webguides/refscitesplag)
+• [Academic Manual Chapter 6, Section 9: Student Academic Misconduct Procedure ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-6-student-casework-framework)
+• [Examinations and Assessments ](https://www.ucl.ac.uk/students/exams-and-assessments)
 
 #################################################################
 
@@ -467,7 +467,7 @@ All work that is submitted for summative assessment is marked by a UCL Internal 
 External Examining at UCL
 External Examiners are senior academics or practitioners from other universities who  help UCL to monitor the quality of the education we provide to our students. In particular,  External Examiners scrutinise the assessment processes on each programme, helping  UCL to ensure that all students have been treated fairly, that academic standards have  been upheld and that the qualifications awarded are comparable with similar degrees at  other UK universities.    Each External Examiner submits an on-line annual report. Faculties and departments are  required to reflect on any recommendations and address any issues raised in a formal  response. The report and response are discussed with Student Reps at the Student  Partnership Committee, and are scrutinised by faculty, department and institution-level  committees. Students can access their External Examiner’s report and departmental  response via the “My Studies” page through their Portico account either through ‘Module  Assessment’ or ‘Summary of Results and Awards’ or by contacting their Departmental
 
-Administrator in the first instance. On the same “My Studies” Portico page, students can  also access UCL wide External Examiners reports for the last three years. For central  [queries relating to External Examining, please contact Student and Registry Services at ](mailto:examiners@ucl.ac.uk) [examiners@ucl.ac.uk](mailto:examiners@ucl.ac.uk)[. ](mailto:examiners@ucl.ac.uk)
+Administrator in the first instance. On the same “My Studies” Portico page, students can  also access UCL wide External Examiners reports for the last three years. For central  [queries relating to External Examining, please contact Student and Registry Services at ](mailto:examiners@ucl.ac.uk) [examiners@ucl.ac.uk. ](mailto:examiners@ucl.ac.uk)
 
 #################################################################
 
@@ -477,32 +477,32 @@ UCL Library Services provides support to students online and in person via our l
 Further information:
 
 • [Discover Library Services ](https://www.ucl.ac.uk/library)
-• [Library Subject Guides](https://library-guides.ucl.ac.uk/subject)[ ](https://library-guides.ucl.ac.uk/subject)
-• [ReadingLists@UCL](https://ucl.rl.talis.com/index.html)[ ](https://ucl.rl.talis.com/index.html)
+• [Library Subject Guides ](https://library-guides.ucl.ac.uk/subject)
+• [ReadingLists@UCL ](https://ucl.rl.talis.com/index.html)
 14.1.2 UCL Information Services Division (ISD)
 The UCL Information Services Division (ISD), the primary provider of IT services to UCL,  offers guidance on all of ISD’s key services, including email and calendar services, user  IDs and passwords, print, copy and scanning, wifi and networks on their web pages.  ‘How to’ guides and individual help and support is available from IT Services.
-• [Help and support](https://www.ucl.ac.uk/isd/help-support)[ ](https://www.ucl.ac.uk/isd/help-support)   There are also opportunities for Digital Skills Development through face-to-face training  in areas such as data analysis, programming, multimedia and graphics packages and  more.
-• [Digital Skills Development](http://www.ucl.ac.uk/isd/services/learning-teaching/it-training)[ ](http://www.ucl.ac.uk/isd/services/learning-teaching/it-training)   UCL also has a licence for LinkedIn Learning which provides thousands of high quality  video-based courses from programming to presentation skills:
-• [LinkedIn Learning](https://www.ucl.ac.uk/isd/linkedin-learning)[ ](https://www.ucl.ac.uk/isd/linkedin-learning)   Learning on Screen (“bob”) provides students with access to a vast archive of 65 free-to- air channel programming for educational usage – you can view TV programmes and  films, and listen to radio programmes. In addition, Kanopy (“thoughtful entertainment”) is  available to UCL students, and offers a wide range of movies:
-• [Learning on Screen (“bob”)](https://learningonscreen.ac.uk/ondemand/)[  ](https://learningonscreen.ac.uk/ondemand/) • [Kanopy](https://www.kanopy.com/)[ ](https://www.kanopy.com/)
+• [Help and support ](https://www.ucl.ac.uk/isd/help-support)   There are also opportunities for Digital Skills Development through face-to-face training  in areas such as data analysis, programming, multimedia and graphics packages and  more.
+• [Digital Skills Development ](http://www.ucl.ac.uk/isd/services/learning-teaching/it-training)   UCL also has a licence for LinkedIn Learning which provides thousands of high quality  video-based courses from programming to presentation skills:
+• [LinkedIn Learning ](https://www.ucl.ac.uk/isd/linkedin-learning)   Learning on Screen (“bob”) provides students with access to a vast archive of 65 free-to- air channel programming for educational usage – you can view TV programmes and  films, and listen to radio programmes. In addition, Kanopy (“thoughtful entertainment”) is  available to UCL students, and offers a wide range of movies:
+• [Learning on Screen (“bob”)  ](https://learningonscreen.ac.uk/ondemand/) • [Kanopy ](https://www.kanopy.com/)
 
 New students are encouraged to complete the ‘Digital Education at UCL’ course which is  available on Moodle, UCL’s virtual learning environment, to familiarise themselves with  the tools and technology available to support their digital learning experience.
-• [Digital Education at UCL](https://moodle.ucl.ac.uk/course/view.php?id=41939)[ ](https://moodle.ucl.ac.uk/course/view.php?id=41939)   ISD provides desktop computers and laptops for loan in a number of learning spaces.  Computers at UCL run a Desktop@UCL service which provides access to hundreds of  software applications to support students. Students also have access to a range of free  and discounted software.    Departments may wish to highlight any subject specific software that is available to their  students.    Visit the IT Essential for new students page for details of all IT services available:
+• [Digital Education at UCL ](https://moodle.ucl.ac.uk/course/view.php?id=41939)   ISD provides desktop computers and laptops for loan in a number of learning spaces.  Computers at UCL run a Desktop@UCL service which provides access to hundreds of  software applications to support students. Students also have access to a range of free  and discounted software.    Departments may wish to highlight any subject specific software that is available to their  students.    Visit the IT Essential for new students page for details of all IT services available:
 • [ISD IT Essentials for new students ](https://www.ucl.ac.uk/isd/it-essentials-for-new-students)    All students are encouraged to download the UCL Go app, available for iOS and Android  devices and on the web. The app gives access to the timetable, Moodle, email, Portico,  and library loans. It has maps to locate lecture theatres, water fountains, computers and  study spaces on campus. It has checklists of things students need to do and sends  important alerts, as well as having opt-in notifications on topics of interest. You can also  see lists of events hosted by Students' Union UCL and UCL departments.
-• [UCL Go](https://www.ucl.ac.uk/isd/services/websites-apps/ucl-go)[ ](https://www.ucl.ac.uk/isd/services/websites-apps/ucl-go)
+• [UCL Go ](https://www.ucl.ac.uk/isd/services/websites-apps/ucl-go)
 14.1.3 UCL Centre for Languages & International Education (CLIE)
 The UCL Centre for Languages & International Education (CLIE) provides modern  foreign language, British Sign Language and English for Academic Purposes (EAP)  modules for UCL students. CLIE also heads the UCL Academic Communication Centre  (ACC). The ACC offers discipline-specific academic communication support to both  native and non-native English speakers currently studying an undergraduate or  postgraduate degree at UCL. Evening courses are offered in nine foreign languages  across a range of levels to support UCL students, staff and London’s wider academic  and professional community. Students can access language-learning resources online  through the CLIE Self-Access Centre, including films and documentaries and books for  self-study.
 Further information:
-• [CLIE website](http://www.ucl.ac.uk/clie)[  ](http://www.ucl.ac.uk/clie)
-• [CLIE Self-Access Centre](https://resources.clie.ucl.ac.uk/home/sac)[ ](https://resources.clie.ucl.ac.uk/home/sac)
-• [Academic Communication Centre (ACC)](https://www.ucl.ac.uk/languages-international-education/ucl-academic-communication-centre)[ ](https://www.ucl.ac.uk/languages-international-education/ucl-academic-communication-centre)
+• [CLIE website  ](http://www.ucl.ac.uk/clie)
+• [CLIE Self-Access Centre ](https://resources.clie.ucl.ac.uk/home/sac)
+• [Academic Communication Centre (ACC) ](https://www.ucl.ac.uk/languages-international-education/ucl-academic-communication-centre)
 14.1.4 Sustainable UCL
 UCL launched its Sustainability Strategy in 2019 – one of the most ambitious across the  UK higher education sector.  It includes many headline commitments – to be a net zero  carbon institution by 2030; to be single use plastic free; and that every student has the  opportunity to engage with sustainability during their time at UCL. The Sustainable UCL
 
 team offers students many different opportunities to learn about sustainability as part of  their studies or extracurricular activities.      In particular, students can engage with sustainability in their free-time by joining one of  UCL’s green clubs and societies or taking part in UCL’s Student Sustainability Council to  help direct UCL’s sustainability vision and represent the students’ voice on sustainability.
 Further information:
-• [Sustainable UCL Website](https://www.ucl.ac.uk/sustainable/)[ ](https://www.ucl.ac.uk/sustainable/)
-• [Sustainability Student Opportunity Website](https://www.ucl.ac.uk/sustainable/student-opportunities)[ ](https://www.ucl.ac.uk/sustainable/student-opportunities)
+• [Sustainable UCL Website ](https://www.ucl.ac.uk/sustainable/)
+• [Sustainability Student Opportunity Website ](https://www.ucl.ac.uk/sustainable/student-opportunities)
 • [Student Sustainability Council ](https://studentsunionucl.org/sustainability-council)
 
 #################################################################
@@ -516,8 +516,8 @@ Students are also permitted to use the kitchen facilities situated adjacent to t
 ## 14.3 How to access Moodle and support contacts
 Moodle is UCL's online learning space. It includes a wide range of tools which can be  used to support learning and teaching. Moodle is used to supplement taught modules, in  some cases just by providing essential information and materials, but it can also be  integrated more fully, becoming an essential component of a module. Some modules  may use Moodle to provide access to readings, videos, activities, collaboration tools and  assessments.
 Further information:
-• [Moodle](https://moodle.ucl.ac.uk/)[  ](https://moodle.ucl.ac.uk/)
-• [Moodle Resource Centre](https://ucldata.atlassian.net/wiki/spaces/MoodleResourceCentre/overview)[ ](https://ucldata.atlassian.net/wiki/spaces/MoodleResourceCentre/overview)
+• [Moodle  ](https://moodle.ucl.ac.uk/)
+• [Moodle Resource Centre ](https://ucldata.atlassian.net/wiki/spaces/MoodleResourceCentre/overview)
 
 #################################################################
 
@@ -526,68 +526,68 @@ Further information:
 Portico is the main UCL student information system which is used by all students for:  §  Updating personal data such as addresses or contact numbers  §  Completing online module registration   §  Viewing information about programmes/modules  §  Viewing module results  §  Pre-enrolment and re-enrolment  §  Applying for programme transfer  §  Plan and record skills development  §  Applying for graduation ceremonies
 
 Further information:
-• [Portico Login](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)[ ](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)
-• [What is Portico](https://www.ucl.ac.uk/srs/portico/what-portico)[ ](https://www.ucl.ac.uk/srs/portico/what-portico)
-• [Portico Support](https://www.ucl.ac.uk/srs/portico/portico-support)[ ](https://www.ucl.ac.uk/srs/portico/portico-support)
+• [Portico Login ](https://evision.ucl.ac.uk/urd/sits.urd/run/siw_lgn)
+• [What is Portico ](https://www.ucl.ac.uk/srs/portico/what-portico)
+• [Portico Support ](https://www.ucl.ac.uk/srs/portico/portico-support)
 
 #################################################################
 
 ## what services are offered, locations and contact information
 15.1.1 UCL Student Support and Wellbeing
 UCL is committed to the wellbeing and safety of its students and tries to give assistance  wherever possible to ensure that studying at UCL is a fulfilling, healthy and enjoyable  experience. There is a wide range of support services for student – the Students website  provides more information:
-• [Student Support and Wellbeing](https://www.ucl.ac.uk/students/student-support-and-wellbeing)[ ](https://www.ucl.ac.uk/students/student-support-and-wellbeing)   Students should be aware that, while there are many services on offer, it is their  responsibility to seek out support and they need to be proactive in engaging with the  available services.
+• [Student Support and Wellbeing ](https://www.ucl.ac.uk/students/student-support-and-wellbeing)   Students should be aware that, while there are many services on offer, it is their  responsibility to seek out support and they need to be proactive in engaging with the  available services.
 15.1.2 The Student Enquiries Centre
 Walk-in Service  The Student Enquiries Centre have a physical space that students can visit for walk-in  questions and enquiries on the 1st floor of the Student Centre. We can assist you with  questions or concerns you may have around your student record and give guidance and  information on a range of areas such as, Student Support and Wellbeing, Fees, Study  Abroad or any matters regarding your studies at UCL.
 Our term-time hours are:
 10am to 6pm on Monday-Wednesday & Friday   10am to 4pm on & Thursday
 Telephone Service    You can also contact us via our telephone service:    Student Enquiries Centre Telephone Service: +44 (0)20 3108 8836.    Telephone service hours:     9am to 12pm & 2pm to 5pm on Monday-Wednesday & Friday   9am to 12pm & 2pm- 4pm on Thursday.
 askUCL
-[Log an enquiry via ](https://www.ucl.ac.uk/students/askucl)[askUCL](https://www.ucl.ac.uk/students/askucl)[, our online student enquiries system, to ask a question or ](https://www.ucl.ac.uk/students/askucl) directions to a particular service. We are currently responding to enquiries between the  hours of 9am - 6pm (Monday – Friday) and will aim to provide you with a response  within 5 working days.
+[Log an enquiry via askUCL, our online student enquiries system, to ask a question or ](https://www.ucl.ac.uk/students/askucl) directions to a particular service. We are currently responding to enquiries between the  hours of 9am - 6pm (Monday – Friday) and will aim to provide you with a response  within 5 working days.
 
 Accessing our self-service options
-Self-service remains the quickest and most efficient way for students to complete certain  processes and obtain key documentation. We recommend that students use the  following self-service opportunities:    •[ Launch ](https://www.ucl.ac.uk/students/askucl)[askUCL](https://www.ucl.ac.uk/students/askucl)[ to access the comprehensive and extensive database of Frequently ](https://www.ucl.ac.uk/students/askucl)
+Self-service remains the quickest and most efficient way for students to complete certain  processes and obtain key documentation. We recommend that students use the  following self-service opportunities:    •[ Launch askUCL to access the comprehensive and extensive database of Frequently ](https://www.ucl.ac.uk/students/askucl)
 Asked Questions (FAQs)  • The letter self-service options on Portico where students can print off a statement of
 student status (current students) or statement of award (alumni)  • The personal details & address containers on Portico where students can update their
 preferred name, title, trusted contact details and addresses.
 Further information:
-• [askUCL](https://www.ucl.ac.uk/students/askucl-student-enquiry-system)[ ](https://www.ucl.ac.uk/students/askucl-student-enquiry-system)
-• [Student Enquiries Centre](https://www.ucl.ac.uk/students/support-and-wellbeing/student-enquiries-centre)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/student-enquiries-centre)
+• [askUCL ](https://www.ucl.ac.uk/students/askucl-student-enquiry-system)
+• [Student Enquiries Centre ](https://www.ucl.ac.uk/students/support-and-wellbeing/student-enquiries-centre)
 15.1.3 Student Advisers for First Year Undergraduates (first-year UG only)
 UCL Student Advisers are a key contact for first-year undergraduates for any wellbeing,  support and student experience matters. They can help students navigate any aspects of  student life that may appear challenging, including policies, assessments and finding the  right kind of support. All UCL departments have dedicated Student Advisers who make  contact with students before the start of the academic year to introduce their role and  offer individual appointments.
-• [Student Advisers](https://www.ucl.ac.uk/students/support-and-wellbeing/meet-ssw-team/meet-your-student-advisers#brain-sciences)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/meet-ssw-team/meet-your-student-advisers#brain-sciences)
+• [Student Advisers ](https://www.ucl.ac.uk/students/support-and-wellbeing/meet-ssw-team/meet-your-student-advisers#brain-sciences)
 15.1.4 Disability, Mental Health and Wellbeing team
 The Disability, Mental Health and Wellbeing Team in Student Support and Wellbeing  (SSW) provide a safe, confidential and non-judgemental space, in which students can  discuss any wellbeing, mental health and/or disability concerns that may be affecting  their ability to study. This encompasses any personal or emotional challenges students  may be experiencing, mental health difficulties such as anxiety or depression and long- term health conditions. The service also supports students with physical and sensory  impairments, specific learning difficulties, and autistic spectrum conditions. As well as  arranging for adjustments to learning environments, the team loan out specialist  equipment. They provide one-to-one tutoring and support for students with specific  learning difficulties and mentoring for students with mental health conditions.
 Further information:
-• [Support for Disabled Students](https://www.ucl.ac.uk/students/support-and-wellbeing/support-disabled-students)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/support-disabled-students)
+• [Support for Disabled Students ](https://www.ucl.ac.uk/students/support-and-wellbeing/support-disabled-students)
 • [Mental health and wellbeing support](http://www.ucl.ac.uk/students/support-and-wellbeing/wellbeing)
 15.1.5 Student Psychological and Counselling Services
 Student Psychological and Counselling Services (SPCS) is dedicated to helping UCL  students with personal, emotional and psychological concerns. The SPCS team is  diverse and consists of a variety of highly trained and experienced professionals, who
 
 offer short-term CBT and psychodynamic support. There are currently two psychiatrists  and ten therapists on staff with varying kinds of psychological training and expertise.    Students wishing to access counselling through SPCS need to first complete an online  registration form that can be found through the link below.
 Further information:
-• [Student Psychological and Counselling Services](https://www.ucl.ac.uk/students/support-and-wellbeing/student-psychological-services)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/student-psychological-services)
+• [Student Psychological and Counselling Services ](https://www.ucl.ac.uk/students/support-and-wellbeing/student-psychological-services)
 15.1.6 International Student Support
 The International Student Support team provide specialist support and advice for all non- UK students at UCL. They help international students settle into life in the UK and make  the most of their time at UCL and in London. This includes practical guidance on  healthcare, banking, transport and safety, as well as information about the International  Student Orientation Programme (ISOP).
 Further information:
-• [International Student Orientation Programme (ISOP)](https://www.ucl.ac.uk/students/international-students)[ ](https://www.ucl.ac.uk/students/international-students)
+• [International Student Orientation Programme (ISOP) ](https://www.ucl.ac.uk/students/international-students)
 15.1.7 Study Abroad support
 The Study Abroad team provide administrative and welfare support to all undergraduate  students undertaking a period abroad as part of their studies, working with colleagues,  including Study Abroad Tutors, across academic departments in order to advise and  guide students from application through to their return to studies at UCL. The team  coordinates a diverse portfolio of global student opportunities via different projects:  Student Exchanges and Exchange Agreements, the Turing Scheme, Global Experience  (Summer Schools, volunteering abroad, short-term mobility).
 Further information:
-• [Go Abroad](https://www.ucl.ac.uk/students/go-abroad)[ ](https://www.ucl.ac.uk/students/go-abroad)
+• [Go Abroad ](https://www.ucl.ac.uk/students/go-abroad)
 15.1.8 Accommodation
 UCL Accommodation provides a range of housing options which includes two Halls of  Residence (catered), self-catered Student Houses and Intercollegiate Halls (both catered  and self-catered) shared with other colleges of the University of London. Each Hall has a  designated Warden supported by a number of live-in Student Residence Advisers (SRA)  to provide support for students and to foster a positive environment within the  accommodation.
 Further information:
-• [Wardens and Student Residence Advisers at UCL Residences](https://www.ucl.ac.uk/students/life/accommodation/wardens)[ ](https://www.ucl.ac.uk/students/life/accommodation/wardens)
+• [Wardens and Student Residence Advisers at UCL Residences ](https://www.ucl.ac.uk/students/life/accommodation/wardens)
 15.1.9 Financial support
 The UCL Student Funding Office provides a central service aimed at supporting students  with money matters. We can assist with scholarship, bursary and loan queries, and help  signpost students to sources of funding. We also offer a range of resources and tips on  money management. The easiest way to access our information and guidance is online,
 
 but for students with more complex circumstances an appointment can be booked with  one of our Student Funding Advisers.
 Further information:
-• [UCL Financial Support](https://www.ucl.ac.uk/students/funding/financial-support)[ ](https://www.ucl.ac.uk/students/funding/financial-support)
-• [Manage your Money](https://www.ucl.ac.uk/students/funding/manage-your-money)[ ](https://www.ucl.ac.uk/students/funding/manage-your-money)
+• [UCL Financial Support ](https://www.ucl.ac.uk/students/funding/financial-support)
+• [Manage your Money ](https://www.ucl.ac.uk/students/funding/manage-your-money)
 15.1.10  Student of Concern
 There are many sources of support for students who are having difficulties, but  sometimes it is hard to know how to help a student who appears to be struggling,  particularly if they seem unwilling or unable to seek the help they need. Anyone  concerned about the behaviour of a student, who believes the problem may be related to  health and wellbeing issues, is encouraged to complete the online UCL Student of  Concern Form:
-• [Student of Concern](https://www.ucl.ac.uk/students/support-and-wellbeing/if-you-are-concerned-about-student)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/if-you-are-concerned-about-student)
+• [Student of Concern ](https://www.ucl.ac.uk/students/support-and-wellbeing/if-you-are-concerned-about-student)
 Depending on the concerns raised, Student Support and Wellbeing may respond by  offering support or advice to the student or the person who submitted the form, liaise with  support services or, if necessary, work with the relevant authorities to ensure the student  is safe.
 
 #################################################################
@@ -596,17 +596,17 @@ Depending on the concerns raised, Student Support and Wellbeing may respond by  
 15.2.1 Registering with a doctor
 Students are strongly encouraged to register with a doctor as soon as possible after they  arrive in London so that they can access healthcare quickly if they become ill or injured.  [When attending a university in the UK students under the age of 25 are also advised to ](http://www.gowerplacepractice.nhs.uk/) [be vaccinated against meningitis (ACWY). The Ridgmount Practice is a National Health ](http://www.gowerplacepractice.nhs.uk/) Service (NHS) practice providing healthcare for students living within its catchment area  (i.e. near the main UCL campus). Students can also choose to register with a practice  closer to where they live if they prefer. The Ridgmount Practice also runs a walk-in  surgery which any UCL student can attend, even if they are not registered with the  practice.
 Further information:
-• [Register with a doctor ](https://www.ucl.ac.uk/students/support-and-wellbeing/register-doctor)[  ](https://www.ucl.ac.uk/students/support-and-wellbeing/register-doctor)
-• [Ridgmount Practice](https://www.ridgmountpractice.nhs.uk/)[ ](https://www.ridgmountpractice.nhs.uk/)
+• [Register with a doctor   ](https://www.ucl.ac.uk/students/support-and-wellbeing/register-doctor)
+• [Ridgmount Practice ](https://www.ridgmountpractice.nhs.uk/)
 15.2.2 Counselling, support and information helpline
 As part of a partnership with an organisation external to UCL, we provide an information  and counselling helpline. The helpline is free of charge and includes access to  information specialists who are trained by Citizens Advice and to professionally qualified  and BACP-accredited counsellors who can help students with a range of emotional and  psychological difficulties.
 
 Further information:
-• [UCL 24/7 Student Support Line](https://www.ucl.ac.uk/students/support-and-wellbeing/mental-health-and-wellbeing/ucl-247-student-support-line)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/mental-health-and-wellbeing/ucl-247-student-support-line)
+• [UCL 24/7 Student Support Line ](https://www.ucl.ac.uk/students/support-and-wellbeing/mental-health-and-wellbeing/ucl-247-student-support-line)
 15.2.3 Crisis support - immediate and urgent help
-If anyone is in immediate danger, medical support can be received by:     •  Attending an Accident & Emergency (A&E) department of a local hospital. University  College Hospital is the nearest A&E department to UCL’s main campus (this A&E  department has a dedicated mental health unit)  • [University College Hospital](https://www.uclh.nhs.uk/)[ ](https://www.uclh.nhs.uk/)   •  Calling 999 to request an ambulance if you are unable to reach the hospital yourself    If a student is feeling distressed, urgent medical support can be obtained by:     •  Contacting the student’s GP surgery to request an emergency appointment    •  If the GP surgery isn't open, the free NHS out-of-hours medical line on 111 can help  students access the right services.    •  Calling the Samaritans on 116 123 to talk to someone at any time, day or night  • [Samaritans](http://www.samaritans.org/)[ ](http://www.samaritans.org/)   •  Nightline are available overnight and can help students across London, call them on  [+44 (0) 207 631 0101 ](http://nightline.org.uk/) • [Nightline](http://nightline.org.uk/)[ ](http://nightline.org.uk/)
+If anyone is in immediate danger, medical support can be received by:     •  Attending an Accident & Emergency (A&E) department of a local hospital. University  College Hospital is the nearest A&E department to UCL’s main campus (this A&E  department has a dedicated mental health unit)  • [University College Hospital ](https://www.uclh.nhs.uk/)   •  Calling 999 to request an ambulance if you are unable to reach the hospital yourself    If a student is feeling distressed, urgent medical support can be obtained by:     •  Contacting the student’s GP surgery to request an emergency appointment    •  If the GP surgery isn't open, the free NHS out-of-hours medical line on 111 can help  students access the right services.    •  Calling the Samaritans on 116 123 to talk to someone at any time, day or night  • [Samaritans ](http://www.samaritans.org/)   •  Nightline are available overnight and can help students across London, call them on  [+44 (0) 207 631 0101 ](http://nightline.org.uk/) • [Nightline ](http://nightline.org.uk/)
 Further information:
-• [Urgent and out of hours support](https://www.ucl.ac.uk/students/support-and-wellbeing/urgent-and-out-hours-support)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/urgent-and-out-hours-support)
+• [Urgent and out of hours support ](https://www.ucl.ac.uk/students/support-and-wellbeing/urgent-and-out-hours-support)
 
 #################################################################
 
@@ -614,19 +614,19 @@ Further information:
 15.3.1  Equality, Diversity and Inclusion
 The Equality, Diversity and Inclusion Team aims to acknowledge, understand, and tackle  structural inequities and unjust social power imbalances that affect our communities  across the institution. This means recognising how we got here and what needs to be  done to ensure equity, inclusion and belonging for those who are not systemically  privileged by our society. UCL is a place where people can be authentic and their unique  perspective, experiences and skills seen as a valuable asset to the institution.     The Equality, Diversity and Inclusion website brings together a range of information on  issues relating to race, gender, religion and belief, sexual orientation, gender identity,  and disability amongst other equalities initiatives at UCL.
 Further information:
-• [Equality, Diversity and Inclusion](https://www.ucl.ac.uk/equality-diversity-inclusion/)[ ](https://www.ucl.ac.uk/equality-diversity-inclusion/)
+• [Equality, Diversity and Inclusion ](https://www.ucl.ac.uk/equality-diversity-inclusion/)
 
 15.3.2 Inclusion Leads
 Inclusion Leads provide support and assistance for students and staff on issues relating  to equalities and diversity.
-[Simon Lock is currently the STS Inclusion Lead and can be contacted via email: ](mailto:simon.lock@ucl.ac.uk) [simon.lock@ucl.ac.uk](mailto:simon.lock@ucl.ac.uk)[. ](mailto:simon.lock@ucl.ac.uk)
+[Simon Lock is currently the STS Inclusion Lead and can be contacted via email: ](mailto:simon.lock@ucl.ac.uk) [simon.lock@ucl.ac.uk. ](mailto:simon.lock@ucl.ac.uk)
 Further information:
-• [Inclusion Leads](https://www.ucl.ac.uk/equality-diversity-inclusion/equalityucl/inclusion-leads-ucl)[ ](https://www.ucl.ac.uk/equality-diversity-inclusion/equalityucl/inclusion-leads-ucl)
-• [Inclusion Leads Contact List](https://www.ucl.ac.uk/equality-diversity-inclusion/equalityucl/inclusion-leads-ucl/inclusion-leads-contact-list)[ ](https://www.ucl.ac.uk/equality-diversity-inclusion/equalityucl/inclusion-leads-ucl/inclusion-leads-contact-list)
+• [Inclusion Leads ](https://www.ucl.ac.uk/equality-diversity-inclusion/equalityucl/inclusion-leads-ucl)
+• [Inclusion Leads Contact List ](https://www.ucl.ac.uk/equality-diversity-inclusion/equalityucl/inclusion-leads-ucl/inclusion-leads-contact-list)
 15.3.3 Useful Links
-• [Support for Pregnant Students](https://www.ucl.ac.uk/students/support-and-wellbeing/pregnant-students)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/pregnant-students)
-• [Support for Student Parents](https://www.ucl.ac.uk/students/support-and-wellbeing/information-specific-groups/student-parents)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/information-specific-groups/student-parents)
-• [Faith and belief](https://www.ucl.ac.uk/students/support-and-wellbeing/resources-and-information/information-and-support-specific-student-groups-3)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/resources-and-information/information-and-support-specific-student-groups-3)
-•[  ](https://www.ucl.ac.uk/students/support-and-wellbeing/information-specific-groups/lgbt-students)[LGBTQ+ Students](https://www.ucl.ac.uk/students/support-and-wellbeing/information-specific-groups/lgbt-students)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/information-specific-groups/lgbt-students)
+• [Support for Pregnant Students ](https://www.ucl.ac.uk/students/support-and-wellbeing/pregnant-students)
+• [Support for Student Parents ](https://www.ucl.ac.uk/students/support-and-wellbeing/information-specific-groups/student-parents)
+• [Faith and belief ](https://www.ucl.ac.uk/students/support-and-wellbeing/resources-and-information/information-and-support-specific-student-groups-3)
+•[  LGBTQ+ Students ](https://www.ucl.ac.uk/students/support-and-wellbeing/information-specific-groups/lgbt-students)
 
 #################################################################
 
@@ -643,22 +643,22 @@ comments, coercion and promised advancement in exchange for sexual access.     I
 option you can give as much or as little detail as you wish. The reports are strictly  confidential and only shared on a need to know basis.    Students can request to speak to all the following advisors:
 §  Dignity Advisor   §  Crime Prevention and Personal Safety Advisor   §  Human Resources Business Manager (if it’s about a member of staff)   §  Student Casework Team  §  Independent Sexual Violence Advisors  §  Student Support and Wellbeing
 Further information:
-• [Report and Support](https://report-support.ucl.ac.uk/)[  ](https://report-support.ucl.ac.uk/)
+• [Report and Support  ](https://report-support.ucl.ac.uk/)
 • [UCL Policies on Conduct and Harassment and Bullying ](https://www.ucl.ac.uk/students/policies/conduct/harassment-and-bullying-policy)
 • [Dignity at UCL ](https://www.ucl.ac.uk/equality-diversity-inclusion/dignity-ucl)
-• [Students’ Union UCL Advice Service](http://studentsunionucl.org/help-and-advice/advice-service)[  ](http://studentsunionucl.org/help-and-advice/advice-service)
-• [Active Bystander Programme](https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fstudentsunionucl.org%2Factivebystander&data=04%7C01%7C%7C30e87ffea682459eb1a008d934a9be00%7C1faf88fea9984c5b93c9210a11d9a5c2%7C0%7C0%7C637598725904166315%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&sdata=AqDUzh9CU9YmczKm3wIZlJlRfbi84xBAGmCCs5PCYbg%3D&reserved=0)[ ](https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fstudentsunionucl.org%2Factivebystander&data=04%7C01%7C%7C30e87ffea682459eb1a008d934a9be00%7C1faf88fea9984c5b93c9210a11d9a5c2%7C0%7C0%7C637598725904166315%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&sdata=AqDUzh9CU9YmczKm3wIZlJlRfbi84xBAGmCCs5PCYbg%3D&reserved=0)
+• [Students’ Union UCL Advice Service  ](http://studentsunionucl.org/help-and-advice/advice-service)
+• [Active Bystander Programme ](https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fstudentsunionucl.org%2Factivebystander&data=04%7C01%7C%7C30e87ffea682459eb1a008d934a9be00%7C1faf88fea9984c5b93c9210a11d9a5c2%7C0%7C0%7C637598725904166315%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&sdata=AqDUzh9CU9YmczKm3wIZlJlRfbi84xBAGmCCs5PCYbg%3D&reserved=0)
 15.4.2 Support for students who have been affected by sexual violence and/or domestic
 abuse
 UCL will do its utmost to support anyone who has been, or is being, affected by sexual  violence and/or domestic abuse. If a student would like to talk to somebody at UCL, the  Student Support and Wellbeing Team can offer advice on the support available both  internally and externally.
 Further information:
-• [Sexual Misconduct and Violence](https://www.ucl.ac.uk/students/support-and-wellbeing/sexual-misconduct-and-violence)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/sexual-misconduct-and-violence)
-[ ](https://report-support.ucl.ac.uk/support/support-for-students-affected-by-gendered-violence) • [Support for Students affected by Gendered Violence](https://report-support.ucl.ac.uk/support/support-for-students-affected-by-gendered-violence)[ ](https://report-support.ucl.ac.uk/support/support-for-students-affected-by-gendered-violence)
+• [Sexual Misconduct and Violence ](https://www.ucl.ac.uk/students/support-and-wellbeing/sexual-misconduct-and-violence)
+[ ](https://report-support.ucl.ac.uk/support/support-for-students-affected-by-gendered-violence) • [Support for Students affected by Gendered Violence ](https://report-support.ucl.ac.uk/support/support-for-students-affected-by-gendered-violence)
 
 #################################################################
 
 ## 16.1 Opportunities available, where and how to get advice, career planning tips
-[The STS Careers Lead is ](mailto:erman.sozudogru@ucl.ac.uk)[Erman Sözüdoğru ](mailto:erman.sozudogru@ucl.ac.uk)who coordinates departmental careers  activities for the department and can be contacted with careers enquiries. STS also has  careers officers for specific disciplines:    [Jenny Bulstrode](mailto:j.bulstrode@ucl.ac.uk)[ – HPS/STS ](mailto:j.bulstrode@ucl.ac.uk) [Simon Lock](mailto:simon.lock@ucl.ac.uk)[ – Science Communication ](mailto:simon.lock@ucl.ac.uk) [Melanie Smallman](mailto:m.smallman@ucl.ac.uk)[ – Science Policy ](mailto:m.smallman@ucl.ac.uk)
+[The STS Careers Lead is Erman Sözüdoğru ](mailto:erman.sozudogru@ucl.ac.uk)who coordinates departmental careers  activities for the department and can be contacted with careers enquiries. STS also has  careers officers for specific disciplines:    [Jenny Bulstrode – HPS/STS ](mailto:j.bulstrode@ucl.ac.uk) [Simon Lock – Science Communication ](mailto:simon.lock@ucl.ac.uk) [Melanie Smallman – Science Policy ](mailto:m.smallman@ucl.ac.uk)
 
 #################################################################
 
@@ -668,9 +668,9 @@ UCL Careers provides a wide variety of careers information, one-to-one guidance 
 UCL Careers also supports employability activities within departments such as work- related learning and internships.
 UCL students are helped with applications and sourcing opportunities with web  resources and advice.  They can book appointments and search for internship and  graduate job vacancies via myUCLCareers.
 Further information:
-•[  ](http://www.ucl.ac.uk/careers)[UCL Careers ](http://www.ucl.ac.uk/careers)[  ](http://www.ucl.ac.uk/careers)
-•[  ](https://uclcareers.targetconnect.net/home.html)[myUCLCareers ](https://uclcareers.targetconnect.net/home.html)[  ](https://uclcareers.targetconnect.net/home.html)
-• [Sourcing and making the most of internships](https://www.ucl.ac.uk/careers/opportunities/jobs/internships-and-placements)[  ](https://www.ucl.ac.uk/careers/opportunities/jobs/internships-and-placements)
+•[  UCL Careers   ](http://www.ucl.ac.uk/careers)
+•[  myUCLCareers   ](https://uclcareers.targetconnect.net/home.html)
+• [Sourcing and making the most of internships  ](https://www.ucl.ac.uk/careers/opportunities/jobs/internships-and-placements)
 
 #################################################################
 
@@ -682,7 +682,7 @@ Many internships are available for STS students. Some are offered by STS; others
 ## 16.4 Entrepreneurship at UCL
 UCL has a long and successful track record of supporting spin-outs and start-ups  developed by its academic and student communities. Many of the student and staff  entrepreneurs have won external awards and achieved substantial investment allowing  their enterprises to grow and reach their full potential. UCL offers a wide range of support  to students ranging from training programmes, advice on whether an idea has  commercial potential, one-to-one sessions with business advisers, funding, competitions  and incubator space to help them start or grow their business.
 Further information:
-•[  ](https://www.ucl.ac.uk/enterprise/)[UCL Innovation and Enterprise](https://www.ucl.ac.uk/enterprise/)[ ](https://www.ucl.ac.uk/enterprise/)
+•[  UCL Innovation and Enterprise ](https://www.ucl.ac.uk/enterprise/)
 
 #################################################################
 
@@ -690,8 +690,8 @@ Further information:
 Students’ Union UCL
 Students’ Union UCL helps you to do more at UCL, experience something you’ve always  dreamt of, turn a curiosity into a new passion and help you reach your potential. The  Union cares about the things you care about, it’s made up of all kinds of people from all  kinds of places and it’s there to fight for you when you need someone in your corner.     The Students’ Union is the representative body of all UCL students. It’s run by students  for students and is a registered charity, independent of UCL. All UCL students at every  level of study are automatically members of the Students’ Union (but can opt out), and  student leaders are elected annually by and from all current students. The elected  student leaders who work full time for you are called Sabbatical Officers and they  represent students on various UCL committees and influence decisions that matter to  students. Alongside the Sabbatical Officers there are more than 2000 other student  representatives, who cover every part of UCL life, from your programme, research  studies, department, and faculty.
 Further information:
-• [Students’ Union UCL website](http://studentsunionucl.org/)[ ](http://studentsunionucl.org/)
-• [Make a Change](https://studentsunionucl.org/make-change)[ ](https://studentsunionucl.org/make-change)
+• [Students’ Union UCL website ](http://studentsunionucl.org/)
+• [Make a Change ](https://studentsunionucl.org/make-change)
 
 #################################################################
 
@@ -699,8 +699,8 @@ Further information:
 Student Clubs and Societies
 At Students’ Union UCL, there are over 400 different student-led clubs and societies for  you to get involved in. Maybe you are interested in sports with our TeamUCL clubs or low  commitment exercise with our Project Active scheme? Perhaps you are keen to perform  on-stage in the Bloomsbury Theatre or you want to learn about and celebrate different  cultures? With such a diverse offering available there is bound to be something that  sparks your interest! Clubs and societies are a great way to develop your skills and find a  community at UCL. The Welcome Fair in early October is the perfect chance to meet  them all in one place and learn more about what they have on offer!
 Further information:
-• [Students’ Union UCL Clubs and Societies](http://studentsunionucl.org/content/clubs-and-societies)[ ](http://studentsunionucl.org/content/clubs-and-societies)
-• [Club and Society Events](http://studentsunionucl.org/whats-on)[ ](http://studentsunionucl.org/whats-on)
+• [Students’ Union UCL Clubs and Societies ](http://studentsunionucl.org/content/clubs-and-societies)
+• [Club and Society Events ](http://studentsunionucl.org/whats-on)
 
 #################################################################
 
@@ -711,8 +711,8 @@ Your Students’ Union is there to make sure you have the best possible time whi
 Every student at UCL will have a Course Representative or a Research Student  Representative who will be your eyes, ears, and voice. They’ll work closely with staff in  your department to make sure that they understand what you most value, and take action  to deal with things you’d like to see improve. They’ll also work with your Lead  Department Representative as well as your Faculty Representatives and the Students’  Union to make things better across the whole of UCL.
 These Academic Representatives are appointed during early October – if you’d like to  take up the role, staff in your department can tell you how. If you take up a representative  role, the Students’ Union will work closely with you to provide training, support, and  advice, and you’ll be able to change the experience of everyone on your course or in  your department for the better.     Even if you don’t fancy taking up a role yourself, keep an eye out for your chance to vote  for which students you feel will do the best job.
 Further information:
-• [Academic Representatives](https://studentsunionucl.org/academic-reps)[ ](https://studentsunionucl.org/academic-reps)
-• [Find your representative](https://studentsunionucl.org/academic-representatives)[ ](https://studentsunionucl.org/academic-representatives)
+• [Academic Representatives ](https://studentsunionucl.org/academic-reps)
+• [Find your representative ](https://studentsunionucl.org/academic-representatives)
 
 #################################################################
 
@@ -736,7 +736,7 @@ management and hardship funds
 The service is free, independent, impartial and confidential. No information shared with  the service is shared with your department or any other university staff unless you  request it or give your permission.  Students can complete the online contact form  for  advice and support.
 Further information:
 •[ Students’ Union UCL Advice Service ](https://studentsunionucl.org/advice-and-support)
-• [Advice Service Contact Form](https://studentsunionucl.org/forms/advice-service-contact-form)[ ](https://studentsunionucl.org/forms/advice-service-contact-form)
+• [Advice Service Contact Form ](https://studentsunionucl.org/forms/advice-service-contact-form)
 
 #################################################################
 
@@ -748,9 +748,9 @@ Many complaints can be resolved at an informal or local level without needing to
 17.7.3 Formal complaints
 If an issue cannot be resolved at a local level, students may feel they need to submit a  formal complaint using UCL’s Student Complaints Procedure. UCL aims to ensure that  all complaints are treated fairly, impartially, effectively and in a timely manner, without  fear of victimisation. The Complaints Procedure applies across all Schools, Faculties,  Academic Departments and Professional Service Divisions. Students’ attention should be  drawn to the timescales set out in the Procedure.
 Further information:
-• [Academic Manual Chapter 6, Section 8: UCL Student Complaints Procedure](https://www.ucl.ac.uk/academic-manual/chapters/chapter-6-student-casework-framework/section-8-ucl-student-complaints-procedure)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-6-student-casework-framework/section-8-ucl-student-complaints-procedure)
-• [Academic Manual Chapter 6, Section 7: UCL Academic Appeals Procedure](https://www.ucl.ac.uk/academic-manual/chapters/chapter-6-student-casework-framework/section-7-academic-appeals-procedure)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-6-student-casework-framework/section-7-academic-appeals-procedure)
-• [Students’ Union UCL Advice Service](https://studentsunionucl.org/advice-and-support)[  ](https://studentsunionucl.org/advice-and-support)
+• [Academic Manual Chapter 6, Section 8: UCL Student Complaints Procedure ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-6-student-casework-framework/section-8-ucl-student-complaints-procedure)
+• [Academic Manual Chapter 6, Section 7: UCL Academic Appeals Procedure ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-6-student-casework-framework/section-7-academic-appeals-procedure)
+• [Students’ Union UCL Advice Service  ](https://studentsunionucl.org/advice-and-support)
 
 #################################################################
 
@@ -763,7 +763,7 @@ Our goal is to put students’ feedback, insights and contributions at the heart
 Student Surveys
 One of the principal ways in which UCL gathers and responds to student feedback is via  online student experience surveys such as the National Student Survey, annual  programme evaluations and the New to UCL survey. Whether it’s about teaching,  accommodation, or facilities, surveys are a chance for students to have their say about  what works and what needs improving, to help us make sure that UCL is delivering an  excellent education for current and future students. Each survey takes just a few minutes  to complete, all responses are anonymous, and some include a generous prize draw.  Every piece of feedback is read and the results of each survey are shared with staff  across UCL – including President & Provost Dr Michael Spence.
 Further information:
-• [You Shape UCL](https://www.ucl.ac.uk/you-shape-ucl/)[  ](https://www.ucl.ac.uk/you-shape-ucl/)
+• [You Shape UCL  ](https://www.ucl.ac.uk/you-shape-ucl/)
 
 #################################################################
 
@@ -782,7 +782,7 @@ student survey data, discussed at Student Partnership Committees, raised  throug
 through the payment of a stipend.   • There are two application deadlines a year, in terms 1 and 2.
 Projects are open to all students: undergraduate, postgraduate taught and postgraduate  research (MRes).
 Further information:
-•[  ](https://www.ucl.ac.uk/changemakers/)[UCL ChangeMakers](https://www.ucl.ac.uk/changemakers/)[  ](https://www.ucl.ac.uk/changemakers/)
+•[  UCL ChangeMakers  ](https://www.ucl.ac.uk/changemakers/)
 
 #################################################################
 
@@ -793,23 +793,23 @@ assessments through the Programme or Assessment Design Student Partner  roles;  
 Dialogue scheme;   • Provide a student view on how teaching can include more diverse perspectives as
 a Student Curriculum Partner;  • Students are paid a stipend of £300 for around 25 hours work.
 Further information:
-• [Student Quality Reviewers](https://www.ucl.ac.uk/you-shape-ucl/student-quality-reviewers)[ ](https://www.ucl.ac.uk/you-shape-ucl/student-quality-reviewers)
+• [Student Quality Reviewers ](https://www.ucl.ac.uk/you-shape-ucl/student-quality-reviewers)
 
 #################################################################
 
 # 19 Sport and Physical Activity
 19.1.1 TeamUCL
 With 75 Sports Clubs and our very own TeamUCL Sports Leagues, we operate one of the  largest university sport programmes in the UK. There are opportunities to learn sports as a  beginner, compete for TeamUCL at a national level in British Universities and Colleges  Sport (BUCS), or join a department or society team to play against other UCL students in  the TeamUCL leagues:
-• [Welcome to TeamUCL](https://studentsunionucl.org/sport-fitness/teamucl)[ ](https://studentsunionucl.org/sport-fitness/teamucl)
+• [Welcome to TeamUCL ](https://studentsunionucl.org/sport-fitness/teamucl)
 UCL has a commitment to support dual-career athletes throughout their studies. If you are a  national or international level athlete, find out more about the TeamUCL Elite Athlete  Support Programme:
-• [TeamUCL Elite Athlete Support Programme](https://studentsunionucl.org/elite-athlete-support-programme)[ ](https://studentsunionucl.org/elite-athlete-support-programme)
-[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework/section-8-academic-flexibility-elite-athletes) • [Academic Manual Chapter 2, Section 8: Academic Flexibility for Elite Athletes](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework/section-8-academic-flexibility-elite-athletes)[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework/section-8-academic-flexibility-elite-athletes)
+• [TeamUCL Elite Athlete Support Programme ](https://studentsunionucl.org/elite-athlete-support-programme)
+[ ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework/section-8-academic-flexibility-elite-athletes) • [Academic Manual Chapter 2, Section 8: Academic Flexibility for Elite Athletes ](https://www.ucl.ac.uk/academic-manual/chapters/chapter-2-student-support-framework/section-8-academic-flexibility-elite-athletes)
 19.1.2 Project Active
 Project Active offers low cost, beginner friendly physical activity for all UCL staff and  students including weekly classes, social sport and one off events:
-• [Project Active](https://studentsunionucl.org/project-active)[ ](https://studentsunionucl.org/project-active)
+• [Project Active ](https://studentsunionucl.org/project-active)
 19.1.3 Bloomsbury Fitness
 Bloomsbury Fitness is a gym that gives back. As part of your Students' Union, we offer a  quality service while keeping prices low and channelling profits back into student activities.  Our campus gym is located at 15 Gordon Street, WC1H 0AH:
-• [Bloomsbury Fitness](https://studentsunionucl.org/bloomsbury-fitness)[  ](https://studentsunionucl.org/bloomsbury-fitness)
+• [Bloomsbury Fitness  ](https://studentsunionucl.org/bloomsbury-fitness)
 
 #################################################################
 
@@ -817,8 +817,8 @@ Bloomsbury Fitness is a gym that gives back. As part of your Students' Union, we
 20.1.1 Volunteering Services
 The Volunteering Service at Students’ Union UCL exists to connect UCL students with  London’s Voluntary and Community Sector, primarily through volunteering. It’s one of the  largest volunteering teams in UK Higher Education, meaning that UCL students have  access to opportunities that their peers in other universities often do not.
 The Service runs three main programmes:  Partnerships - linking students with volunteering opportunities within their network of  around 350 community partners.  Student-led Projects - supporting students to set up and run their own community  projects.  Community Research Initiative - connecting master’s students with community  organisations for collaborative research and Knowledge Exchange projects that form  their dissertations.
-Through community volunteering, students develop new skills and learn how to enact  change in the wider world. UCL Student volunteers also report positive benefits on their  academic study and well-being.    [The Volunteering Service’s opportunities can be found on its ](https://studentsunionucl.org/volunteering/directory)[online directory,](https://studentsunionucl.org/volunteering/directory)[ where ](https://studentsunionucl.org/volunteering/directory) students can search for roles related to their academic studies, by skills developed or by  cause. There are plenty of one-off and flexible vacancies that students can fit around  their studies and other commitments.    Further Information
-• [Volunteering Services](https://studentsunionucl.org/volunteering)[ ](https://studentsunionucl.org/volunteering)
+Through community volunteering, students develop new skills and learn how to enact  change in the wider world. UCL Student volunteers also report positive benefits on their  academic study and well-being.    [The Volunteering Service’s opportunities can be found on its online directory, where ](https://studentsunionucl.org/volunteering/directory) students can search for roles related to their academic studies, by skills developed or by  cause. There are plenty of one-off and flexible vacancies that students can fit around  their studies and other commitments.    Further Information
+• [Volunteering Services ](https://studentsunionucl.org/volunteering)
 
 #################################################################
 
@@ -826,13 +826,13 @@ Through community volunteering, students develop new skills and learn how to ena
 How UCL uses student information
 UCL uses student information for a range of purposes, including the provision of teaching  and learning, managing accommodation and ensuring health and safety. Further  information about how UCL uses student information can be found in the UCL General  Student Privacy Notice.
 Further information:
-• [UCL General Student Privacy Notice](https://www.ucl.ac.uk/legal-services/privacy/student-privacy-notice)[ ](https://www.ucl.ac.uk/legal-services/privacy/student-privacy-notice)
-• [UCL Information Security Policies](https://www.ucl.ac.uk/informationsecurity/policy)[ ](https://www.ucl.ac.uk/informationsecurity/policy)
+• [UCL General Student Privacy Notice ](https://www.ucl.ac.uk/legal-services/privacy/student-privacy-notice)
+• [UCL Information Security Policies ](https://www.ucl.ac.uk/informationsecurity/policy)
 • [UCL Electronic (email) policy ](https://www.ucl.ac.uk/information-security/sites/information-security/files/email.pdf)
 [ ](https://www.ucl.ac.uk/data-protection/) • [Data Protection ](https://www.ucl.ac.uk/data-protection/)
 • [Understanding your Intellectual Property (IP) Rights ](https://www.ucl.ac.uk/enterprise/students/understand-your-intellectual-property-ip-rights#:~:text=Generally%2C%20as%20a%20student%2C%20you,funded%20by%20an%20external%20organisation.)
 • [Report a Breach of Personal Data ](https://www.ucl.ac.uk/data-protection/guidance-staff-students-and-researchers/practical-data-protection-guidance-notices/report-breach#reporting)
-Students may send queries on data protection matters to the University Data Protection  [Officer: ](mailto:data-protection@ucl.ac.uk)[data-protection@ucl.ac.uk](mailto:data-protection@ucl.ac.uk)[ ](mailto:data-protection@ucl.ac.uk)
+Students may send queries on data protection matters to the University Data Protection  [Officer: data-protection@ucl.ac.uk ](mailto:data-protection@ucl.ac.uk)
 
 #################################################################
 
@@ -848,10 +848,10 @@ Further information:
 • [Emergency Contacts ](https://www.ucl.ac.uk/students/support-and-wellbeing/staying-safe/emergency-contacts)
 • [Staying Safe ](https://www.ucl.ac.uk/students/new-students/countdown-ucl/staying-safe)
 • [Safety Services ](https://www.ucl.ac.uk/safety-services/)
-• [Fire Safety at UCL](https://www.ucl.ac.uk/safety-services/fire)[ ](https://www.ucl.ac.uk/safety-services/fire)
-• [Security at UCL ](https://www.ucl.ac.uk/estates/our-services/security-ucl)[ ](https://www.ucl.ac.uk/estates/our-services/security-ucl)
-• [Safety on and off Campus](https://www.ucl.ac.uk/students/support-and-wellbeing/personal-safety/safety-and-campus)[ ](https://www.ucl.ac.uk/students/support-and-wellbeing/personal-safety/safety-and-campus)
-• [SafeZone App](https://www.ucl.ac.uk/news/2022/aug/contact-ucls-security-team-direct-your-phone-safezone-app)[ ](https://www.ucl.ac.uk/news/2022/aug/contact-ucls-security-team-direct-your-phone-safezone-app)
+• [Fire Safety at UCL ](https://www.ucl.ac.uk/safety-services/fire)
+• [Security at UCL  ](https://www.ucl.ac.uk/estates/our-services/security-ucl)
+• [Safety on and off Campus ](https://www.ucl.ac.uk/students/support-and-wellbeing/personal-safety/safety-and-campus)
+• [SafeZone App ](https://www.ucl.ac.uk/news/2022/aug/contact-ucls-security-team-direct-your-phone-safezone-app)
 
 #################################################################
 
@@ -864,7 +864,7 @@ Further information:
 A copy of your official transcript, detailing examinations taken and results achieved, is  issued automatically to all graduating students and sent to their home addresses as held  on Portico within 3 months from the date the award is conferred by UCL authorities.
 Affiliate students:  Transcripts for affiliate students are issued automatically upon the students’ completion  of their study at UCL and are dispatched as follows:   §  Junior Year Abroad (JYA), Exchange and Erasmus Students – transcripts are issued  to the students’ home universities.  §  Independent affiliate students – transcripts are posted to the students’ contact  addresses.    UCL Student Records can produce additional transcripts for students on taught  programmes as well as for affiliate students via the UCL Transcript Shop.
 Further information:
-• [Transcripts](https://www.ucl.ac.uk/students/exams-and-assessments/certificates-results/transcripts)[ ](https://www.ucl.ac.uk/students/exams-and-assessments/certificates-results/transcripts)
+• [Transcripts ](https://www.ucl.ac.uk/students/exams-and-assessments/certificates-results/transcripts)
 
 #################################################################
 
@@ -872,7 +872,7 @@ Further information:
 Higher Education Achievement Report (HEAR)
 The Higher Education Achievement Report (HEAR) is an electronic transcript of a  student’s verified academic results and approved non-academic achievements whilst at  UCL. Students who commenced their studies in or after September 2011 will have a  HEAR made available to them online, via our HEAR provider, Gradintel, each summer -  new students will be invited to register for this facility during their first year of study and  throughout their students. Students can share their HEAR, free of charge, as a secure  electronic token with third parties via their registered Gradintel account.
 Further information:
-• [Higher Education Achievement Report](https://www.ucl.ac.uk/students/certificates-results/higher-education-achievement-report-hear)[ ](https://www.ucl.ac.uk/students/certificates-results/higher-education-achievement-report-hear)
+• [Higher Education Achievement Report ](https://www.ucl.ac.uk/students/certificates-results/higher-education-achievement-report-hear)
 
 #################################################################
 
@@ -880,7 +880,7 @@ Further information:
 Following successful completion of their studies, graduation ceremonies are held to  celebrate students’ achievements:
 
 Further information:
-• [Graduation Ceremonies](http://www.ucl.ac.uk/graduation)[ ](http://www.ucl.ac.uk/graduation)
+• [Graduation Ceremonies ](http://www.ucl.ac.uk/graduation)
 
 #################################################################
 
@@ -888,7 +888,7 @@ Further information:
 UCL Alumni Community
 As UCL alumni, you join a global community of over 350,000 former students. All UCL  alumni can take advantage of a huge range of exclusive benefits and support, including  access to thousands of e-journals, use of the library, a UCL-branded email for life and  UCL Careers services for up to three years. Stay connected through reunions,  international networks, and interest-based groups. UCL students and alumni can also  take advantage of UCL’s lifelong learning opportunities through UCL Connect, our  professional development programme of panel events, workshops, and resources such  as blogs, case studies and podcasts.
 Further information:
-• [UCL Alumni](https://www.ucl.ac.uk/alumni/)[ ](https://www.ucl.ac.uk/alumni/)
+• [UCL Alumni ](https://www.ucl.ac.uk/alumni/)
 
 #################################################################
 

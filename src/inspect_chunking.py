@@ -58,18 +58,32 @@ def reconstruct_document_from_pdf(pdf_path: str) -> str:
             if b['type'] == 0:  # It's a text block
                 block_markdown = ""
                 for l in b["lines"]:
-                    line_text = ""
+                    # Step 1: Pre-process all spans in a line to find their associated links
+                    processed_spans = []
                     for s in l["spans"]:
                         span_rect = fitz.Rect(s['bbox'])
                         link_uri = next((uri for r, uri in links.items() if r.intersects(span_rect)), None)
+                        processed_spans.append({'text': s['text'], 'uri': link_uri})
 
-                        text = s['text']
-                        if link_uri:
-                            # Merge with subsequent spans if they share the same link
-                            # This is a simplified merge, more complex logic could be added
-                            line_text += f"[{text}]({link_uri})"
+                    # Step 2: Group consecutive spans with the same link URI to form a single link
+                    line_text = ""
+                    i = 0
+                    while i < len(processed_spans):
+                        span = processed_spans[i]
+                        if span['uri']:
+                            # This is a link. Group all subsequent spans that share this URI.
+                            link_text = span['text']
+                            j = i + 1
+                            while j < len(processed_spans) and processed_spans[j]['uri'] == span['uri']:
+                                link_text += processed_spans[j]['text']
+                                j += 1
+
+                            line_text += f"[{link_text}]({span['uri']})"
+                            i = j # Move pointer past the processed spans
                         else:
-                            line_text += text
+                            # Not a link, just append the text
+                            line_text += span['text']
+                            i += 1
 
                     # Determine heading level based on font size
                     span_size = round(l["spans"][0]["size"])
