@@ -63,6 +63,18 @@ The answer you generate MUST:
 - **If the context contains a relevant URL, you must include the full URL in the answer.**
 
 Do not invent any information. The question should be natural-sounding, but the answer must be grounded truth from the text.
+
+**Critique and Refine Step:**
+1. First, generate a draft question based on the persona and context.
+2. Then, critique your own question. Does it sound like a real student? Is it too generic? Is it just rephrasing a heading?
+3. Refine the question to make it more specific, persona-driven, and natural.
+
+**Examples of BAD questions to AVOID:**
+- "What does the section on Personal study time say?"
+- "How are students assessed?"
+- "What is the information about word counts?"
+
+Your final output should only be the refined question and the answer.
 """
 
 
@@ -100,7 +112,8 @@ def chunk_markdown_documents(docs: List[Document]) -> List[Document]:
     for doc in split_docs:
         header_content = " ".join(doc.metadata.values())
         doc.page_content = f"{header_content}\\n\\n{doc.page_content}".strip()
-        doc.metadata = source_metadata
+        # Preserve header metadata and add the source
+        doc.metadata.update(source_metadata)
 
     print(f"Successfully created {len(split_docs)} semantic chunks from Markdown.")
     return split_docs
@@ -181,23 +194,23 @@ def main():
     personas = [
         Persona(
             name="Stressed Fresher",
-            role_description="I'm a first-year, totally overwhelmed and feeling lost. I think I've missed a deadline for choosing my modules, and I can't find my timetable. I'm scared I'll get in trouble for my attendance. I need to ask urgent, slightly panicked questions about who to talk to for administrative help and how to fix my registration before it's too late. My questions might be simple, like 'Who can I talk to about...' or 'What happens if I missed...'.",
+            role_description="I'm a first-year, totally overwhelmed and feeling lost. I think I've missed a deadline for choosing my modules, and I can't find my timetable. I'm scared I'll get in trouble for my attendance. My questions are urgent and slightly panicked. For example: 'I think I messed up my module choices, who do I talk to RIGHT NOW?' or 'What's the bare minimum attendance I need so I don't get kicked out?'",
         ),
         Persona(
             name="Anxious International Student",
-            role_description="I'm an international student and I'm very worried about my visa and settling in. What are the rules about working part-time? What happens if my attendance drops? I also urgently need to know practical things, like how to set up a UK bank account or register with a doctor (GP). My questions are driven by anxiety about staying compliant and navigating a new country. They might sound like 'I'm worried about my visa, what are the attendance rules?' or 'How do I even start to see a doctor here?'",
+            role_description="I'm an international student and very worried about my visa and settling in. I need to know the rules for working part-time and what happens if my attendance drops. I also have practical questions about setting up a bank account or seeing a doctor. My questions are driven by anxiety about compliance. For example: 'I'm terrified of doing something wrong with my visa, what are the rules on attendance?' or 'How do I even start to see a doctor here?'",
         ),
         Persona(
             name="Ambitious Masters Student",
-            role_description="I'm a postgraduate student focused on my dissertation and future career. I need to find the exact submission deadlines and the official process for requesting an extension. I'm also concerned about academic misconduct rules, research ethics, and finding funding for a PhD. My questions are precise and goal-oriented, like 'What's the formal procedure for getting an extension on my dissertation?' or 'I'm planning research with human participants, what ethics approval do I need?'",
+            role_description="I'm a postgraduate focused on my dissertation and future career. I need specifics on submission deadlines, extension request procedures, academic misconduct rules, and research ethics. My questions are precise and goal-oriented. For example: 'What is the formal procedure for getting an extension on my dissertation?' or 'I'm planning research with human participants, what specific ethics approval process must I follow?'",
         ),
         Persona(
             name="Financially Concerned Student",
-            role_description="I'm struggling to manage my finances and I'm worried about making ends meet. I need to know if there's any financial support, bursaries, or loans I can apply for. I'm also looking for tips on budgeting and managing my money in London. My questions are practical and driven by financial stress, like 'Are there any hardship funds for students?' or 'Who can I talk to about financial problems?'"
+            role_description="I'm struggling with money and worried about making ends meet. I need to know about financial support, bursaries, or loans. I'm also looking for tips on budgeting. My questions are practical and driven by financial stress. For example: 'My loan hasn't come in and I can't pay my rent, is there any emergency financial help?' or 'Who can I talk to about my money problems without being judged?'"
         ),
         Persona(
             name="Student Needing Support",
-            role_description="I'm dealing with a long-term health condition that affects my studies, and I'm not sure what support is available. I need to ask about reasonable adjustments, like getting extra time in exams or flexible deadlines. I'm also interested in mental health support and counseling services. My questions are about accessibility and wellbeing, such as 'How can I get exam adjustments for my disability?' or 'What kind of mental health support does UCL offer?'"
+            role_description="I have a long-term health condition that affects my studies. I need to ask about reasonable adjustments like extra time in exams or flexible deadlines. I'm also interested in mental health support. My questions are about accessibility and wellbeing. For example: 'How do I arrange for extra time in my exams because of my disability?' or 'I'm really struggling with my mental health, what kind of counseling does UCL offer?'"
         ),
     ]
 
