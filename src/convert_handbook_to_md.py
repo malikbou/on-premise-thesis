@@ -194,17 +194,96 @@ def reconstruct_pdf_to_markdown(pdf_path: str, ocr: bool = False, verbose: bool 
 
     doc.close()
 
-    # Remove headers/footers repeating on > 60% of pages
+    # ------------------------------------------------------------------
+    # Post-processing: remove recurring headers/footers and noisy blocks
+    # ------------------------------------------------------------------
+
     pages = len(header_candidates)
     common_headers = {h for h, c in header_candidates.items() if c > pages * 0.6 and h}
     common_footers = {f for f, c in footer_candidates.items() if c > pages * 0.6 and f}
-    cleaned_lines = [ln for ln in all_lines if ln.strip() not in common_headers | common_footers]
+
+    def remove_noise(lines: List[str]) -> List[str]:
+        """Strip headers/footers, page markers, duplicate ToC blocks, dup lines."""
+        cleaned: List[str] = []
+        in_toc = False
+        for ln in lines:
+            stripped = ln.strip()
+
+            # Skip common header/footer lines
+            if stripped in common_headers or stripped in common_footers:
+                continue
+
+            # Drop page markers like "Page" or "Page"
+            if re.match(r'^.*?Page\s*$', stripped) and len(stripped) <= 10:
+                continue
+
+            # Detect start of repeating Table-of-Contents blocks
+            if re.match(r'^###\s+Section\s+\d+', stripped):
+                in_toc = True
+                continue
+
+            # Exit ToC block when we hit a top-level heading
+            if in_toc and stripped.startswith('#'):
+                in_toc = False  # fall through to normal processing
+
+            if in_toc:
+                continue  # skip ToC lines
+
+            # Deduplicate consecutive identical lines
+            if cleaned and stripped == cleaned[-1].strip():
+                continue
+
+            cleaned.append(ln)
+        return cleaned
+
+    cleaned_lines = remove_noise(all_lines)
+
+    # ------------------------------------------------------------
+    # Soft-wrap paragraphs: merge consecutive text lines to make
+    # the Markdown easier to read and produce more coherent
+    # embedding input. Lists, headings and blank lines are kept
+    # verbatim.
+    # ------------------------------------------------------------
+
+    def unwrap_paragraphs(lines: List[str]) -> List[str]:
+        out: List[str] = []
+        buf: List[str] = []
+
+        def flush():
+            if buf:
+                out.append(" ".join(s.strip() for s in buf))
+                buf.clear()
+
+        for ln in lines:
+            stripped = ln.rstrip("\n")
+
+            if not stripped:  # blank line
+                flush()
+                out.append("")
+                continue
+
+            if stripped.startswith("#") or BULLET_REGEX.match(stripped) or NUMBERED_REGEX.match(stripped):
+                flush()
+                out.append(stripped)
+                continue
+
+            # Accumulate into paragraph buffer
+            buf.append(stripped)
+
+            # Optional heuristic: flush after sentence-ending punctuation
+            if stripped.endswith((".", "?", "!")):
+                flush()
+
+        flush()
+        return out
+
+    cleaned_lines = unwrap_paragraphs(cleaned_lines)
 
     md_text = "\n".join(cleaned_lines)
     # Collapse repeated blank lines
     md_text = re.sub(r"\n{3,}", "\n\n", md_text)
 
-    # Remove standalone Table of Contents section
+    # Legacy safeguard: remove a single large TOC headed "Contents" if present
     toc_match = re.search(r"^#*\s*Contents.*?$", md_text, flags=re.MULTILINE | re.IGNORECASE)
     if toc_match:
         start = toc_match.start()
