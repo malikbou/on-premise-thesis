@@ -123,10 +123,13 @@ def cleanup_markdown_output(lines: List[str]) -> str:
     # Join all lines into a single string for regex-based cleanup
     full_text = "\n".join(lines)
 
+    # Add a hard newline after any line that is a heading. This prevents
+    # the paragraph-joining logic from incorrectly concatenating it.
+    full_text = re.sub(r'(^#+.*$)', r'\1\n', full_text, flags=re.MULTILINE)
+
     # 1. Join lines that are part of the same paragraph.
     # This joins any line with the next one, unless the next line is a heading,
     # a list item, a table skipper, or already has a blank line before it.
-    # This fixes text that is incorrectly split across lines.
     full_text = re.sub(r'([^\n])\n(?!#|\n|\[SKIPPING|\*|\s*-)', r'\1 ', full_text)
 
     # 2. Clean up weird spacing that can result from joining, like around links.
