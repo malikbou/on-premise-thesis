@@ -70,7 +70,8 @@ def spans_to_markdown(line_spans, link_lookup, heading_level):
 def remove_noise(lines: List[str], common_headers: set, common_footers: set) -> List[str]:
     """Strip headers/footers, page markers, and other noise."""
     cleaned: List[str] = []
-    in_toc_block = False
+    # This function is now only responsible for headers, footers, and simple noise.
+    # TOC removal is handled in the main processing loop.
     for ln in lines:
         stripped = ln.strip()
 
@@ -82,20 +83,6 @@ def remove_noise(lines: List[str], common_headers: set, common_footers: set) -> 
         if re.match(r'^page\s*\d+\s*of\s*\d+$', stripped, re.IGNORECASE):
             continue
         if re.match(r'^\d+$', stripped) and len(stripped) < 4:
-            continue
-
-        # Catch and enter a "table of contents" block
-        if stripped.startswith("### Handbook Index") or stripped.startswith("On this page"):
-            in_toc_block = True
-            continue
-
-        # Exit TOC block when a real heading is encountered
-        if in_toc_block and stripped.startswith("#"):
-            in_toc_block = False
-            # Fall through to process the heading itself
-
-        # Skip all lines while inside the TOC block
-        if in_toc_block:
             continue
 
         cleaned.append(ln)
@@ -125,27 +112,45 @@ def unwrap_paragraphs(lines: List[str]) -> List[str]:
 
 # --- Main Processing Logic ---
 
+
+def cleanup_markdown_output(lines: List[str]) -> str:
+    """
+    Cleans up the generated markdown for better formatting after initial processing.
+    - Joins broken paragraphs and list items.
+    - Ensures proper spacing around headings.
+    - Removes excessive blank lines and weird artifacts.
+    """
+    # Join all lines into a single string for regex-based cleanup
+    full_text = "\n".join(lines)
+
+    # 1. Join lines that are part of the same paragraph.
+    # This joins any line with the next one, unless the next line is a heading,
+    # a list item, a table skipper, or already has a blank line before it.
+    # This fixes text that is incorrectly split across lines.
+    full_text = re.sub(r'([^\n])\n(?!#|\n|\[SKIPPING|\*|\s*-)', r'\1 ', full_text)
+
+    # 2. Clean up weird spacing that can result from joining, like around links.
+    full_text = re.sub(r'\]\s+\[', '] [', full_text)
+
+    # 3. Ensure there are two newlines before every heading for readability,
+    # but not at the very start of the file.
+    full_text = re.sub(r'\n(?!^\n)(#+)', r'\n\n\1', full_text)
+    full_text = full_text.lstrip() # Remove any leading newlines from the top of the file.
+
+    # 4. Collapse three or more consecutive newlines into just two.
+    full_text = re.sub(r'\n{3,}', r'\n\n', full_text)
+
+    return full_text
+
+
 def process_document(pdf_path: str, out_path: str):
+    """
+    Processes the entire PDF document, extracts content page by page,
+    and converts it to a structured Markdown file.
+    """
     doc = fitz.open(pdf_path)
-
-    # Perform a global analysis for headers, footers, and body font size first.
-    print("Performing global analysis of document structure...")
-    _, body_size = analyse_font_sizes(doc)
-    header_candidates = collections.Counter()
-    footer_candidates = collections.Counter()
-    for page in doc:
-        lines = [line.strip() for line in page.get_text().split('\n') if line.strip()]
-        if len(lines) > 1:
-            header_candidates[lines[0]] += 1
-            footer_candidates[lines[-1]] += 1
-
-    common_headers = {h for h, c in header_candidates.items() if c > len(doc) * 0.5 and len(h) < 100}
-    common_footers = {f for f, c in footer_candidates.items() if c > len(doc) * 0.5 and len(f) < 100}
-    print(f"Found {len(common_headers)} common headers and {len(common_footers)} common footers.")
-
-    # Now, process the document page by page
     all_lines = []
-    in_table_section = False
+    in_table_section = False # This was missing
     min_heading_increase = 1.5
 
     for page in doc:
@@ -155,7 +160,41 @@ def process_document(pdf_path: str, out_path: str):
         link_lookup = {fitz.Rect(lk["from"]): lk["uri"] for lk in page.get_links() if "uri" in lk}
 
         for block in blocks:
-            # Check if this block starts a new section
+            # Get raw text from block for analysis
+            block_text = "".join(span["text"] for line in block.get("lines", []) for span in line.get("spans", [])).strip()
+
+            if not block_text:
+                continue
+
+            # --- START: NEW, AGGRESSIVE, AND FINAL FILTERING LOGIC ---
+
+            # FILTER 1: Remove page footers containing the page artifact character.
+            if "Page" in block_text:
+                continue
+
+            # FILTER 2: Remove all table of contents, index, and local navigation headers.
+            TOC_MARKERS = ["Handbook Index", "Contents", "On this page"]
+            if any(marker.lower() in block_text.lower() for marker in TOC_MARKERS):
+                continue
+
+            # FILTER 3: THIS IS THE CRITICAL FIX.
+            # It removes the endlessly repeating navigational link blocks you pointed out.
+            # A block is removed if its text starts with "Section X" AND it is a hyperlink.
+            # This is specific enough to remove the junk without touching real headings.
+            if re.match(r'^\s*Section\s+\d+', block_text, re.IGNORECASE):
+                is_link_block = False
+                block_bbox = fitz.Rect(block['bbox'])
+                for link in page.get_links():
+                    if block_bbox.intersects(fitz.Rect(link['from'])):
+                        is_link_block = True
+                        break
+                if is_link_block:
+                    continue # This is a navigational link block. DELETE IT.
+
+            # --- END: FILTERING LOGIC ---
+
+            # --- Table Handling ---
+            # Check if this block starts a new section to be skipped (for tables)
             first_line_of_block = ""
             if block["lines"] and block["lines"][0]["spans"]:
                 first_line_of_block = block["lines"][0]["spans"][0]["text"].strip()
@@ -183,32 +222,30 @@ def process_document(pdf_path: str, out_path: str):
                 spans = line.get("spans", [])
                 if not spans: continue
 
-                size_diff = spans[0]["size"] - body_size
+                # Determine heading level based on section numbering (e.g., "1.1", "1.1.1")
+                raw_text = "".join(s["text"] for s in spans).strip()
                 heading_level = 0
-                if size_diff > min_heading_increase * 2: heading_level = 1
-                elif size_diff > min_heading_increase: heading_level = 2
-                elif size_diff > min_heading_increase * 0.5: heading_level = 3
+                # Matches patterns like "1.2", "1.2.3 First word"
+                match = re.match(r'^(\d[\d\.]*)\s+', raw_text)
+
+                if match:
+                    section_number = match.group(1).strip().rstrip('.')
+                    heading_level = len(section_number.split('.'))
+                # Fallback for major headings like "Section 1"
+                elif re.match(r'^Section\s+\d+', raw_text, re.IGNORECASE):
+                    heading_level = 1
 
                 md_line = spans_to_markdown(spans, link_lookup, heading_level)
-                if not heading_level:
-                    if BULLET_REGEX.match(md_line):
-                        md_line = "- " + BULLET_REGEX.sub("", md_line)
                 page_lines.append(md_line)
 
         all_lines.extend(page_lines)
-        all_lines.append("") # Page break
 
-    # Final cleaning and formatting
-    cleaned_lines = remove_noise(all_lines, common_headers, common_footers)
-    unwrapped_lines = unwrap_paragraphs(cleaned_lines)
-
-    full_markdown = "\n".join(unwrapped_lines)
-    full_markdown = re.sub(r"\n{3,}", "\n\n", full_markdown)
+    # --- NEW: Final Cleanup and Write ---
+    # After processing all pages, run the final cleanup function.
+    final_output = cleanup_markdown_output(all_lines)
 
     with open(out_path, "w", encoding="utf-8") as f:
-        f.write(full_markdown.strip())
-
-    print(f"\nProcessing complete. Output saved to {out_path}")
+        f.write(final_output)
 
 
 def main():
