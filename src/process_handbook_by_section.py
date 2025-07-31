@@ -70,19 +70,33 @@ def spans_to_markdown(line_spans, link_lookup, heading_level):
 def remove_noise(lines: List[str], common_headers: set, common_footers: set) -> List[str]:
     """Strip headers/footers, page markers, and other noise."""
     cleaned: List[str] = []
+    in_toc_block = False
     for ln in lines:
         stripped = ln.strip()
+
+        # Skip common header/footer lines from global analysis
         if stripped in common_headers or stripped in common_footers:
             continue
+
+        # Skip page number lines like "Page 7 of 95" or just "7"
         if re.match(r'^page\s*\d+\s*of\s*\d+$', stripped, re.IGNORECASE):
             continue
-        # Skip lines that are just a page number
-        if re.match(r'^\d+$', stripped):
-            page_num_match = True
-            # Basic check to avoid removing legitimate numbered lines
-            if len(stripped) > 3: page_num_match = False
-            if cleaned and cleaned[-1].strip().endswith(":"): page_num_match = False
-            if page_num_match: continue
+        if re.match(r'^\d+$', stripped) and len(stripped) < 4:
+            continue
+
+        # Catch and enter a "table of contents" block
+        if stripped.startswith("### Handbook Index") or stripped.startswith("On this page"):
+            in_toc_block = True
+            continue
+
+        # Exit TOC block when a real heading is encountered
+        if in_toc_block and stripped.startswith("#"):
+            in_toc_block = False
+            # Fall through to process the heading itself
+
+        # Skip all lines while inside the TOC block
+        if in_toc_block:
+            continue
 
         cleaned.append(ln)
     return cleaned
