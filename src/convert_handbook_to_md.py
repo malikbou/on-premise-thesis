@@ -125,6 +125,41 @@ def spans_to_markdown(line_spans, link_lookup, heading_level):
     return line_text.strip()
 
 
+def text_to_markdown_table(block_text: str) -> str:
+    """If text looks like a table, format it as a GFM table."""
+    lines = block_text.strip().split("\n")
+    if len(lines) < 2:
+        return block_text
+
+    # Heuristic: find number of "columns" by counting whitespace-separated tokens
+    # in each line. If the counts are consistent, it's likely a table.
+    col_counts = [len(re.split(r'\s{2,}', ln.strip())) for ln in lines]
+    mode_cols = max(set(col_counts), key=col_counts.count)
+
+    if mode_cols <= 1 or col_counts.count(mode_cols) < len(lines) * 0.7:
+        return block_text  # Not a table
+
+    # It's a table - format it!
+    md_table = []
+    header = lines[0].strip()
+    # Split header on multiple spaces to get column titles
+    header_cols = [h.strip() for h in re.split(r'\s{2,}', header)]
+
+    # Ensure header has the mode number of columns, pad if not.
+    while len(header_cols) < mode_cols:
+        header_cols.append("")
+    md_table.append("| " + " | ".join(header_cols) + " |")
+    md_table.append("|" + "---|" * len(header_cols))
+
+    for line in lines[1:]:
+        cols = [c.strip() for c in re.split(r'\s{2,}', line.strip())]
+        while len(cols) < mode_cols:
+            cols.append("")
+        md_table.append("| " + " | ".join(cols) + " |")
+
+    return "\n".join(md_table)
+
+
 def process_page(page: fitz.Page, body_size: float, min_heading_increase: float, ocr: bool, verbose: bool):
     """Return markdown lines for a page."""
     if verbose:
@@ -147,29 +182,57 @@ def process_page(page: fitz.Page, body_size: float, min_heading_increase: float,
     link_lookup = {fitz.Rect(lk["from"]): lk["uri"] for lk in page.get_links() if "uri" in lk}
 
     for block in blocks:
+        block_text = ""
+        is_heading_block = False
+        heading_level = 0
+
+        # First, determine if the block is a heading and extract all its text
         for line in block["lines"]:
             spans = line["spans"]
             if not spans:
                 continue
+
             first_span = spans[0]
             size_diff = first_span["size"] - body_size
-            heading_level = 0
-            if size_diff > min_heading_increase * 2:  # big title
+            if size_diff > min_heading_increase * 2:
+                is_heading_block = True
                 heading_level = 1
             elif size_diff > min_heading_increase:
+                is_heading_block = True
                 heading_level = 2
             elif size_diff > min_heading_increase * 0.5:
+                is_heading_block = True
                 heading_level = 3
 
-            md_line = spans_to_markdown(spans, link_lookup, heading_level)
-            # Preserve lists
-            if not heading_level:
-                if BULLET_REGEX.match(md_line):
-                    md_line = "- " + BULLET_REGEX.sub("", md_line)
-                elif NUMBERED_REGEX.match(md_line):
-                    # Keep original numbering for ordered lists
-                    pass
-            markdown_lines.append(md_line)
+            block_text += spans_to_markdown(spans, link_lookup, 0) + "\n"
+
+        block_text = block_text.strip()
+        if not block_text:
+            continue
+
+        # Now process the block
+        if is_heading_block:
+            # It's a heading, so just format the first line as such
+            lines = block_text.split('\n')
+            first_line = f"{'#' * heading_level} {lines[0]}"
+            markdown_lines.append(first_line)
+            markdown_lines.extend(lines[1:])
+        else:
+            # Not a heading block. Could be a table or just paragraph text.
+            table_md = text_to_markdown_table(block_text)
+            if table_md != block_text:
+                markdown_lines.append(table_md)
+            else:
+                # It's not a table, so process as regular lines.
+                for line in block["lines"]:
+                    spans = line["spans"]
+                    if not spans:
+                        continue
+                    md_line = spans_to_markdown(spans, link_lookup, 0)
+                    if BULLET_REGEX.match(md_line):
+                        md_line = "- " + BULLET_REGEX.sub("", md_line)
+                    markdown_lines.append(md_line)
+
     return markdown_lines
 
 
@@ -205,7 +268,7 @@ def reconstruct_pdf_to_markdown(pdf_path: str, ocr: bool = False, verbose: bool 
     def remove_noise(lines: List[str]) -> List[str]:
         """Strip headers/footers, page markers, duplicate ToC blocks, dup lines."""
         cleaned: List[str] = []
-        in_toc = False
+        in_toc_block = False
         for ln in lines:
             stripped = ln.strip()
 
@@ -217,20 +280,30 @@ def reconstruct_pdf_to_markdown(pdf_path: str, ocr: bool = False, verbose: bool 
             if re.match(r'^.*?Page\s*$', stripped) and len(stripped) <= 10:
                 continue
 
-            # Detect start of repeating Table-of-Contents blocks
-            if re.match(r'^###\s+Section\s+\d+', stripped):
-                in_toc = True
+            # New, more robust TOC/navigational block removal.
+            # Catches "### Handbook Index" and "Contents" pages.
+            if stripped.startswith("### Handbook Index") or re.match(r"^#*\s*Contents\s*$", stripped, re.IGNORECASE):
+                in_toc_block = True
                 continue
 
-            # Exit ToC block when we hit a top-level heading
-            if in_toc and stripped.startswith('#'):
-                in_toc = False  # fall through to normal processing
+            # Catches inline "On this page" sections.
+            if stripped.startswith("On this page"):
+                continue
 
-            if in_toc:
-                continue  # skip ToC lines
+            # Exit TOC block when we hit a major heading, which signals new content.
+            if in_toc_block and stripped.startswith("#"):
+                in_toc_block = False
+                # Fall through to process the heading itself
 
-            # Deduplicate consecutive identical lines
-            if cleaned and stripped == cleaned[-1].strip():
+            if in_toc_block:
+                continue
+
+            # Index-block removal heuristic from user prompt
+            if stripped.count("[Section") >= 2 and len(stripped) > 200:
+                continue
+
+            # Deduplicate consecutive identical lines, but allow empty lines to repeat
+            if cleaned and stripped and stripped == cleaned[-1].strip():
                 continue
 
             cleaned.append(ln)
