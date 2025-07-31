@@ -119,10 +119,104 @@ def spans_to_markdown(line_spans, link_lookup, heading_level):
         else:
             line_text += cur_text
         i = j
+
+    # New step: remove common PDF icon/symbol artifacts
+    line_text = re.sub(r'[\uf0b7\uf076\uf0e0\uf0a7\uf075\uf071\uf0b2\uf07d\uf07e]', '', line_text)
+
+
     # Add heading hashes if needed
     if heading_level:
         line_text = f"{'#' * heading_level} {line_text.strip()}"
     return line_text.strip()
+
+
+def find_potential_tables(blocks: List[Dict], y_tolerance=5, x_tolerance=10) -> List[List[List[Dict]]]:
+    """Identify groups of blocks that form tables based on alignment."""
+    rows = find_table_rows(blocks, y_tolerance)
+    if not rows:
+        return []
+
+    tables = []
+    visited_blocks = set()
+
+    for i, row in enumerate(rows):
+        # Skip if the first block of the row has been processed
+        if not row or id(row[0]) in visited_blocks:
+            continue
+
+        # A potential table starts with a row of multiple columns
+        if len(row) > 1:
+            current_table = [row]
+            for block in row:
+                visited_blocks.add(id(block))
+
+            # Find subsequent rows that align with the current table's columns
+            num_cols = len(row)
+            for next_row in rows[i+1:]:
+                if len(next_row) == num_cols:
+                    # Check for horizontal alignment of columns
+                    aligned = True
+                    for col_idx in range(num_cols):
+                        col_x = row[col_idx]['bbox'][0]
+                        next_row_col_x = next_row[col_idx]['bbox'][0]
+                        if abs(col_x - next_row_col_x) > x_tolerance:
+                            aligned = False
+                            break
+                    if aligned:
+                        current_table.append(next_row)
+                        for block in next_row:
+                            visited_blocks.add(id(block))
+                    else:
+                        break # Row doesn't align, so table ends
+                else:
+                    break # Different number of columns, table ends
+
+            tables.append(current_table)
+
+    return tables
+
+
+def table_to_markdown(table: List[List[Dict]]) -> str:
+    """Converts a table (list of rows of blocks) to a Markdown table string."""
+    md_rows = []
+    # Header
+    header_cells = [blocks_to_text([cell]) for cell in table[0]]
+    md_rows.append("| " + " | ".join(header_cells) + " |")
+    md_rows.append("|" + "---|" * len(header_cells))
+    # Body
+    for row in table[1:]:
+        row_cells = [blocks_to_text([cell]) for cell in row]
+        md_rows.append("| " + " | ".join(row_cells) + " |")
+    return "\n".join(md_rows)
+
+
+def find_table_rows(blocks: List[Dict], y_tolerance=5) -> List[List[Dict]]:
+    """Group blocks into rows based on vertical alignment."""
+    if not blocks:
+        return []
+    rows = []
+    # Sort blocks by their top y-coordinate
+    sorted_blocks = sorted(blocks, key=lambda b: b['bbox'][1])
+    current_row = [sorted_blocks[0]]
+    for block in sorted_blocks[1:]:
+        # If the current block's top is close to the previous one's, it's in the same row
+        if abs(block['bbox'][1] - current_row[-1]['bbox'][1]) < y_tolerance:
+            current_row.append(block)
+        else:
+            rows.append(sorted(current_row, key=lambda b: b['bbox'][0]))
+            current_row = [block]
+    rows.append(sorted(current_row, key=lambda b: b['bbox'][0]))
+    return rows
+
+
+def blocks_to_text(blocks: List[Dict]) -> str:
+    """Extract and join text from a list of blocks."""
+    text = ""
+    for b in blocks:
+        for l in b['lines']:
+            for s in l['spans']:
+                text += s['text'] + " "
+    return text.strip()
 
 
 def text_to_markdown_table(block_text: str) -> str:
@@ -171,17 +265,34 @@ def process_page(page: fitz.Page, body_size: float, min_heading_increase: float,
 
     two_col = detect_two_column(page)
     blocks = [b for b in blocks_dict["blocks"] if b["type"] == 0]
-    # Sort reading order: y, then x for single column; y, then column buckets for 2-col
+
+    # New sorting logic for two-column layouts
     if two_col:
         mid_x = page.rect.width * 0.5
-        blocks.sort(key=lambda b: (b["bbox"][1], 0 if b["bbox"][0] < mid_x else 1, b["bbox"][0]))
+        left_col = sorted([b for b in blocks if b["bbox"][0] < mid_x], key=lambda b: (b["bbox"][1], b["bbox"][0]))
+        right_col = sorted([b for b in blocks if b["bbox"][0] >= mid_x], key=lambda b: (b["bbox"][1], b["bbox"][0]))
+        blocks = left_col + right_col  # Process left column fully, then right
     else:
         blocks.sort(key=lambda b: (b["bbox"][1], b["bbox"][0]))
+
 
     markdown_lines: List[str] = []
     link_lookup = {fitz.Rect(lk["from"]): lk["uri"] for lk in page.get_links() if "uri" in lk}
 
+    # New coordinate-based table detection
+    potential_tables = find_potential_tables(blocks)
+    table_blocks_processed = set()
+    for table in potential_tables:
+        table_md = table_to_markdown(table)
+        markdown_lines.append(table_md)
+        for row in table:
+            for cell in row:
+                table_blocks_processed.add(id(cell))
+
     for block in blocks:
+        if id(block) in table_blocks_processed:
+            continue
+
         block_text = ""
         is_heading_block = False
         heading_level = 0
@@ -234,6 +345,39 @@ def process_page(page: fitz.Page, body_size: float, min_heading_increase: float,
                     markdown_lines.append(md_line)
 
     return markdown_lines
+
+
+def unwrap_paragraphs(lines: List[str]) -> List[str]:
+    out: List[str] = []
+    buf: List[str] = []
+
+    def flush():
+        if buf:
+            out.append(" ".join(s.strip() for s in buf))
+            buf.clear()
+
+    for ln in lines:
+        stripped = ln.rstrip("\n")
+
+        if not stripped:  # blank line
+            flush()
+            out.append("")
+            continue
+
+        if stripped.startswith("#") or BULLET_REGEX.match(stripped) or NUMBERED_REGEX.match(stripped):
+            flush()
+            out.append(stripped)
+            continue
+
+        # Accumulate into paragraph buffer
+        buf.append(stripped)
+
+        # Optional heuristic: flush after sentence-ending punctuation
+        if stripped.endswith((".", "?", "!")):
+            flush()
+
+    flush()
+    return out
 
 
 def reconstruct_pdf_to_markdown(pdf_path: str, ocr: bool = False, verbose: bool = False) -> str:
@@ -317,38 +461,6 @@ def reconstruct_pdf_to_markdown(pdf_path: str, ocr: bool = False, verbose: bool 
     # embedding input. Lists, headings and blank lines are kept
     # verbatim.
     # ------------------------------------------------------------
-
-    def unwrap_paragraphs(lines: List[str]) -> List[str]:
-        out: List[str] = []
-        buf: List[str] = []
-
-        def flush():
-            if buf:
-                out.append(" ".join(s.strip() for s in buf))
-                buf.clear()
-
-        for ln in lines:
-            stripped = ln.rstrip("\n")
-
-            if not stripped:  # blank line
-                flush()
-                out.append("")
-                continue
-
-            if stripped.startswith("#") or BULLET_REGEX.match(stripped) or NUMBERED_REGEX.match(stripped):
-                flush()
-                out.append(stripped)
-                continue
-
-            # Accumulate into paragraph buffer
-            buf.append(stripped)
-
-            # Optional heuristic: flush after sentence-ending punctuation
-            if stripped.endswith((".", "?", "!")):
-                flush()
-
-        flush()
-        return out
 
     cleaned_lines = unwrap_paragraphs(cleaned_lines)
 
