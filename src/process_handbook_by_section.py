@@ -115,32 +115,49 @@ def unwrap_paragraphs(lines: List[str]) -> List[str]:
 
 def cleanup_markdown_output(lines: List[str]) -> str:
     """
-    Cleans up the generated markdown for better formatting after initial processing.
-    - Joins broken paragraphs and list items.
-    - Ensures proper spacing around headings.
-    - Removes excessive blank lines and weird artifacts.
+    Final cleanup of the markdown output.
     """
-    # Join all lines into a single string for regex-based cleanup
-    full_text = "\n".join(lines)
+    # 1. Remove most common headers/footers
+    common_headers = {"Quick Links", "Key contacts", "Student representation"}
+    common_footers = {"Additional Resources", "Further information:"}
+    clean_lines = remove_noise(lines, common_headers, common_footers)
 
-    # Add a hard newline after any line that is a heading. This prevents
-    # the paragraph-joining logic from incorrectly concatenating it.
-    full_text = re.sub(r'(^#+.*$)', r'\1\n', full_text, flags=re.MULTILINE)
+    # 2. Unwrap paragraphs
+    unwrapped_lines = unwrap_paragraphs(clean_lines)
 
-    # 1. Join lines that are part of the same paragraph.
-    # This joins any line with the next one, unless the next line is a heading,
-    # a list item, a table skipper, or already has a blank line before it.
-    full_text = re.sub(r'([^\n])\n(?!#|\n|\[SKIPPING|\*|\s*-)', r'\1 ', full_text)
+    # 3. **NEW: Remove initial TOC section**
+    # Find where real content begins and strip everything before it
+    content_start_idx = 0
+    for i, line in enumerate(unwrapped_lines):
+        # Look for the first substantial paragraph that indicates real content
+        # More specific detection - look for actual paragraph content, not just descriptions
+        if (len(line) > 150 and
+            any(phrase in line.lower() for phrase in [
+                'dear students', 'warm welcome to', 'computer science was established',
+                'provides you with key information', 'is intended to provide you'
+            ]) and
+            not line.startswith('#') and  # Don't match headings
+            not line.startswith('[')      # Don't match link-heavy content
+        ):
+            # Found real content - look backwards for the section heading
+            for j in range(i-1, max(0, i-15), -1):
+                if unwrapped_lines[j].startswith('#'):
+                    content_start_idx = j
+                    break
+            break
 
-    # 2. Clean up weird spacing that can result from joining, like around links.
-    full_text = re.sub(r'\]\s+\[', '] [', full_text)
+    # Remove everything before the real content starts
+    if content_start_idx > 0:
+        unwrapped_lines = unwrapped_lines[content_start_idx:]
 
-    # 3. Ensure there are two newlines before every heading for readability,
-    # but not at the very start of the file.
+    # 4. Join all lines into a single string
+    full_text = '\n'.join(unwrapped_lines)
+
+    # 5. Ensure proper spacing around headings
     full_text = re.sub(r'\n(?!^\n)(#+)', r'\n\n\1', full_text)
     full_text = full_text.lstrip() # Remove any leading newlines from the top of the file.
 
-    # 4. Collapse three or more consecutive newlines into just two.
+    # 6. Collapse three or more consecutive newlines into just two.
     full_text = re.sub(r'\n{3,}', r'\n\n', full_text)
 
     return full_text
@@ -153,8 +170,9 @@ def process_document(pdf_path: str, out_path: str):
     """
     doc = fitz.open(pdf_path)
     all_lines = []
-    in_table_section = False # This was missing
+    in_table_section = False
     min_heading_increase = 1.5
+    found_first_real_content = False  # Track when we've moved past initial TOC
 
     for page in doc:
         page_lines = []
@@ -169,21 +187,72 @@ def process_document(pdf_path: str, out_path: str):
             if not block_text:
                 continue
 
-            # --- START: NEW, AGGRESSIVE, AND FINAL FILTERING LOGIC ---
+            # --- START: ENHANCED FILTERING LOGIC ---
 
             # FILTER 1: Remove page footers containing the page artifact character.
-            if "Page" in block_text:
+            if "Page" in block_text:
                 continue
 
-            # FILTER 2: Remove all table of contents, index, and local navigation headers.
-            TOC_MARKERS = ["Handbook Index", "Contents", "On this page"]
+            # FILTER 2: Enhanced TOC and navigation filtering
+
+            # Basic TOC markers
+            TOC_MARKERS = ["Handbook Index", "Contents"]
             if any(marker.lower() in block_text.lower() for marker in TOC_MARKERS):
                 continue
 
-            # FILTER 3: THIS IS THE CRITICAL FIX.
-            # It removes the endlessly repeating navigational link blocks you pointed out.
+            # Enhanced "On this page" filtering - catch the content that follows
+            if "On this page" in block_text:
+                # Count section references in the block (e.g., "1.1", "2.3", etc.)
+                section_refs = re.findall(r'\b\d+\.\d+\b', block_text)
+                # If it contains multiple section references, it's likely a TOC
+                if len(section_refs) >= 2:
+                    continue
+                # Also skip if it literally starts with "On this page"
+                if re.match(r'^\s*On this page\b', block_text, re.IGNORECASE):
+                    continue
+
+            # FILTER 3: Initial document TOC detection
+            # Skip blocks that look like the jumbled TOC at the document start
+            if not found_first_real_content:
+                # Count how many section references this block contains
+                section_refs = re.findall(r'\b\d+\.\d+\b', block_text)
+                link_heavy = len(section_refs) > 1
+
+                # Skip if it's link-heavy navigation content
+                if link_heavy:
+                    continue
+
+                # More aggressive detection of real content
+                # Look for blocks that start with actual sentences (not just section titles/links)
+                word_count = len(block_text.split())
+                section_density = len(section_refs) / max(word_count, 1)
+
+                # Check if this looks like real paragraph content
+                # Real content should have longer sentences and proper punctuation
+                sentences = re.split(r'[.!?]+', block_text)
+                avg_sentence_length = sum(len(s.split()) for s in sentences) / max(len(sentences), 1)
+
+                # Skip blocks that are mostly section titles, links, or short phrases
+                is_section_title_block = (
+                    re.match(r'^#+\s*[\d\.\s]*[A-Z]', block_text) or  # Starts with heading markup
+                    re.match(r'^[\d\.]+\s+[A-Z]', block_text) or      # Starts with section number
+                    block_text.startswith('[') or                     # Starts with link
+                    word_count < 15 or                                # Very short
+                    section_density > 0.15                            # High section reference density
+                )
+
+                if is_section_title_block:
+                    continue
+
+                # If we find a substantial paragraph (>30 words, avg sentence >8 words), it's real content
+                if word_count > 30 and avg_sentence_length > 8:
+                    found_first_real_content = True
+                # Also detect welcome messages or substantial content blocks
+                elif any(phrase in block_text.lower() for phrase in ['dear students', 'welcome to', 'provides information']):
+                    found_first_real_content = True
+
+            # FILTER 4: Remove repetitive section link blocks
             # A block is removed if its text starts with "Section X" AND it is a hyperlink.
-            # This is specific enough to remove the junk without touching real headings.
             if re.match(r'^\s*Section\s+\d+', block_text, re.IGNORECASE):
                 is_link_block = False
                 block_bbox = fitz.Rect(block['bbox'])
@@ -194,7 +263,15 @@ def process_document(pdf_path: str, out_path: str):
                 if is_link_block:
                     continue # This is a navigational link block. DELETE IT.
 
-            # --- END: FILTERING LOGIC ---
+            # FILTER 5: Skip blocks that are primarily section number lists
+            # (catches remaining TOC-style content)
+            if found_first_real_content:  # Only apply this after we've found real content
+                section_refs = re.findall(r'\b\d+\.\d+\b', block_text)
+                words = block_text.split()
+                if len(section_refs) >= 3 and len(words) < 50:  # Lots of section refs, not much other text
+                    continue
+
+            # --- END: ENHANCED FILTERING LOGIC ---
 
             # --- Table Handling ---
             # Check if this block starts a new section to be skipped (for tables)
