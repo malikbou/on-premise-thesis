@@ -85,10 +85,11 @@ def preprocess_markdown(content: str) -> str:
     question generation, such as table-of-contents-style placeholders.
     """
     lines = content.split('\\n')
-    # Filter out lines that match the patterns to be removed
+    # Filter out lines that match the patterns to be removed.
+    # The regex needs to escape the square brackets.
     filtered_lines = [
         line for line in lines
-        if not re.match(r'^\\s*\\[SKIPPING TABLE SECTION:.*\\]\\s*$', line)
+        if not re.match(r'^\s*\[SKIPPING TABLE SECTION:.*\]\s*$', line.strip())
     ]
     return '\\n'.join(filtered_lines)
 
@@ -141,18 +142,41 @@ def chunk_markdown_documents(docs: List[Document]) -> List[Document]:
     return split_docs
 
 
-def filter_chunks(docs: List[Document], min_length: int = 50) -> List[Document]:
-    """Filters out documents that are too short or lack meaningful content."""
+def filter_chunks(docs: List[Document], min_length: int = 250) -> List[Document]:
+    """
+    Filters out documents that are too short or lack meaningful, answerable content.
+    """
     original_count = len(docs)
     filtered_docs = []
+    summary_phrases = [
+        "information on",
+        "an overview of",
+        "this section sets out",
+        "an explanation of",
+        "a summary of",
+    ]
+
     for doc in docs:
-        if len(doc.page_content) < min_length:
-            continue  # Skip docs that are too short
-        if not re.search(r'[a-zA-Z]', doc.page_content):
-            continue  # Skip docs that contain no alphabetic characters
-        # Skip chunks that are just lists of programmes or staff
-        if "Programme Name:" in doc.page_content or "Role Day of the" in doc.page_content:
+        content = doc.page_content.lower() # Check against lowercased content
+        if len(content) < min_length:
             continue
+
+        if not re.search(r'[a-zA-Z]', content):
+            continue
+
+        if "programme name:" in content or "role day of the" in content:
+            continue
+
+        sentences = re.split(r'[.!?]+', content)
+        if len(sentences) < 3:
+            continue
+
+        # Check for summary phrases in the first few sentences
+        # to filter out introductory/summary chunks.
+        first_few_sentences = " ".join(sentences[:2])
+        if any(phrase in first_few_sentences for phrase in summary_phrases):
+            continue
+
         filtered_docs.append(doc)
 
     print(f"Filtered out {original_count - len(filtered_docs)} low-quality chunks.")
