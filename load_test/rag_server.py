@@ -34,6 +34,9 @@ from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaEmbeddings, ChatOllama
 from langchain.chains import RetrievalQA
 
+# Ollama connection (container -> host)
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+
 # ---------------------------------------------------
 # Configuration helpers
 # ---------------------------------------------------
@@ -95,14 +98,14 @@ def _load_retriever():
             f"FAISS index not found at {index_file}. Build embeddings first."
         )
 
-    embeddings = OllamaEmbeddings(model=DEFAULT_EMBEDDING_MODEL)
+    embeddings = OllamaEmbeddings(model=DEFAULT_EMBEDDING_MODEL, base_url=OLLAMA_BASE_URL)
     vector_store = FAISS.load_local(index_dir, embeddings, allow_dangerous_deserialization=True)
     return vector_store.as_retriever(search_kwargs={"k": CHUNK_TOP_K})
 
 
 @lru_cache(maxsize=1)
 def _load_chat_model():
-    return ChatOllama(model=DEFAULT_CHAT_MODEL, temperature=0.1, timeout=120)
+    return ChatOllama(model=DEFAULT_CHAT_MODEL, base_url=OLLAMA_BASE_URL, temperature=0.1, timeout=120)
 
 
 # ---------------------------------------------------

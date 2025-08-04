@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  rag:
+    build:
+      context: ..  # project root
+      dockerfile: load_test/Dockerfile
+      platforms: ["linux/arm64"]
+    container_name: rag_server
+    environment:
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-all-minilm}
+      - CHAT_MODEL=${CHAT_MODEL:-mistral:7b}
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    ports:
+      - "8000:8000"
+    volumes:
+      - ..:/app:ro  # mount code read-only to speed up rebuilds
+
+  locust:
+    image: locustio/locust:2.19.1
+    platform: linux/arm64
+    container_name: locust
+    volumes:
+      - ..:/mnt/locust
+    working_dir: /mnt/locust
+    command: >-
+      -f load_test/locustfile.py --host http://rag:8000 --users 5 --spawn-rate 1 --headless
+    depends_on:
+      - rag
+    ports:
+      - "8089:8089"
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    platform: linux/arm64
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:11.0.0
+    platform: linux/arm64
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "4000:3000"  # host:container – use 4000 locally to avoid collision with OpenWebUI
+    depends_on:
+      - prometheus

@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'rag_server'
+    static_configs:
+      - targets: ['rag:8000']
+        labels:
+          service: rag
+
+  - job_name: 'locust'
+    metrics_path: /stats/requests
+    static_configs:
+      - targets: ['locust:8089']
+        labels:
+          service: locust
