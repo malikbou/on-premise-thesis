@@ -1,0 +1,23 @@
+# This file is an add-on for the main docker-compose.yml.
+# It should ONLY be used in a production environment with an NVIDIA GPU.
+#
+# How to use:
+# docker-compose -f docker-compose.yml -f docker-compose.vm.yml up -d
+
+version: '3.9'
+
+services:
+  ollama:
+    image: ollama/ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    container_name: ollama

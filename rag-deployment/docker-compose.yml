@@ -1,12 +1,4 @@
 services:
-  ollama:
-    image: ollama/ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    container_name: ollama
-
   litellm:
     image: ghcr.io/berriai/litellm:main-stable
     ports:
@@ -14,8 +6,8 @@ services:
     volumes:
       - ./config.yaml:/app/config.yaml:ro
     command: ["--config", "/app/config.yaml"]
-    depends_on:
-      - ollama
+    env_file:
+      - .env
     container_name: litellm
 
   rag-api:
@@ -24,10 +16,12 @@ services:
       - "8000:8000"
     volumes:
       - ./src:/app/src
-      - rag_cache:/app/.rag_cache:ro # Mount as read-only
+      - rag_cache:/app/.rag_cache:ro
     depends_on:
       - litellm
     container_name: rag-api
+    env_file:
+      - .env
 
   index-builder:
     build: .
@@ -35,9 +29,8 @@ services:
     volumes:
       - ./data:/app/data:ro
       - rag_cache:/app/.rag_cache
-    depends_on:
-      - ollama
+    env_file:
+      - .env
 
 volumes:
-  ollama_data:
   rag_cache:
