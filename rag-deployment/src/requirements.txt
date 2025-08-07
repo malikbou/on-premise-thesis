@@ -15,6 +15,8 @@ faiss-cpu # Using cpu version as retrieval is fast anyway
 # Document Loading
 pypdf
 unstructured
+markdown
+
 
 # LLM Gateway
 litellm
