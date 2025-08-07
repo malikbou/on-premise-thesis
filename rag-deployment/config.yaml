@@ -1,9 +1,5 @@
-# This configuration tells LiteLLM how to route model requests.
-# For now, it's configured to forward requests for "ollama" models
-# to our local ollama service.
-
 model_list:
   - model_name: ollama
     litellm_params:
-      model: ollama/mistral # This is just a default, we can request any ollama model
+      model: ollama/mistral
       api_base: http://ollama:11434
