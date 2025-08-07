@@ -2,4 +2,4 @@ model_list:
   - model_name: ollama
     litellm_params:
       model: ollama/phi3:mini
-      api_base: http://ollama:11434
+      api_base: os.environ/OLLAMA_BASE_URL
