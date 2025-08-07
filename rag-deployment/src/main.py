@@ -2,21 +2,25 @@ import os
 from contextlib import asynccontextmanager
 from typing import List
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
 # LangChain components for RAG
-from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import OllamaEmbeddings
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain_community.chat_models.litellm import ChatLiteLLM
 
 
 # Load environment variables from a .env file
 load_dotenv()
+
+# --- Configuration ---
+INDEX_DIR = ".rag_cache/faiss_index"
+EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
+
 
 # --- Data Models for API ---
 
@@ -40,9 +44,6 @@ class QueryResponse(BaseModel):
 
 
 # --- Global Variables ---
-
-# This dictionary will hold our "heavy" resources, like the vector store.
-# We use a dictionary to allow it to be mutated by the lifespan manager.
 rag_resources = {}
 
 
@@ -52,57 +53,32 @@ rag_resources = {}
 async def lifespan(app: FastAPI):
     """
     Handles startup and shutdown events for the FastAPI application.
-    This is the recommended way to manage resources.
+    This function now loads the pre-built FAISS index from disk.
     """
     print("--- RAG API is starting up ---")
 
-    # --- 1. Load Documents ---
-    print("Loading documents from 'data/' directory...")
-    loader = DirectoryLoader(
-        "data/",
-        glob="**/*.md",
-        loader_cls=UnstructuredMarkdownLoader,
-        show_progress=True,
-        use_multithreading=True
-    )
-    docs = loader.load()
-    print(f"Loaded {len(docs)} documents.")
+    # --- 1. Load the Pre-built FAISS Index ---
+    print(f"Loading FAISS index from '{INDEX_DIR}'...")
 
-    # --- 2. Split Documents into Chunks ---
-    print("Splitting documents into chunks...")
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=100
-    )
-    splits = text_splitter.split_documents(docs)
-    print(f"Created {len(splits)} document chunks.")
-
-    # --- 3. Create Embeddings and Vector Store ---
-    # We use a local Ollama model for embeddings, as it's fast and free.
-    # This embedding model runs in the `ollama` container.
-    print("Creating embeddings and FAISS vector store...")
-    embedding_model_name = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
-    ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-
-    # Ensure the embedding model is pulled locally
-    try:
-        import requests
-        requests.post(f"{ollama_base_url}/api/pull", json={"name": embedding_model_name})
-        print(f"Successfully pulled embedding model: {embedding_model_name}")
-    except Exception as e:
-        print(f"Warning: Could not pull embedding model. It may need to be pulled manually. Error: {e}")
+    if not os.path.exists(INDEX_DIR):
+        raise RuntimeError(
+            f"FAISS index not found at {INDEX_DIR}. "
+            "Please run the index builder service first using: "
+            "'docker compose up index-builder'"
+        )
 
     embeddings = OllamaEmbeddings(
-        model=embedding_model_name,
-        base_url=ollama_base_url
+        model=EMBEDDING_MODEL_NAME,
+        base_url=OLLAMA_BASE_URL
     )
 
-    # Create the FAISS vector store from the document chunks
-    vectorstore = FAISS.from_documents(documents=splits, embedding=embeddings)
-    print("FAISS vector store created successfully.")
-
-    # Store the vector store in our global resources dictionary
+    vectorstore = FAISS.load_local(
+        INDEX_DIR,
+        embeddings,
+        allow_dangerous_deserialization=True # This is required for FAISS
+    )
     rag_resources["vectorstore"] = vectorstore
+    print("FAISS index loaded successfully.")
 
     yield # The API is now running
 
@@ -130,9 +106,7 @@ async def query_rag_pipeline(request: QueryRequest) -> QueryResponse:
         raise HTTPException(status_code=503, detail="Vector store not available.")
 
     # --- Create the RAG Chain ---
-    # The LLM is accessed via our LiteLLM gateway service.
     llm = ChatLiteLLM(model=request.model_name, api_base="http://litellm:4000")
-
     retriever = vectorstore.as_retriever()
 
     qa_chain = RetrievalQA.from_chain_type(
