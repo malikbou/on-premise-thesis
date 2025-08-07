@@ -1,0 +1,23 @@
+services:
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    container_name: ollama
+
+  litellm:
+    image: ghcr.io/berriai/litellm
+    command: ["litellm", "--config", "/app/litellm_config.yaml"]
+    volumes:
+      - ./litellm_config.yaml:/app/litellm_config.yaml:ro
+
+    ports:
+      - "4000:4000"
+    depends_on:
+      - ollama
+    container_name: litellm
+
+volumes:
+  ollama_data:
