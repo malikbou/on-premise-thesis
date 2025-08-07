@@ -1,0 +1,4 @@
+version: "3.9"
+
+services:
+  # We will add our services here in the upcoming steps.
