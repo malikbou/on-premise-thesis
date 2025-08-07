@@ -8,11 +8,10 @@ services:
     container_name: ollama
 
   litellm:
-    image: ghcr.io/berriai/litellm
-    command: ["litellm", "--config", "/app/litellm_config.yaml"]
+    image: ghcr.io/berriai/litellm:main-stable
+    command: ["--config", "/app/config.yaml"]
     volumes:
-      - ./litellm_config.yaml:/app/litellm_config.yaml:ro
-
+      - ./config.yaml:/app/config.yaml:ro
     ports:
       - "4000:4000"
     depends_on:
@@ -25,10 +24,10 @@ services:
       - "8000:8000"
     volumes:
       - ./src:/app/src
+      - ./data:/app/data:ro
     depends_on:
       - litellm
     container_name: rag-api
-
 
 volumes:
   ollama_data:
