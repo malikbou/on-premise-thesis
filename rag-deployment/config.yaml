@@ -1,5 +1,9 @@
+# This configuration tells LiteLLM to act as a pass-through proxy
+# for any model it receives. It will forward the request to the
+# OLLAMA_BASE_URL defined in the .env file.
+
 model_list:
-  - model_name: ollama
+  - model_name: "*" # Wildcard for any model name
     litellm_params:
-      model: ollama/phi3:mini
+      model: "*" # Pass through the model name as is
       api_base: os.environ/OLLAMA_BASE_URL
