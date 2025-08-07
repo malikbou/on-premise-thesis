@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 # LangChain components
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import OllamaEmbeddings
+from langchain_ollama import OllamaEmbeddings # Use modern Ollama embeddings
 from langchain.chains import RetrievalQA
 from langchain_openai import ChatOpenAI # Use the standard OpenAI client
 
@@ -44,7 +44,7 @@ async def lifespan(app: FastAPI):
 
     print(f"Loading FAISS index from '{INDEX_DIR}'...")
     if not os.path.exists(INDEX_DIR):
-        raise RuntimeError(f"FAISS index not found at {INDEX_DIR}. Run the index builder first.")
+        raise RuntimeError(f"FAISS index not found. Run the index builder first.")
 
     embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL_NAME, base_url=OLLAMA_BASE_URL)
 
@@ -74,11 +74,12 @@ async def query_rag_pipeline(request: QueryRequest) -> QueryResponse:
     if not vectorstore:
         raise HTTPException(status_code=503, detail="Vector store not available.")
 
-    # Use the standard ChatOpenAI client pointed at our LiteLLM proxy
+    # This is the correct way to talk to the LiteLLM proxy
     llm = ChatOpenAI(
         model=request.model_name,
         openai_api_base=LITELLM_API_BASE,
-        openai_api_key="anything" # LiteLLM doesn't require a key for local models
+        openai_api_key="anything", # LiteLLM doesn't require a key for local models
+        request_timeout=600 # 10 minute timeout for large models
     )
 
     retriever = vectorstore.as_retriever()

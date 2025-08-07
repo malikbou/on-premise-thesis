@@ -32,5 +32,23 @@ services:
     env_file:
       - .env
 
+  benchmarker:
+    build: .
+    command: ["python", "src/benchmark.py"]
+    volumes:
+      - ./testset:/app/testset:ro
+    depends_on:
+      - rag-api
+    environment:
+      - RAGAS_LLM_PROVIDER=langchain
+      - RAGAS_LLM_MODEL=ollama/qwen3:4b
+      - RAGAS_EMBEDDINGS_PROVIDER=langchain
+      - RAGAS_EMBEDDINGS_MODEL=ollama/nomic-embed-text
+      - OLLAMA_HOST=host.docker.internal
+    env_file:
+      - .env
+
+
+
 volumes:
   rag_cache:
