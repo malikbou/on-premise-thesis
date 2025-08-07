@@ -1,0 +1,24 @@
+# Core API and Server
+fastapi
+uvicorn[standard]
+python-dotenv
+
+# LangChain for RAG pipeline
+langchain
+langchain-community
+langchain-core
+langchain-text-splitters
+
+# Vector Store
+faiss-cpu # Using cpu version as retrieval is fast anyway
+
+# Document Loading
+pypdf
+unstructured
+
+# LLM Gateway
+litellm
+
+# For Ragas evaluation later
+ragas
+pandas

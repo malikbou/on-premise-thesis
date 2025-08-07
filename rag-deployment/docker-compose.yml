@@ -19,5 +19,16 @@ services:
       - ollama
     container_name: litellm
 
+  rag-api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - litellm
+    container_name: rag-api
+
+
 volumes:
   ollama_data:
