@@ -20,6 +20,8 @@ markdown
 
 # LLM Gateway
 litellm
+langchain-openai
+
 
 # For Ragas evaluation later
 ragas
