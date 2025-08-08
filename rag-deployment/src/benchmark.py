@@ -184,11 +184,21 @@ def main():
         # Evaluate for each embedding model
         for embedding_model in EMBEDDING_MODELS:
             print(f"Evaluating generated answers with Ragas... (embeddings={embedding_model})")
-            ragas_embeddings = OllamaEmbeddings(model=embedding_model, base_url=OLLAMA_HOST_URL)
+            ragas_embeddings = OllamaEmbeddings(
+                model=embedding_model,
+                base_url=OLLAMA_HOST_URL,
+                keep_alive=0,
+            )
 
             # Use the model being tested as its own judge to save memory
             judge_model_name = model_name.split("/", 1)[-1] if model_name.startswith("ollama/") else model_name
-            judge_llm = ChatOllama(model=judge_model_name, base_url=OLLAMA_HOST_URL, temperature=0, timeout=600)
+            judge_llm = ChatOllama(
+                model=judge_model_name,
+                base_url=OLLAMA_HOST_URL,
+                temperature=0,
+                timeout=600,
+                keep_alive=0,
+            )
             print(f"Using judge model: {judge_model_name} @ {OLLAMA_HOST_URL}")
             loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
             print(f"Ollama loaded models (before evaluation): {loaded}")
