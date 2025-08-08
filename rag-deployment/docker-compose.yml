@@ -22,6 +22,8 @@ services:
     container_name: rag-api
     env_file:
       - .env
+    environment:
+      - INDEX_DIR=/app/.rag_cache/faiss_index
 
   index-builder:
     build: .
@@ -40,14 +42,49 @@ services:
       - ./results:/app/results
     depends_on:
       - rag-api
+      - rag-api-minilm
+      - rag-api-nomic
     environment:
       - RAGAS_LLM_PROVIDER=langchain
       - RAGAS_LLM_MODEL=ollama/qwen3:4b
       - RAGAS_EMBEDDINGS_PROVIDER=langchain
       - RAGAS_EMBEDDINGS_MODEL=ollama/nomic-embed-text
       - OLLAMA_HOST=host.docker.internal
+      - EMBEDDING_API_MAP=all-minilm=http://host.docker.internal:8001,nomic-embed-text=http://host.docker.internal:8002
     env_file:
       - .env
+
+  rag-api-minilm:
+    build: .
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./src:/app/src
+      - rag_cache:/app/.rag_cache:ro
+    depends_on:
+      - litellm
+    container_name: rag-api-minilm
+    env_file:
+      - .env
+    environment:
+      - INDEX_DIR=/app/.rag_cache/all_minilm/faiss_index
+      - EMBEDDING_MODEL=all-minilm
+
+  rag-api-nomic:
+    build: .
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./src:/app/src
+      - rag_cache:/app/.rag_cache:ro
+    depends_on:
+      - litellm
+    container_name: rag-api-nomic
+    env_file:
+      - .env
+    environment:
+      - INDEX_DIR=/app/.rag_cache/nomic_embed_text/faiss_index
+      - EMBEDDING_MODEL=nomic-embed-text
 
 
 

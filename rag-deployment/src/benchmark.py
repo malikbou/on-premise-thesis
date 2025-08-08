@@ -97,12 +97,12 @@ def stop_models_by_base_name(base_url: str, base_name: str) -> None:
         print(f"WARNING: stop_models_by_base_name failed for '{base_name}': {e}")
 
 # --- Configuration ---
-RAG_API_URL = "http://rag-api:8000/query"
+RAG_API_URL = "http://rag-api:8000/query"  # Fallback/default API URL
 TESTSET_FILE = "testset/CS_testset_from_markdown_gpt-4o-mini_20250803_175526.json"
 DEFAULT_MODELS_TO_TEST = [
     "ollama/gemma3:4b",
 ]
-DEFAULT_EMBEDDING_MODELS = ["nomic-embed-text"]
+DEFAULT_EMBEDDING_MODELS = ["nomic-embed-text"]  # Treated as retrieval embeddings list
 OLLAMA_HOST_URL = "http://host.docker.internal:11434"
 NUM_QUESTIONS_TO_TEST = int(os.getenv("NUM_QUESTIONS_TO_TEST", "1"))
 
@@ -110,6 +110,15 @@ NUM_QUESTIONS_TO_TEST = int(os.getenv("NUM_QUESTIONS_TO_TEST", "1"))
 MODELS_TO_TEST = _parse_list_env("MODELS_TO_TEST", DEFAULT_MODELS_TO_TEST)
 EMBEDDING_MODELS = _parse_list_env("EMBEDDING_MODELS", DEFAULT_EMBEDDING_MODELS)
 RESULTS_DIR = os.getenv("RESULTS_DIR", "results")
+
+# Optional mapping: embedding -> API base URL (Option A per-embedding API services)
+# Example: EMBEDDING_API_MAP="all-minilm=http://rag-api-minilm:8001,nomic-embed-text=http://rag-api-nomic:8002"
+EMBEDDING_API_MAP_RAW = os.getenv("EMBEDDING_API_MAP", "")
+EMBEDDING_API_MAP: dict[str, str] = {}
+for pair in [p.strip() for p in EMBEDDING_API_MAP_RAW.split(",") if p.strip()]:
+    if "=" in pair:
+        k, v = pair.split("=", 1)
+        EMBEDDING_API_MAP[k.strip()] = v.strip()
 
 def main():
     """
@@ -134,63 +143,85 @@ def main():
         print(f"ERROR: Could not load or parse testset '{TESTSET_FILE}'. Details: {e}")
         return
 
-    # --- 2. Run Benchmark for Each Model ---
-    all_results = {}
-    for model_name in MODELS_TO_TEST:
-        print(f"\n--- Benchmarking Model: {model_name} ---")
-        loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
-        print(f"Ollama loaded models (before generation): {loaded}")
+    # --- 2. Run Benchmark for Each Retrieval Embedding ---
+    all_results: dict[str, dict[str, dict]] = {}
+    for embedding_model in EMBEDDING_MODELS:
+        print(f"\n=== Retrieval Embedding: {embedding_model} ===")
+        api_base = EMBEDDING_API_MAP.get(embedding_model, RAG_API_URL)
+        api_url = api_base.rstrip("/") + "/query"
+        print(f"Using RAG API: {api_base}")
 
-        contexts = []
-        answers = []
-        print(f"Generating answers for {len(questions)} question(s)...")
-        for q in questions:
+        all_results.setdefault(embedding_model, {})
+
+        for model_name in MODELS_TO_TEST:
+            print(f"\n--- Benchmarking Model: {model_name} with embedding {embedding_model} ---")
+            loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
+            print(f"Ollama loaded models (before generation): {loaded}")
+
+            contexts = []
+            answers = []
+            print(f"Generating answers for {len(questions)} question(s)...")
+            for q in questions:
+                try:
+                    response = requests.post(
+                        api_url,
+                        json={"question": q, "model_name": model_name},
+                        timeout=600
+                    )
+                    response.raise_for_status()
+                    data = response.json()
+                    answers.append(data['answer'])
+                    contexts.append([doc['page_content'] for doc in data['source_documents']])
+                    snippet = (data.get('answer') or "").strip().replace("\n", " ")[:160]
+                    print(f"  Answer snippet: {snippet!r}")
+                    print(f"  Retrieved contexts: {len(data.get('source_documents', []))}")
+                except requests.exceptions.RequestException as e:
+                    print(f"  ERROR: API request failed for question '{q[:50]}...'. Error: {e}")
+                    answers.append("")
+                    contexts.append([])
+
+            print("Answer generation complete.")
+            loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
+            print(f"Ollama loaded models (after generation): {loaded}")
+
+            # Persist raw answers for audit
+            ensure_dir(RESULTS_DIR)
+            answers_name = f"answers__{sanitize_filename(embedding_model)}__{sanitize_filename(model_name)}.json"
+            answers_path = os.path.join(RESULTS_DIR, answers_name)
             try:
-                response = requests.post(
-                    RAG_API_URL,
-                    json={"question": q, "model_name": model_name},
-                    timeout=600
-                )
-                response.raise_for_status()
-                data = response.json()
-                answers.append(data['answer'])
-                contexts.append([doc['page_content'] for doc in data['source_documents']])
-                # Debug visibility of generation
-                snippet = (data.get('answer') or "").strip().replace("\n", " ")[:160]
-                print(f"  Answer snippet: {snippet!r}")
-                print(f"  Retrieved contexts: {len(data.get('source_documents', []))}")
-            except requests.exceptions.RequestException as e:
-                print(f"  ERROR: API request failed for question '{q[:50]}...'. Error: {e}")
-                answers.append("")
-                contexts.append([])
+                records_save = []
+                for i in range(len(questions)):
+                    records_save.append({
+                        "user_input": questions[i],
+                        "response": answers[i],
+                        "retrieved_contexts": contexts[i],
+                        "reference": ground_truths[i],
+                    })
+                with open(answers_path, "w") as f:
+                    json.dump(records_save, f, indent=2)
+                print(f"Saved answers to {answers_path}")
+            except Exception as e:
+                print(f"WARNING: Failed to save answers to {answers_path}: {e}")
 
-        print("Answer generation complete.")
-        loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
-        print(f"Ollama loaded models (after generation): {loaded}")
+            # Build records for Ragas
+            records = []
+            for i in range(len(questions)):
+                records.append({
+                    "user_input": questions[i],
+                    "response": answers[i],
+                    "retrieved_contexts": contexts[i],
+                    "reference": ground_truths[i],
+                })
+            evaluation_dataset = EvaluationDataset.from_list(records)
 
-        # Build records with column names expected by Ragas metrics
-        records = []
-        for i in range(len(questions)):
-            records.append({
-                "user_input": questions[i],
-                "response": answers[i],
-                "retrieved_contexts": contexts[i],
-                "reference": ground_truths[i],
-            })
-        evaluation_dataset = EvaluationDataset.from_list(records)
-
-        all_results[model_name] = {}
-
-        # Evaluate for each embedding model
-        for embedding_model in EMBEDDING_MODELS:
-            print(f"Evaluating generated answers with Ragas... (embeddings={embedding_model})")
+            # Use same embedding for evaluation to avoid bias
             ragas_embeddings = OllamaEmbeddings(
                 model=embedding_model,
                 base_url=OLLAMA_HOST_URL,
                 keep_alive=0,
             )
 
-            # Use the model being tested as its own judge to save memory
+            # Use the model-under-test as judge (memory efficient)
             judge_model_name = model_name.split("/", 1)[-1] if model_name.startswith("ollama/") else model_name
             judge_llm = ChatOllama(
                 model=judge_model_name,
@@ -227,9 +258,9 @@ def main():
                     print(f"  ERROR evaluating {metric_name}: {e}")
                     scores[metric_name] = f"error: {e}"
 
-            # Persist per-(model, embedding) scores
+            # Persist per-(embedding, model) scores
             ensure_dir(RESULTS_DIR)
-            out_name = f"results__{sanitize_filename(model_name)}__emb__{sanitize_filename(embedding_model)}.json"
+            out_name = f"scores__{sanitize_filename(embedding_model)}__{sanitize_filename(model_name)}.json"
             out_path = os.path.join(RESULTS_DIR, out_name)
             try:
                 with open(out_path, "w") as f:
@@ -238,23 +269,10 @@ def main():
             except Exception as e:
                 print(f"WARNING: Failed to save results to {out_path}: {e}")
 
-            all_results[model_name][embedding_model] = scores
-            print(f"Evaluation complete for {model_name} (embeddings={embedding_model}). Scores: {scores}")
+            all_results[embedding_model][model_name] = scores
+            print(f"Evaluation complete for {model_name} (retrieval embedding={embedding_model}). Scores: {scores}")
             loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
             print(f"Ollama loaded models (after evaluation): {loaded}")
-
-            # Proactively unload embedding model to free memory
-            emb_model_stop_name = embedding_model
-            print(f"Attempting to stop embedding model(s) matching: {emb_model_stop_name}")
-            stop_models_by_base_name(OLLAMA_HOST_URL, emb_model_stop_name)
-            loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
-            print(f"Ollama loaded models (after stopping embedding): {loaded}")
-
-        # After finishing evaluations for this LLM, unload the judge/LLM
-        print(f"Attempting to stop LLM model(s) matching: {judge_model_name}")
-        stop_models_by_base_name(OLLAMA_HOST_URL, judge_model_name)
-        loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
-        print(f"Ollama loaded models (after stopping LLM): {loaded}")
 
     # --- 4. Print Final Results ---
     print("\n\n--- Benchmark Summary ---")
@@ -268,11 +286,11 @@ def main():
     except Exception as e:
         print(f"WARNING: Failed to save summary to {summary_path}: {e}")
 
-    for model_name, by_embedding in all_results.items():
-        print(f"\nModel: {model_name}")
+    for embedding_model, by_model in all_results.items():
+        print(f"\nRetrieval Embedding: {embedding_model}")
         print("-" * 20)
-        for embedding_model, results in by_embedding.items():
-            print(f"Embeddings: {embedding_model}")
+        for model_name, results in by_model.items():
+            print(f"Model: {model_name}")
             print(json.dumps(results, indent=2))
 
 if __name__ == "__main__":

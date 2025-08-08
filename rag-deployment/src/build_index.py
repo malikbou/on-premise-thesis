@@ -1,18 +1,19 @@
 import os
+import re
 import requests
 from dotenv import load_dotenv
 
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import OllamaEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_ollama import OllamaEmbeddings
 
 # Load environment variables from a .env file
 load_dotenv()
 
 # --- Configuration ---
 DATA_DIR = "data/"
-INDEX_DIR = ".rag_cache/faiss_index"
+INDEX_DIR = os.getenv("INDEX_DIR")  # may be None; we'll derive if missing
 EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
 CHUNK_SIZE = 1000
@@ -61,9 +62,17 @@ def main():
     except Exception as e:
         print(f"Warning: Could not pull embedding model. It may need to be pulled manually. Error: {e}")
 
+    # Derive INDEX_DIR if not provided via env
+    global INDEX_DIR
+    if not INDEX_DIR:
+        slug = re.sub(r"[^A-Za-z0-9]+", "_", EMBEDDING_MODEL_NAME.lower())
+        INDEX_DIR = f".rag_cache/{slug}/faiss_index"
+    print(f"Using index directory: '{INDEX_DIR}'")
+
     embeddings = OllamaEmbeddings(
         model=EMBEDDING_MODEL_NAME,
-        base_url=OLLAMA_BASE_URL
+        base_url=OLLAMA_BASE_URL,
+        keep_alive=0,
     )
 
     # --- 4. Create and Save FAISS Vector Store ---
