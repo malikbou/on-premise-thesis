@@ -16,7 +16,8 @@ from langchain_openai import ChatOpenAI # Use the standard OpenAI client
 load_dotenv()
 
 # --- Configuration ---
-INDEX_DIR = ".rag_cache/faiss_index"
+# Allow overriding index path per service instance (Option A multi-API)
+INDEX_DIR = os.getenv("INDEX_DIR", ".rag_cache/faiss_index")
 EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
 LITELLM_API_BASE = os.getenv("LITELLM_API_BASE", "http://litellm:4000")
