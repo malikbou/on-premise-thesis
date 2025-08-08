@@ -37,6 +37,7 @@ services:
     command: ["python", "src/benchmark.py"]
     volumes:
       - ./testset:/app/testset:ro
+      - ./results:/app/results
     depends_on:
       - rag-api
     environment:
