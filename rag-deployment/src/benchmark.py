@@ -12,17 +12,43 @@ from ragas.metrics import (
 from datasets import Dataset
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 
+
+def _parse_list_env(var_name: str, default_list: list[str]) -> list[str]:
+    value = os.getenv(var_name)
+    if value is None or value.strip() == "":
+        return default_list
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def get_ollama_loaded_models(base_url: str) -> list[str]:
+    """Return list of currently loaded models from Ollama (/api/ps)."""
+    try:
+        url = f"{base_url.rstrip('/')}/api/ps"
+        try:
+            resp = requests.get(url, timeout=10)
+        except Exception:
+            resp = requests.post(url, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        models = [m.get("name", "") for m in data.get("models", [])]
+        return models
+    except Exception as e:
+        print(f"WARNING: Could not query Ollama /api/ps: {e}")
+        return []
+
 # --- Configuration ---
 RAG_API_URL = "http://rag-api:8000/query"
 TESTSET_FILE = "testset/CS_testset_from_markdown_gpt-4o-mini_20250803_175526.json"
-MODELS_TO_TEST = [
+DEFAULT_MODELS_TO_TEST = [
     "ollama/gemma3:4b",
-    # "ollama/qwen3:4b"
 ]
-# JUDGE_MODEL = "qwen3:4b" # No longer needed, we use the model-under-test as the judge
-EMBEDDING_MODEL = "nomic-embed-text"
+DEFAULT_EMBEDDING_MODELS = ["nomic-embed-text"]
 OLLAMA_HOST_URL = "http://host.docker.internal:11434"
-NUM_QUESTIONS_TO_TEST = 1 # Set to 1 for quick testing
+NUM_QUESTIONS_TO_TEST = int(os.getenv("NUM_QUESTIONS_TO_TEST", "1"))
+
+# Allow overriding via env (comma-separated)
+MODELS_TO_TEST = _parse_list_env("MODELS_TO_TEST", DEFAULT_MODELS_TO_TEST)
+EMBEDDING_MODELS = _parse_list_env("EMBEDDING_MODELS", DEFAULT_EMBEDDING_MODELS)
 
 def main():
     """
@@ -47,13 +73,12 @@ def main():
         print(f"ERROR: Could not load or parse testset '{TESTSET_FILE}'. Details: {e}")
         return
 
-    # --- 2. Prepare Ragas Embeddings (LLM is now set per-model) ---
-    ragas_embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL, base_url=OLLAMA_HOST_URL)
-
-    # --- 3. Run Benchmark for Each Model ---
+    # --- 2. Run Benchmark for Each Model ---
     all_results = {}
     for model_name in MODELS_TO_TEST:
         print(f"\n--- Benchmarking Model: {model_name} ---")
+        loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
+        print(f"Ollama loaded models (before generation): {loaded}")
 
         contexts = []
         answers = []
@@ -79,10 +104,10 @@ def main():
                 contexts.append([])
 
         print("Answer generation complete.")
+        loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
+        print(f"Ollama loaded models (after generation): {loaded}")
 
-        print("Evaluating generated answers with Ragas...")
         # Build records with column names expected by Ragas metrics
-        # Expected keys per errors: 'user_input', 'response', 'retrieved_contexts', 'reference'
         records = []
         for i in range(len(questions)):
             records.append({
@@ -93,46 +118,57 @@ def main():
             })
         evaluation_dataset = EvaluationDataset.from_list(records)
 
-        # Use the model being tested as its own judge to save memory
-        # When calling native Ollama, do NOT include the 'ollama/' prefix
-        judge_model_name = model_name.split("/", 1)[-1] if model_name.startswith("ollama/") else model_name
-        judge_llm = ChatOllama(model=judge_model_name, base_url=OLLAMA_HOST_URL, temperature=0, timeout=600)
-        print(f"Using judge model: {judge_model_name} @ {OLLAMA_HOST_URL}")
+        all_results[model_name] = {}
 
-        metrics = [faithfulness, answer_relevancy, context_precision, context_recall]
-        scores = {}
-        for metric in metrics:
-            metric_name = getattr(metric, "__name__", str(metric))
-            try:
-                result = evaluate(
-                    dataset=evaluation_dataset,
-                    metrics=[metric],
-                    llm=judge_llm,
-                    embeddings=ragas_embeddings,
-                    raise_exceptions=True,
-                    batch_size=1,
-                )
-                if hasattr(result, "to_pandas"):
-                    df = result.to_pandas()
-                    for col in df.select_dtypes(include="number").columns:
-                        scores[col] = float(df[col].mean())
-                        print(f"  {col}: {scores[col]:.4f}")
-                else:
-                    scores[metric_name] = str(result)
-            except Exception as e:
-                print(f"  ERROR evaluating {metric_name}: {e}")
-                scores[metric_name] = f"error: {e}"
+        # Evaluate for each embedding model
+        for embedding_model in EMBEDDING_MODELS:
+            print(f"Evaluating generated answers with Ragas... (embeddings={embedding_model})")
+            ragas_embeddings = OllamaEmbeddings(model=embedding_model, base_url=OLLAMA_HOST_URL)
 
-        all_results[model_name] = scores
-        print(f"Evaluation complete for {model_name}. Scores: {scores}")
+            # Use the model being tested as its own judge to save memory
+            judge_model_name = model_name.split("/", 1)[-1] if model_name.startswith("ollama/") else model_name
+            judge_llm = ChatOllama(model=judge_model_name, base_url=OLLAMA_HOST_URL, temperature=0, timeout=600)
+            print(f"Using judge model: {judge_model_name} @ {OLLAMA_HOST_URL}")
+            loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
+            print(f"Ollama loaded models (before evaluation): {loaded}")
+
+            metrics = [faithfulness, answer_relevancy, context_precision, context_recall]
+            scores = {}
+            for metric in metrics:
+                metric_name = getattr(metric, "__name__", str(metric))
+                try:
+                    result = evaluate(
+                        dataset=evaluation_dataset,
+                        metrics=[metric],
+                        llm=judge_llm,
+                        embeddings=ragas_embeddings,
+                        raise_exceptions=True,
+                        batch_size=1,
+                    )
+                    if hasattr(result, "to_pandas"):
+                        df = result.to_pandas()
+                        for col in df.select_dtypes(include="number").columns:
+                            scores[col] = float(df[col].mean())
+                            print(f"  {col}: {scores[col]:.4f}")
+                    else:
+                        scores[metric_name] = str(result)
+                except Exception as e:
+                    print(f"  ERROR evaluating {metric_name}: {e}")
+                    scores[metric_name] = f"error: {e}"
+
+            all_results[model_name][embedding_model] = scores
+            print(f"Evaluation complete for {model_name} (embeddings={embedding_model}). Scores: {scores}")
+            loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
+            print(f"Ollama loaded models (after evaluation): {loaded}")
 
     # --- 4. Print Final Results ---
     print("\n\n--- Benchmark Summary ---")
-    for model_name, results in all_results.items():
+    for model_name, by_embedding in all_results.items():
         print(f"\nModel: {model_name}")
         print("-" * 20)
-        # The result is now a simple dict, so json.dumps will work correctly
-        print(json.dumps(results, indent=2))
+        for embedding_model, results in by_embedding.items():
+            print(f"Embeddings: {embedding_model}")
+            print(json.dumps(results, indent=2))
 
 if __name__ == "__main__":
     main()
