@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 import requests
 import pandas as pd
 from ragas import evaluate, EvaluationDataset
@@ -110,6 +111,8 @@ NUM_QUESTIONS_TO_TEST = int(os.getenv("NUM_QUESTIONS_TO_TEST", "1"))
 MODELS_TO_TEST = _parse_list_env("MODELS_TO_TEST", DEFAULT_MODELS_TO_TEST)
 EMBEDDING_MODELS = _parse_list_env("EMBEDDING_MODELS", DEFAULT_EMBEDDING_MODELS)
 RESULTS_DIR = os.getenv("RESULTS_DIR", "results")
+RUN_STAMP = os.getenv("RUN_STAMP", datetime.now().strftime("%Y%m%d_%H%M%S"))
+RUN_DIR = os.path.join(RESULTS_DIR, RUN_STAMP)
 
 # Optional mapping: embedding -> API base URL (Option A per-embedding API services)
 # Example: EMBEDDING_API_MAP="all-minilm=http://rag-api-minilm:8001,nomic-embed-text=http://rag-api-nomic:8002"
@@ -185,9 +188,9 @@ def main():
             print(f"Ollama loaded models (after generation): {loaded}")
 
             # Persist raw answers for audit
-            ensure_dir(RESULTS_DIR)
+            ensure_dir(RUN_DIR)
             answers_name = f"answers__{sanitize_filename(embedding_model)}__{sanitize_filename(model_name)}.json"
-            answers_path = os.path.join(RESULTS_DIR, answers_name)
+            answers_path = os.path.join(RUN_DIR, answers_name)
             try:
                 records_save = []
                 for i in range(len(questions)):
@@ -259,9 +262,9 @@ def main():
                     scores[metric_name] = f"error: {e}"
 
             # Persist per-(embedding, model) scores
-            ensure_dir(RESULTS_DIR)
+            ensure_dir(RUN_DIR)
             out_name = f"scores__{sanitize_filename(embedding_model)}__{sanitize_filename(model_name)}.json"
-            out_path = os.path.join(RESULTS_DIR, out_name)
+            out_path = os.path.join(RUN_DIR, out_name)
             try:
                 with open(out_path, "w") as f:
                     json.dump(scores, f, indent=2)
@@ -277,8 +280,8 @@ def main():
     # --- 4. Print Final Results ---
     print("\n\n--- Benchmark Summary ---")
     # Persist overall summary
-    ensure_dir(RESULTS_DIR)
-    summary_path = os.path.join(RESULTS_DIR, "summary.json")
+    ensure_dir(RUN_DIR)
+    summary_path = os.path.join(RUN_DIR, "summary.json")
     try:
         with open(summary_path, "w") as f:
             json.dump(all_results, f, indent=2)
