@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 # LangChain components
 from langchain_community.vectorstores import FAISS
-from langchain_ollama import OllamaEmbeddings # Use modern Ollama embeddings
+from langchain_ollama import OllamaEmbeddings, ChatOllama # Use modern Ollama classes
 from langchain.chains import RetrievalQA
 from langchain_openai import ChatOpenAI # Use the standard OpenAI client
 
@@ -47,7 +47,7 @@ async def lifespan(app: FastAPI):
     if not os.path.exists(INDEX_DIR):
         raise RuntimeError(f"FAISS index not found. Run the index builder first.")
 
-    embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL_NAME, base_url=OLLAMA_BASE_URL)
+    embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL_NAME, base_url=OLLAMA_BASE_URL, keep_alive=0)
 
     vectorstore = FAISS.load_local(
         INDEX_DIR,
@@ -69,19 +69,37 @@ app = FastAPI(title="RAG API", lifespan=lifespan)
 def health_check():
     return {"status": "ok"}
 
+@app.get("/info")
+def info():
+    return {
+        "index_dir": INDEX_DIR,
+        "embedding_model": EMBEDDING_MODEL_NAME,
+    }
+
 @app.post("/query", response_model=QueryResponse)
 async def query_rag_pipeline(request: QueryRequest) -> QueryResponse:
     vectorstore = rag_resources.get("vectorstore")
     if not vectorstore:
         raise HTTPException(status_code=503, detail="Vector store not available.")
 
-    # This is the correct way to talk to the LiteLLM proxy
-    llm = ChatOpenAI(
-        model=request.model_name,
-        openai_api_base=LITELLM_API_BASE,
-        openai_api_key="anything", # LiteLLM doesn't require a key for local models
-        request_timeout=600 # 10 minute timeout for large models
-    )
+    # Choose local vs cloud path
+    if request.model_name.startswith("ollama/"):
+        local_model = request.model_name.split("/", 1)[-1]
+        llm = ChatOllama(
+            model=local_model,
+            base_url=OLLAMA_BASE_URL,
+            temperature=0,
+            timeout=600,
+            keep_alive=0,
+        )
+    else:
+        # Cloud via LiteLLM (OpenAI-compatible)
+        llm = ChatOpenAI(
+            model=request.model_name,
+            openai_api_base=LITELLM_API_BASE,
+            openai_api_key="anything", # LiteLLM doesn't require a key for local models
+            request_timeout=600 # 10 minute timeout for large models
+        )
 
     retriever = vectorstore.as_retriever()
 
