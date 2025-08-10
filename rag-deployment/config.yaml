@@ -15,14 +15,14 @@ model_list:
       model: "openai/*"
 
   # Anthropic models (e.g., claude-3-5-sonnet-20240620)
-  - model_name: "claude-*"
-    litellm_params:
-      model: "anthropic/*"
+  # - model_name: "claude-*"
+  #   litellm_params:
+  #     model: "anthropic/*"
 
   # Google Gemini models (e.g., gemini-1.5-pro)
-  - model_name: "gemini-*"
-    litellm_params:
-      model: "gemini/*"
+  # - model_name: "gemini-*"
+  #   litellm_params:
+  #     model: "gemini/*"
 
   # Fallback to OpenAI provider for any unknown model pattern
   - model_name: "*"
