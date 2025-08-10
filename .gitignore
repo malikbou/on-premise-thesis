@@ -43,3 +43,5 @@ results/
 testset/
 get_github_context.sh
 ragas_context.md
+rag-deployment/.env
+rag-deployment/.env.local.backup
