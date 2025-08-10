@@ -74,6 +74,8 @@ def info():
     return {
         "index_dir": INDEX_DIR,
         "embedding_model": EMBEDDING_MODEL_NAME,
+        "ollama_base_url": OLLAMA_BASE_URL,
+        "litellm_api_base": LITELLM_API_BASE,
     }
 
 @app.post("/query", response_model=QueryResponse)

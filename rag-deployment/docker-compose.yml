@@ -5,7 +5,7 @@ services:
       - "4000:4000"
     volumes:
       - ./config.yaml:/app/config.yaml:ro
-    command: ["--config", "/app/config.yaml"]
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
     env_file:
       - .env
     container_name: litellm
@@ -45,12 +45,7 @@ services:
       - rag-api-minilm
       - rag-api-nomic
     environment:
-      - RAGAS_LLM_PROVIDER=langchain
-      - RAGAS_LLM_MODEL=ollama/qwen3:4b
-      - RAGAS_EMBEDDINGS_PROVIDER=langchain
-      - RAGAS_EMBEDDINGS_MODEL=ollama/nomic-embed-text
-      - OLLAMA_HOST=host.docker.internal
-      - EMBEDDING_API_MAP=all-minilm=http://host.docker.internal:8001,nomic-embed-text=http://host.docker.internal:8002
+      - EMBEDDING_API_MAP=all-minilm=http://rag-api-minilm:8000,nomic-embed-text=http://rag-api-nomic:8000
     env_file:
       - .env
 
