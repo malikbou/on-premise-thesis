@@ -8,7 +8,6 @@ __pycache__/
 venv/
 ENV/
 env/
-
 build/
 develop-eggs/
 dist/
@@ -44,5 +43,3 @@ results/
 testset/
 get_github_context.sh
 ragas_context.md
-
-rag-deployment/.env

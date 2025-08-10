@@ -3,9 +3,6 @@
 # OLLAMA_BASE_URL defined in the .env file.
 
 model_list:
-  - model_name: "openai/gpt-4o-mini"
-    litellm_params:
-      model: "openai/gpt-4o-mini"
   - model_name: "*" # Wildcard for any model name
     litellm_params:
       model: "*" # Pass through the model name as is
