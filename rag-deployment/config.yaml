@@ -1,0 +1,30 @@
+# This configuration tells LiteLLM to act as a pass-through proxy
+# for any model it receives. It will forward the request to the
+# OLLAMA_BASE_URL defined in the .env file.
+
+model_list:
+  # Route any request for an Ollama model (prefixed as "ollama/<model>") to the local Ollama server
+  - model_name: "ollama/*"
+    litellm_params:
+      model: "ollama/*"
+      api_base: os.environ/OLLAMA_BASE_URL
+
+  # OpenAI models (e.g., gpt-4o, gpt-4.1-mini)
+  - model_name: "gpt-*"
+    litellm_params:
+      model: "openai/*"
+
+  # Anthropic models (e.g., claude-3-5-sonnet-20240620)
+  # - model_name: "claude-*"
+  #   litellm_params:
+  #     model: "anthropic/*"
+
+  # Google Gemini models (e.g., gemini-1.5-pro)
+  # - model_name: "gemini-*"
+  #   litellm_params:
+  #     model: "gemini/*"
+
+  # Fallback to OpenAI provider for any unknown model pattern
+  - model_name: "*"
+    litellm_params:
+      model: "openai/*"

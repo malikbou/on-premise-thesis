@@ -1,0 +1,29 @@
+# Core API and Server
+fastapi
+uvicorn[standard]
+python-dotenv
+
+# LangChain and its integrations
+langchain
+langchain-community
+langchain-core
+langchain-text-splitters
+langchain-openai # For talking to the LiteLLM proxy
+langchain-ollama # For the Ragas judge model
+
+# Vector Store
+faiss-cpu
+
+# Document Loading
+pypdf
+unstructured
+markdown
+
+# LLM Gateway
+litellm
+
+# For Ragas evaluation
+ragas
+pandas
+datasets
+Pillow
