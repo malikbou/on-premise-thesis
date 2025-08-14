@@ -2,6 +2,11 @@
 # for any model it receives. It will forward the request to the
 # OLLAMA_BASE_URL defined in the .env file.
 
+# Enable cost tracking and monitoring
+litellm_settings:
+  store_model_in_db: true
+  track_cost_per_request: true
+
 model_list:
   # Route any request for an Ollama model (prefixed as "ollama/<model>") to the local Ollama server
   - model_name: "ollama/*"
@@ -9,10 +14,22 @@ model_list:
       model: "ollama/*"
       api_base: os.environ/OLLAMA_BASE_URL
 
-  # OpenAI models (e.g., gpt-4o, gpt-4.1-mini)
+  # OpenAI models - specific mappings
+  - model_name: "gpt-4o-mini"
+    litellm_params:
+      model: "gpt-4o-mini"
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: "gpt-4o"
+    litellm_params:
+      model: "gpt-4o"
+      api_key: os.environ/OPENAI_API_KEY
+
+  # OpenAI models (general pattern)
   - model_name: "gpt-*"
     litellm_params:
       model: "openai/*"
+      api_key: os.environ/OPENAI_API_KEY
 
   # Anthropic models (e.g., claude-3-5-sonnet-20240620)
   # - model_name: "claude-*"

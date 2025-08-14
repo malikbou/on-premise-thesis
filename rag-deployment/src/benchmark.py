@@ -12,6 +12,7 @@ from ragas.metrics import (
 )
 from datasets import Dataset
 from langchain_ollama import ChatOllama, OllamaEmbeddings
+from langchain_openai import ChatOpenAI # Use the standard OpenAI client
 
 
 def _parse_list_env(var_name: str, default_list: list[str]) -> list[str]:
@@ -105,6 +106,7 @@ DEFAULT_MODELS_TO_TEST = [
 ]
 DEFAULT_EMBEDDING_MODELS = ["nomic-embed-text"]  # Treated as retrieval embeddings list
 OLLAMA_HOST_URL = "http://host.docker.internal:11434"
+LITELLM_API_BASE = os.getenv("LITELLM_API_BASE", "http://litellm:4000")
 NUM_QUESTIONS_TO_TEST = int(os.getenv("NUM_QUESTIONS_TO_TEST", "1"))
 
 # Allow overriding via env (comma-separated)
@@ -225,7 +227,8 @@ def main():
                 keep_alive=0,
             )
 
-            # Use the model-under-test as judge (memory efficient)
+            # For now, let's use local judge to debug the evaluation pipeline
+            # Option 1: Local judge (temporary for debugging)
             judge_model_name = model_name.split("/", 1)[-1] if model_name.startswith("ollama/") else model_name
             judge_llm = ChatOllama(
                 model=judge_model_name,
@@ -235,6 +238,16 @@ def main():
                 keep_alive=0,
             )
             print(f"Using judge model: {judge_model_name} @ {OLLAMA_HOST_URL}")
+
+            # Option 2: Cloud judge (GPT-4o-mini - switch back once .env is configured)
+            # judge_llm = ChatOpenAI(
+            #     model="gpt-4o-mini",
+            #     openai_api_base=LITELLM_API_BASE,
+            #     openai_api_key=os.getenv("OPENAI_API_KEY", "anything"), # LiteLLM handles the key
+            #     temperature=0,
+            #     timeout=600,
+            # )
+            # print(f"Using judge model: gpt-4o-mini @ {LITELLM_API_BASE}")
             loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
             print(f"Ollama loaded models (before evaluation): {loaded}")
 
@@ -242,25 +255,38 @@ def main():
             scores = {}
             for metric in metrics:
                 metric_name = getattr(metric, "__name__", str(metric))
-                try:
-                    result = evaluate(
-                        dataset=evaluation_dataset,
-                        metrics=[metric],
-                        llm=judge_llm,
-                        embeddings=ragas_embeddings,
-                        raise_exceptions=True,
-                        batch_size=1,
-                    )
-                    if hasattr(result, "to_pandas"):
-                        df = result.to_pandas()
-                        for col in df.select_dtypes(include="number").columns:
-                            scores[col] = float(df[col].mean())
-                            print(f"  {col}: {scores[col]:.4f}")
-                    else:
-                        scores[metric_name] = str(result)
-                except Exception as e:
-                    print(f"  ERROR evaluating {metric_name}: {e}")
-                    scores[metric_name] = f"error: {e}"
+                print(f"Evaluating {metric_name}...")
+                retry_count = 0
+                max_retries = 2
+
+                while retry_count <= max_retries:
+                    try:
+                        result = evaluate(
+                            dataset=evaluation_dataset,
+                            metrics=[metric],
+                            llm=judge_llm,
+                            embeddings=ragas_embeddings,
+                            raise_exceptions=False,  # Changed to False for better error handling
+                            batch_size=1,
+                        )
+                        if hasattr(result, "to_pandas"):
+                            df = result.to_pandas()
+                            for col in df.select_dtypes(include="number").columns:
+                                scores[col] = float(df[col].mean())
+                                print(f"  {col}: {scores[col]:.4f}")
+                        else:
+                            scores[metric_name] = str(result)
+                        break  # Success, exit retry loop
+
+                    except Exception as e:
+                        retry_count += 1
+                        if retry_count > max_retries:
+                            print(f"  ERROR evaluating {metric_name} after {max_retries} retries: {e}")
+                            scores[metric_name] = f"error: {e}"
+                        else:
+                            print(f"  Retry {retry_count}/{max_retries} for {metric_name} due to: {e}")
+                            import time
+                            time.sleep(2)  # Brief pause before retry
 
             # Persist per-(embedding, model) scores
             ensure_dir(RUN_DIR)
