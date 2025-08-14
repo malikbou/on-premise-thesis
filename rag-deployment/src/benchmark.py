@@ -227,27 +227,27 @@ def main():
                 keep_alive=0,
             )
 
-            # For now, let's use local judge to debug the evaluation pipeline
-            # Option 1: Local judge (temporary for debugging)
-            judge_model_name = model_name.split("/", 1)[-1] if model_name.startswith("ollama/") else model_name
-            judge_llm = ChatOllama(
-                model=judge_model_name,
-                base_url=OLLAMA_HOST_URL,
+                        # Use cloud judge for better JSON parsing reliability
+            # Option 1: Cloud judge (GPT-4o-mini - recommended for structured output)
+            judge_llm = ChatOpenAI(
+                model="gpt-4o-mini",
+                openai_api_base=LITELLM_API_BASE,
+                openai_api_key=os.getenv("OPENAI_API_KEY", "anything"), # LiteLLM handles the key
                 temperature=0,
                 timeout=600,
-                keep_alive=0,
             )
-            print(f"Using judge model: {judge_model_name} @ {OLLAMA_HOST_URL}")
+            print(f"Using judge model: gpt-4o-mini @ {LITELLM_API_BASE}")
 
-            # Option 2: Cloud judge (GPT-4o-mini - switch back once .env is configured)
-            # judge_llm = ChatOpenAI(
-            #     model="gpt-4o-mini",
-            #     openai_api_base=LITELLM_API_BASE,
-            #     openai_api_key=os.getenv("OPENAI_API_KEY", "anything"), # LiteLLM handles the key
+            # Option 2: Local judge (fallback - may have JSON parsing issues)
+            # judge_model_name = model_name.split("/", 1)[-1] if model_name.startswith("ollama/") else model_name
+            # judge_llm = ChatOllama(
+            #     model=judge_model_name,
+            #     base_url=OLLAMA_HOST_URL,
             #     temperature=0,
             #     timeout=600,
+            #     keep_alive=0,
             # )
-            # print(f"Using judge model: gpt-4o-mini @ {LITELLM_API_BASE}")
+            # print(f"Using judge model: {judge_model_name} @ {OLLAMA_HOST_URL}")
             loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
             print(f"Ollama loaded models (before evaluation): {loaded}")
 
