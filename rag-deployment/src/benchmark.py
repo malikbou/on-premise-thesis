@@ -115,8 +115,6 @@ RESULTS_DIR = os.getenv("RESULTS_DIR", "results")
 RUN_STAMP = os.getenv("RUN_STAMP", datetime.now().strftime("%Y%m%d_%H%M%S"))
 RUN_DIR = os.path.join(RESULTS_DIR, RUN_STAMP)
 
-# ONE LAST TIME
-
 # Optional mapping: embedding -> API base URL (Option A per-embedding API services)
 # Example: EMBEDDING_API_MAP="all-minilm=http://rag-api-minilm:8001,nomic-embed-text=http://rag-api-nomic:8002"
 EMBEDDING_API_MAP_RAW = os.getenv("EMBEDDING_API_MAP", "")
