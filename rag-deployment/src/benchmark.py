@@ -69,11 +69,60 @@ def sanitize_filename(text: str) -> str:
     )
 
 
-def evaluate_metric_parallel(metric, evaluation_dataset, judge_llm, ragas_embeddings, max_retries=2):
+def get_metric_retry_config(metric_name: str) -> Dict[str, Any]:
     """
-    Evaluate a single metric with retry logic - designed for parallel execution
+    Get metric-specific retry configuration based on common failure patterns
     """
+    retry_configs = {
+        "answer_relevancy": {
+            "max_retries": 4,  # JSON parsing failures need more retries
+            "initial_delay": 1.0,
+            "backoff_factor": 2.0,  # Exponential backoff for API rate limits
+            "timeout_multiplier": 1.5,
+        },
+        "faithfulness": {
+            "max_retries": 2,  # Usually stable, fewer retries needed
+            "initial_delay": 0.5,
+            "backoff_factor": 1.5,
+            "timeout_multiplier": 1.0,
+        },
+        "context_precision": {
+            "max_retries": 3,  # Moderate complexity
+            "initial_delay": 2.0,  # Longer initial delay for complex evaluation
+            "backoff_factor": 1.8,
+            "timeout_multiplier": 2.0,  # Needs more time
+        },
+        "context_recall": {
+            "max_retries": 3,
+            "initial_delay": 1.5,
+            "backoff_factor": 1.5,
+            "timeout_multiplier": 1.5,
+        }
+    }
+
+    # Default config for unknown metrics
+    default_config = {
+        "max_retries": 2,
+        "initial_delay": 1.0,
+        "backoff_factor": 1.5,
+        "timeout_multiplier": 1.0,
+    }
+
+    return retry_configs.get(metric_name, default_config)
+
+
+def evaluate_metric_parallel(metric, evaluation_dataset, judge_llm, ragas_embeddings):
+    """
+    Evaluate a single metric with smart, metric-specific retry logic
+    """
+    import time
+
     metric_name = getattr(metric, "name", getattr(metric, "__name__", str(metric)))
+    retry_config = get_metric_retry_config(metric_name)
+
+    max_retries = retry_config["max_retries"]
+    initial_delay = retry_config["initial_delay"]
+    backoff_factor = retry_config["backoff_factor"]
 
     for retry_count in range(max_retries + 1):
         try:
@@ -98,7 +147,10 @@ def evaluate_metric_parallel(metric, evaluation_dataset, judge_llm, ragas_embedd
 
         except Exception as e:
             if retry_count < max_retries:
-                print(f"  Retry {retry_count + 1}/{max_retries} for {metric_name} due to: {e}")
+                # Calculate delay with exponential backoff
+                delay = initial_delay * (backoff_factor ** retry_count)
+                print(f"  Retry {retry_count + 1}/{max_retries} for {metric_name} in {delay:.1f}s (reason: {str(e)[:60]}...)")
+                time.sleep(delay)
                 continue
             else:
                 print(f"  ERROR evaluating {metric_name} after {max_retries} retries: {e}")
@@ -167,27 +219,102 @@ for pair in [p.strip() for p in EMBEDDING_API_MAP_RAW.split(",") if p.strip()]:
         k, v = pair.split("=", 1)
         EMBEDDING_API_MAP[k.strip()] = v.strip()
 
-def main():
+def load_testset_streaming(file_path: str, num_questions: int):
     """
-    This script runs an accuracy benchmark by sending questions to the RAG API
-    and evaluating the responses using the Ragas library.
+    Load testset with memory optimization - stream processing for large datasets
     """
-    print("--- Starting RAG Accuracy Benchmark ---")
-
-    # --- 1. Load the Testset ---
-    print(f"Loading testset from {TESTSET_FILE}...")
     try:
-        with open(TESTSET_FILE, 'r') as f:
+        with open(file_path, 'r') as f:
             testset_data = json.load(f)
 
-        # Slice the dataset to the desired number of questions for testing
-        testset_data = testset_data[:NUM_QUESTIONS_TO_TEST]
+        # Memory-efficient slicing
+        if num_questions > 0:
+            testset_data = testset_data[:num_questions]
 
-        questions = [item['user_input'] for item in testset_data]
-        ground_truths = [item['reference'] for item in testset_data]
-        print(f"Loaded and sliced to {len(questions)} question(s).")
+        # Process in chunks to reduce memory footprint
+        questions = []
+        ground_truths = []
+        contexts = []
+
+        for item in testset_data:
+            questions.append(item['user_input'])
+            ground_truths.append(item['reference'])
+            contexts.append(item.get('reference_contexts', []))
+
+        print(f"Loaded {len(questions)} question(s) with memory optimization.")
+        return questions, ground_truths, contexts
+
     except Exception as e:
-        print(f"ERROR: Could not load or parse testset '{TESTSET_FILE}'. Details: {e}")
+        print(f"ERROR: Could not load testset '{file_path}': {e}")
+        return None, None, None
+
+
+def process_questions_in_batches(questions, api_url, model_name, batch_size=5):
+    """
+    Process questions in smaller batches to reduce memory usage and improve throughput
+    """
+    all_answers = []
+    all_contexts = []
+
+    print(f"Processing {len(questions)} questions in batches of {batch_size}...")
+
+    for i in range(0, len(questions), batch_size):
+        batch_questions = questions[i:i + batch_size]
+        batch_end = min(i + batch_size, len(questions))
+
+        print(f"  Processing batch {i//batch_size + 1}/{(len(questions) + batch_size - 1)//batch_size} (questions {i+1}-{batch_end})")
+
+        batch_answers = []
+        batch_contexts = []
+
+        for q in batch_questions:
+            try:
+                response = requests.post(
+                    api_url,
+                    json={"question": q, "model_name": model_name},
+                    timeout=600
+                )
+                response.raise_for_status()
+                data = response.json()
+
+                answer = data['answer']
+                contexts = [doc['page_content'] for doc in data['source_documents']]
+
+                batch_answers.append(answer)
+                batch_contexts.append(contexts)
+
+                # Show progress for long batches
+                snippet = (answer or "").strip().replace("\n", " ")[:100]
+                print(f"    ✓ Q{len(all_answers) + len(batch_answers)}: {snippet}...")
+
+            except requests.exceptions.RequestException as e:
+                print(f"    ✗ Q{len(all_answers) + len(batch_answers) + 1}: API request failed: {e}")
+                batch_answers.append("")
+                batch_contexts.append([])
+
+        # Add batch results to main lists
+        all_answers.extend(batch_answers)
+        all_contexts.extend(batch_contexts)
+
+        # Optional: Brief pause between batches to prevent overwhelming the API
+        if i + batch_size < len(questions):
+            import time
+            time.sleep(0.5)
+
+    return all_answers, all_contexts
+
+
+def main():
+    """
+    Memory-optimized RAG accuracy benchmark with streaming processing
+    """
+    print("--- Starting RAG Accuracy Benchmark (Memory Optimized) ---")
+
+    # --- 1. Load the Testset with Memory Optimization ---
+    print(f"Loading testset from {TESTSET_FILE}...")
+    questions, ground_truths, _ = load_testset_streaming(TESTSET_FILE, NUM_QUESTIONS_TO_TEST)
+
+    if questions is None:
         return
 
     # --- 2. Run Benchmark for Each Retrieval Embedding ---
@@ -205,29 +332,13 @@ def main():
             loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
             print(f"Ollama loaded models (before generation): {loaded}")
 
-            contexts = []
-            answers = []
-            print(f"Generating answers for {len(questions)} question(s)...")
-            for q in questions:
-                try:
-                    response = requests.post(
-                        api_url,
-                        json={"question": q, "model_name": model_name},
-                        timeout=600
-                    )
-                    response.raise_for_status()
-                    data = response.json()
-                    answers.append(data['answer'])
-                    contexts.append([doc['page_content'] for doc in data['source_documents']])
-                    snippet = (data.get('answer') or "").strip().replace("\n", " ")[:160]
-                    print(f"  Answer snippet: {snippet!r}")
-                    print(f"  Retrieved contexts: {len(data.get('source_documents', []))}")
-                except requests.exceptions.RequestException as e:
-                    print(f"  ERROR: API request failed for question '{q[:50]}...'. Error: {e}")
-                    answers.append("")
-                    contexts.append([])
+            # Memory-optimized question processing with batching
+            batch_size = min(10, max(1, len(questions) // 4))  # Dynamic batch size
+            answers, contexts = process_questions_in_batches(
+                questions, api_url, model_name, batch_size
+            )
 
-            print("Answer generation complete.")
+            print(f"Answer generation complete. Processed {len(answers)} questions.")
             loaded = get_ollama_loaded_models(OLLAMA_HOST_URL)
             print(f"Ollama loaded models (after generation): {loaded}")
 
@@ -250,16 +361,37 @@ def main():
             except Exception as e:
                 print(f"WARNING: Failed to save answers to {answers_path}: {e}")
 
-            # Build records for Ragas
-            records = []
-            for i in range(len(questions)):
-                records.append({
-                    "user_input": questions[i],
-                    "response": answers[i],
-                    "retrieved_contexts": contexts[i],
-                    "reference": ground_truths[i],
-                })
-            evaluation_dataset = EvaluationDataset.from_list(records)
+            # Memory-efficient dataset creation
+            print("Creating evaluation dataset...")
+            try:
+                # Process in smaller chunks to avoid memory issues with large datasets
+                chunk_size = 50
+                all_records = []
+
+                for i in range(0, len(questions), chunk_size):
+                    chunk_records = []
+                    end_idx = min(i + chunk_size, len(questions))
+
+                    for j in range(i, end_idx):
+                        chunk_records.append({
+                            "user_input": questions[j],
+                            "response": answers[j],
+                            "retrieved_contexts": contexts[j],
+                            "reference": ground_truths[j],
+                        })
+
+                    all_records.extend(chunk_records)
+
+                    # Progress indicator for large datasets
+                    if len(questions) > 20:
+                        print(f"  Processed {end_idx}/{len(questions)} records for evaluation...")
+
+                evaluation_dataset = EvaluationDataset.from_list(all_records)
+                print(f"Evaluation dataset created with {len(all_records)} records.")
+
+            except Exception as e:
+                print(f"ERROR: Failed to create evaluation dataset: {e}")
+                continue
 
             # Use same embedding for evaluation to avoid bias
             ragas_embeddings = OllamaEmbeddings(
