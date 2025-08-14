@@ -254,7 +254,8 @@ def main():
             metrics = [faithfulness, answer_relevancy, context_precision, context_recall]
             scores = {}
             for metric in metrics:
-                metric_name = getattr(metric, "__name__", str(metric))
+                # Use clean metric names instead of verbose object representations
+                metric_name = getattr(metric, "name", getattr(metric, "__name__", str(metric)))
                 print(f"Evaluating {metric_name}...")
                 retry_count = 0
                 max_retries = 2
