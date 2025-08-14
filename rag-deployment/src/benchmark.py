@@ -3,6 +3,9 @@ import json
 from datetime import datetime
 import requests
 import pandas as pd
+import asyncio
+import concurrent.futures
+from typing import Dict, Any, List
 from ragas import evaluate, EvaluationDataset
 from ragas.metrics import (
     answer_relevancy,
@@ -64,6 +67,44 @@ def sanitize_filename(text: str) -> str:
         .replace(" ", "_")
         .replace("*", "_")
     )
+
+
+def evaluate_metric_parallel(metric, evaluation_dataset, judge_llm, ragas_embeddings, max_retries=2):
+    """
+    Evaluate a single metric with retry logic - designed for parallel execution
+    """
+    metric_name = getattr(metric, "name", getattr(metric, "__name__", str(metric)))
+
+    for retry_count in range(max_retries + 1):
+        try:
+            result = evaluate(
+                dataset=evaluation_dataset,
+                metrics=[metric],
+                llm=judge_llm,
+                embeddings=ragas_embeddings,
+                raise_exceptions=False,
+                batch_size=1,
+            )
+
+            if hasattr(result, "to_pandas"):
+                df = result.to_pandas()
+                score_dict = {}
+                for col in df.select_dtypes(include="number").columns:
+                    score = float(df[col].mean())
+                    score_dict[col] = score
+                return metric_name, score_dict
+            else:
+                return metric_name, {metric_name: str(result)}
+
+        except Exception as e:
+            if retry_count < max_retries:
+                print(f"  Retry {retry_count + 1}/{max_retries} for {metric_name} due to: {e}")
+                continue
+            else:
+                print(f"  ERROR evaluating {metric_name} after {max_retries} retries: {e}")
+                return metric_name, {metric_name: f"error: {e}"}
+
+    return metric_name, {metric_name: "error: max retries exceeded"}
 
 
 def _normalize_base_name(name: str) -> str:
@@ -252,42 +293,40 @@ def main():
             print(f"Ollama loaded models (before evaluation): {loaded}")
 
             metrics = [faithfulness, answer_relevancy, context_precision, context_recall]
-            scores = {}
-            for metric in metrics:
-                # Use clean metric names instead of verbose object representations
-                metric_name = getattr(metric, "name", getattr(metric, "__name__", str(metric)))
-                print(f"Evaluating {metric_name}...")
-                retry_count = 0
-                max_retries = 2
 
-                while retry_count <= max_retries:
+            # Parallel evaluation for better performance
+            print("Evaluating metrics in parallel...")
+            start_time = datetime.now()
+
+            # Use ThreadPoolExecutor for parallel metric evaluation
+            with concurrent.futures.ThreadPoolExecutor(max_workers=len(metrics)) as executor:
+                # Submit all metric evaluations
+                future_to_metric = {
+                    executor.submit(
+                        evaluate_metric_parallel,
+                        metric,
+                        evaluation_dataset,
+                        judge_llm,
+                        ragas_embeddings
+                    ): metric for metric in metrics
+                }
+
+                scores = {}
+                for future in concurrent.futures.as_completed(future_to_metric):
+                    metric = future_to_metric[future]
                     try:
-                        result = evaluate(
-                            dataset=evaluation_dataset,
-                            metrics=[metric],
-                            llm=judge_llm,
-                            embeddings=ragas_embeddings,
-                            raise_exceptions=False,  # Changed to False for better error handling
-                            batch_size=1,
-                        )
-                        if hasattr(result, "to_pandas"):
-                            df = result.to_pandas()
-                            for col in df.select_dtypes(include="number").columns:
-                                scores[col] = float(df[col].mean())
-                                print(f"  {col}: {scores[col]:.4f}")
-                        else:
-                            scores[metric_name] = str(result)
-                        break  # Success, exit retry loop
-
+                        metric_name, metric_scores = future.result()
+                        scores.update(metric_scores)
+                        print(f"  ✓ {metric_name}: {list(metric_scores.values())[0]:.4f}"
+                              if isinstance(list(metric_scores.values())[0], (int, float))
+                              else f"  ✓ {metric_name}: {list(metric_scores.values())[0]}")
                     except Exception as e:
-                        retry_count += 1
-                        if retry_count > max_retries:
-                            print(f"  ERROR evaluating {metric_name} after {max_retries} retries: {e}")
-                            scores[metric_name] = f"error: {e}"
-                        else:
-                            print(f"  Retry {retry_count}/{max_retries} for {metric_name} due to: {e}")
-                            import time
-                            time.sleep(2)  # Brief pause before retry
+                        metric_name = getattr(metric, "name", str(metric))
+                        print(f"  ✗ {metric_name}: error: {e}")
+                        scores[metric_name] = f"error: {e}"
+
+            evaluation_time = (datetime.now() - start_time).total_seconds()
+            print(f"Parallel evaluation completed in {evaluation_time:.1f}s")
 
             # Persist per-(embedding, model) scores
             ensure_dir(RUN_DIR)
