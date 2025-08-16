@@ -18,6 +18,7 @@ import pandas as pd
 
 # Import httpx for async HTTP requests
 import httpx
+import requests
 
 class OllamaBenchmark:
     def __init__(self, testset_path: str, results_dir: str = "results/ollama_benchmarks"):
@@ -34,10 +35,22 @@ class OllamaBenchmark:
             "nemotron-mini": "nemotron-mini:4b",
             "llama3.2": "llama3.2:3b",
             "gemma3": "gemma3:4b",
-            "qwen2": "qwen2:3b"
         }
 
         self.ollama_base_url = "http://host.docker.internal:11434"
+
+    def stop_ollama_model(self, model_name: str) -> bool:
+        """Attempt to unload a model from Ollama using HTTP API (/api/stop). Returns True if request succeeded."""
+        try:
+            url = f"{self.ollama_base_url.rstrip('/')}/api/stop"
+            resp = requests.post(url, json={"name": model_name}, timeout=10)
+            if resp.status_code // 100 == 2:
+                return True
+            print(f"WARNING: Ollama stop returned status {resp.status_code}: {resp.text}")
+            return False
+        except Exception as e:
+            print(f"WARNING: Could not stop Ollama model '{model_name}': {e}")
+            return False
 
     def get_test_prompts(self, num_prompts: int = 10) -> List[str]:
         """Get random questions from testset with context simulation."""
@@ -104,7 +117,7 @@ Question: """
     ) -> Dict[str, Any]:
         """Benchmark a single Ollama model with multiple prompts."""
 
-        print(f"\n🚀 Testing {model_name} ({model_id})")
+        print(f"\nTesting {model_name} ({model_id})")
         print(f"   Concurrency: {concurrency}")
         print(f"   Questions: {len(prompts)}")
 
@@ -148,10 +161,10 @@ Question: """
                                     "tokens": tokens
                                 })
 
-                print("✓")
+                print("DONE")
 
             except Exception as e:
-                print(f"✗ Error: {e}")
+                print(f"ERROR: {e}")
 
         end_time = time.perf_counter()
         wall_time = end_time - start_time
@@ -177,21 +190,25 @@ Question: """
             )
         }
 
-        print(f"   ✅ {success_count}/{total_requests} requests succeeded")
-        print(f"   📊 {metrics['requests_s']:.2f} req/s, {metrics['tokens_s']:.1f} tok/s")
-        print(f"   ⏱️  {metrics['latency_avg_s']:.3f}s avg, {metrics['latency_p95_s']:.3f}s p95")
+        print(f"   SUCCESS: {success_count}/{total_requests} requests")
+        print(f"   PERFORMANCE: {metrics['requests_s']:.2f} req/s, {metrics['tokens_s']:.1f} tok/s")
+        print(f"   LATENCY: {metrics['latency_avg_s']:.3f}s avg, {metrics['latency_p95_s']:.3f}s p95")
+
+        # Unload model to free memory
+        print(f"   Unloading model {model_id}...")
+        self.stop_ollama_model(model_id)
 
         return metrics, all_responses
 
     async def run_benchmarks(self, num_questions: int = 5, concurrency: int = 2):
         """Run benchmarks across all Ollama models."""
 
-        print("🎯 Ollama Models CS Handbook Benchmark")
+        print("Ollama Models CS Handbook Benchmark")
         print("=" * 50)
 
         # Get test prompts
         prompts = self.get_test_prompts(num_questions)
-        print(f"📝 Using {len(prompts)} CS handbook questions")
+        print(f"Using {len(prompts)} CS handbook questions")
 
         # Results storage
         all_metrics = []
@@ -207,7 +224,7 @@ Question: """
                 all_responses[model_name] = responses
 
             except Exception as e:
-                print(f"❌ Failed to test {model_name}: {e}")
+                print(f"FAILED to test {model_name}: {e}")
 
         # Save results
         timestamp = time.strftime("%Y%m%d_%H%M%S")
@@ -216,13 +233,13 @@ Question: """
         df = pd.DataFrame(all_metrics)
         csv_path = self.results_dir / f"ollama_benchmark_{timestamp}.csv"
         df.to_csv(csv_path, index=False)
-        print(f"\n📊 Results saved to {csv_path}")
+        print(f"\nResults saved to {csv_path}")
 
         # Save responses
         responses_path = self.results_dir / f"ollama_responses_{timestamp}.json"
         with open(responses_path, 'w') as f:
             json.dump(all_responses, f, indent=2)
-        print(f"💬 Responses saved to {responses_path}")
+        print(f"Responses saved to {responses_path}")
 
         # Generate summary
         self.print_summary(all_metrics)
@@ -232,12 +249,12 @@ Question: """
     def print_summary(self, metrics: List[Dict[str, Any]]):
         """Print a summary comparison."""
         print("\n" + "=" * 50)
-        print("📈 OLLAMA MODELS BENCHMARK SUMMARY")
+        print("OLLAMA MODELS BENCHMARK SUMMARY")
         print("=" * 50)
 
         # Sort by requests per second (performance)
         for m in sorted(metrics, key=lambda x: x['requests_s'], reverse=True):
-            print(f"\n🏆 {m['model'].upper()} ({m['model_id']})")
+            print(f"\n{m['model'].upper()} ({m['model_id']})")
             print(f"   Requests/s:  {m['requests_s']:8.2f}")
             print(f"   Tokens/s:    {m['tokens_s']:8.1f}")
             print(f"   Avg Latency:  {m['latency_avg_s']:6.3f}s")
