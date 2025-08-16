@@ -27,3 +27,9 @@ ragas
 pandas
 datasets
 Pillow
+
+# For load testing
+httpx[http2]
+numpy
+tqdm
+matplotlib
