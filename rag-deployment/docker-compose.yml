@@ -100,6 +100,7 @@ services:
     build: .
     command: ["python", "src/ollama_benchmark.py", "--questions", "5", "--concurrency", "2"]
     volumes:
+      - ./src:/app/src
       - ./testset:/app/testset:ro
       - ./results:/app/results
     extra_hosts:

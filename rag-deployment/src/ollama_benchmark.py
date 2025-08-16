@@ -15,6 +15,8 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
 import argparse
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter, MaxNLocator
 
 # Import httpx for async HTTP requests
 import httpx
@@ -37,6 +39,14 @@ class OllamaBenchmark:
         }
 
         self.ollama_base_url = "http://host.docker.internal:11434"
+
+        # Chart configuration (following professional standards)
+        self.figsize_mm = (160, 100)
+        self.dpi = 300
+        self.marker = "o"
+        self.linestyle = "-"
+        self.xtick_rot = 30
+        self.xtick_fsize = 8
 
 
 
@@ -187,11 +197,108 @@ Question: """
 
         return metrics, all_responses
 
-    async def run_benchmarks(self, num_questions: int = 5, concurrency: int = 2):
-        """Run benchmarks across all Ollama models."""
+    def _mm_to_in(self, mm: float) -> float:
+        """Convert millimeters to inches for matplotlib."""
+        return mm / 25.4
 
-        print("Ollama Models CS Handbook Benchmark")
+    def _plain_numbers(self, ax):
+        """Set axis formatters to display plain numbers."""
+        for axis in (ax.xaxis, ax.yaxis):
+            fmt = ScalarFormatter(useOffset=False)
+            fmt.set_scientific(False)
+            axis.set_major_formatter(fmt)
+
+    def _set_all_xticks(self, ax, vals):
+        """Set all x-tick values and format them."""
+        vals = sorted(vals)
+        ax.set_xticks(vals)
+        ax.set_xticklabels(
+            [str(v) for v in vals],
+            rotation=self.xtick_rot,
+            ha="right",
+            fontsize=self.xtick_fsize,
+        )
+
+    def _set_dense_yticks(self, ax):
+        """Set dense y-ticks for better readability."""
+        ax.yaxis.set_major_locator(MaxNLocator(nbins=12, integer=True, prune=None))
+
+    def _plot_multi_models(self, ax, df, y, ylabel):
+        """Plot multiple models on the same chart."""
+        for model, grp in df.groupby("model"):
+            g = grp.sort_values("concurrency")
+            ax.plot(g["concurrency"], g[y],
+                    marker=self.marker, linestyle=self.linestyle, label=model)
+
+        ax.set_xscale("log", base=2)
+        ax.set_xlabel("Concurrent requests")
+        ax.set_ylabel(ylabel)
+        ax.set_title(f"{ylabel} vs concurrency")
+        ax.grid(True, which="both", ls=":")
+        ax.legend(title="Model")
+
+        self._plain_numbers(ax)
+        self._set_all_xticks(ax, df["concurrency"].unique())
+        self._set_dense_yticks(ax)
+
+    def generate_charts(self, csv_path: Path, fmt="png"):
+        """Generate performance comparison charts from benchmark results."""
+        print(f"\nGenerating performance charts from {csv_path}")
+
+        df = pd.read_csv(csv_path)
+
+        # Ensure we have the required columns
+        required_cols = ["model", "concurrency", "requests_s", "tokens_s", "latency_avg_s", "latency_p95_s"]
+        missing_cols = [col for col in required_cols if col not in df.columns]
+        if missing_cols:
+            print(f"Error: Missing required columns: {missing_cols}")
+            return
+
+        figsize = (self._mm_to_in(self.figsize_mm[0]), self._mm_to_in(self.figsize_mm[1]))
+
+        # Charts to generate
+        charts = [
+            ("requests_s", "Requests/s", "ollama_requests_vs_concurrency"),
+            ("tokens_s", "Tokens/s", "ollama_tokens_vs_concurrency"),
+            ("latency_avg_s", "Average latency (s)", "ollama_latency_avg_vs_concurrency"),
+            ("latency_p95_s", "P95 latency (s)", "ollama_latency_p95_vs_concurrency"),
+        ]
+
+        chart_files = []
+        for col, label, filename in charts:
+            fig, ax = plt.subplots(figsize=figsize)
+            self._plot_multi_models(ax, df, col, label)
+            fig.tight_layout()
+
+            chart_path = self.results_dir / f"{filename}.{fmt}"
+            fig.savefig(chart_path, dpi=self.dpi if fmt == "png" else None)
+            plt.close(fig)
+            chart_files.append(chart_path)
+            print(f"Generated {chart_path}")
+
+        return chart_files
+
+    async def run_benchmarks(self, num_questions: int = 5, concurrency: int = 2):
+        """Run benchmarks across all Ollama models with single concurrency."""
+        return await self.run_concurrency_range_benchmarks(
+            num_questions, [concurrency], generate_charts=False
+        )
+
+    async def run_concurrency_range_benchmarks(
+        self,
+        num_questions: int = 5,
+        concurrency_levels: List[int] = None,
+        generate_charts: bool = True
+    ):
+        """Run benchmarks across all models and concurrency levels."""
+
+        if concurrency_levels is None:
+            concurrency_levels = [1, 2, 4, 8, 16]  # Conservative defaults for Mac
+
+        print("Ollama Models CS Handbook Concurrency Benchmark")
         print("=" * 50)
+        print(f"Testing concurrency levels: {concurrency_levels}")
+        print(f"Models: {list(self.models.keys())}")
 
         # Get test prompts
         prompts = self.get_test_prompts(num_questions)
@@ -201,37 +308,57 @@ Question: """
         all_metrics = []
         all_responses = {}
 
-        # Test each model
-        for model_name, model_id in self.models.items():
-            try:
-                metrics, responses = await self.benchmark_model(
-                    model_name, model_id, prompts, concurrency
-                )
-                all_metrics.append(metrics)
-                all_responses[model_name] = responses
+        # Test each concurrency level
+        for concurrency in concurrency_levels:
+            print(f"\n{'='*20} Concurrency: {concurrency} {'='*20}")
 
-            except Exception as e:
-                print(f"FAILED to test {model_name}: {e}")
+            # Test each model at this concurrency level
+            for model_name, model_id in self.models.items():
+                try:
+                    metrics, responses = await self.benchmark_model(
+                        model_name, model_id, prompts, concurrency
+                    )
+
+                    # Add backend column for chart compatibility
+                    metrics["backend"] = "Ollama"
+
+                    all_metrics.append(metrics)
+
+                    # Store responses with concurrency key
+                    response_key = f"{model_name}_c{concurrency}"
+                    all_responses[response_key] = responses
+
+                except Exception as e:
+                    print(f"FAILED to test {model_name} at concurrency {concurrency}: {e}")
 
         # Save results
         timestamp = time.strftime("%Y%m%d_%H%M%S")
 
         # Save metrics as CSV
         df = pd.DataFrame(all_metrics)
-        csv_path = self.results_dir / f"ollama_benchmark_{timestamp}.csv"
+        csv_path = self.results_dir / f"ollama_concurrency_benchmark_{timestamp}.csv"
         df.to_csv(csv_path, index=False)
         print(f"\nResults saved to {csv_path}")
 
         # Save responses
-        responses_path = self.results_dir / f"ollama_responses_{timestamp}.json"
+        responses_path = self.results_dir / f"ollama_concurrency_responses_{timestamp}.json"
         with open(responses_path, 'w') as f:
             json.dump(all_responses, f, indent=2)
         print(f"Responses saved to {responses_path}")
 
+        # Generate charts if requested
+        chart_files = []
+        if generate_charts and len(all_metrics) > 0:
+            try:
+                chart_files = self.generate_charts(csv_path)
+                print(f"Generated {len(chart_files)} performance charts")
+            except Exception as e:
+                print(f"Chart generation failed: {e}")
+
         # Generate summary
         self.print_summary(all_metrics)
 
-        return all_metrics, all_responses
+        return all_metrics, all_responses, chart_files
 
     def print_summary(self, metrics: List[Dict[str, Any]]):
         """Print a summary comparison."""
@@ -256,17 +383,42 @@ def main():
     parser.add_argument("--questions", type=int, default=5,
                        help="Number of test questions to use")
     parser.add_argument("--concurrency", type=int, default=2,
-                       help="Concurrent requests per question")
+                       help="Single concurrency level (for backward compatibility)")
+    parser.add_argument("--concurrency-range", type=str, default=None,
+                       help="Comma-separated concurrency levels (e.g., '1,2,4,8,16')")
     parser.add_argument("--results-dir", default="/app/results/ollama_benchmarks",
                        help="Directory to save results")
+    parser.add_argument("--generate-charts", action="store_true", default=False,
+                       help="Generate performance charts automatically")
+    parser.add_argument("--chart-format", choices=["png", "pdf", "svg"], default="png",
+                       help="Chart output format")
 
     args = parser.parse_args()
+
+    # Parse concurrency levels
+    if args.concurrency_range:
+        try:
+            concurrency_levels = [int(x.strip()) for x in args.concurrency_range.split(',')]
+            print(f"Using concurrency range: {concurrency_levels}")
+        except ValueError:
+            print("Error: Invalid concurrency range format. Use comma-separated integers.")
+            return
+    else:
+        concurrency_levels = [args.concurrency]
+        print(f"Using single concurrency level: {args.concurrency}")
 
     # Initialize benchmarker
     benchmarker = OllamaBenchmark(args.testset, args.results_dir)
 
     # Run benchmarks
-    asyncio.run(benchmarker.run_benchmarks(args.questions, args.concurrency))
+    if len(concurrency_levels) == 1 and not args.generate_charts:
+        # Single concurrency, backward compatibility
+        asyncio.run(benchmarker.run_benchmarks(args.questions, concurrency_levels[0]))
+    else:
+        # Multiple concurrency levels or chart generation requested
+        asyncio.run(benchmarker.run_concurrency_range_benchmarks(
+            args.questions, concurrency_levels, args.generate_charts
+        ))
 
 
 if __name__ == "__main__":
