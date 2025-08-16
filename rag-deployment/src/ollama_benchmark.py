@@ -18,7 +18,6 @@ import pandas as pd
 
 # Import httpx for async HTTP requests
 import httpx
-import requests
 
 class OllamaBenchmark:
     def __init__(self, testset_path: str, results_dir: str = "results/ollama_benchmarks"):
@@ -39,18 +38,7 @@ class OllamaBenchmark:
 
         self.ollama_base_url = "http://host.docker.internal:11434"
 
-    def stop_ollama_model(self, model_name: str) -> bool:
-        """Attempt to unload a model from Ollama using HTTP API (/api/stop). Returns True if request succeeded."""
-        try:
-            url = f"{self.ollama_base_url.rstrip('/')}/api/stop"
-            resp = requests.post(url, json={"name": model_name}, timeout=10)
-            if resp.status_code // 100 == 2:
-                return True
-            print(f"WARNING: Ollama stop returned status {resp.status_code}: {resp.text}")
-            return False
-        except Exception as e:
-            print(f"WARNING: Could not stop Ollama model '{model_name}': {e}")
-            return False
+
 
     def get_test_prompts(self, num_prompts: int = 10) -> List[str]:
         """Get random questions from testset with context simulation."""
@@ -71,7 +59,8 @@ Question: """
         model_id: str,
         prompt: str,
         max_tokens: int = 150,
-        temperature: float = 0.2
+        temperature: float = 0.2,
+        keep_alive: int = 0
     ) -> Tuple[Optional[float], Optional[int], Optional[str]]:
         """Send one completion request and return (latency, tokens, response)."""
         url = f"{self.ollama_base_url.rstrip('/')}/v1/chat/completions"
@@ -82,6 +71,7 @@ Question: """
             "temperature": temperature,
             "messages": [{"role": "user", "content": prompt}],
             "stream": False,
+            "keep_alive": keep_alive,
         }
 
         t0 = time.perf_counter()
@@ -138,7 +128,7 @@ Question: """
             async def worker():
                 async with sem:
                     return await self.chat_completion(
-                        client, model_id, prompt, max_tokens, temperature
+                        client, model_id, prompt, max_tokens, temperature, keep_alive=0
                     )
 
             try:
@@ -193,10 +183,7 @@ Question: """
         print(f"   SUCCESS: {success_count}/{total_requests} requests")
         print(f"   PERFORMANCE: {metrics['requests_s']:.2f} req/s, {metrics['tokens_s']:.1f} tok/s")
         print(f"   LATENCY: {metrics['latency_avg_s']:.3f}s avg, {metrics['latency_p95_s']:.3f}s p95")
-
-        # Unload model to free memory
-        print(f"   Unloading model {model_id}...")
-        self.stop_ollama_model(model_id)
+        print(f"   Model automatically unloaded (keep_alive=0)")
 
         return metrics, all_responses
 
