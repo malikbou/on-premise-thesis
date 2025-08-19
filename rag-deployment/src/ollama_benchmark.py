@@ -236,38 +236,7 @@ Question: """
         print(f"   LATENCY: {metrics['latency_avg_s']:.3f}s avg, {metrics['latency_p95_s']:.3f}s p95")
         print(f"   Model automatically unloaded (keep_alive=0)")
 
-        # Additional explicit model unloading for better memory management
-        self._explicit_model_unload(model_id)
-
         return metrics, all_responses
-
-    def _explicit_model_unload(self, model_id: str):
-        """Explicitly unload model from memory via Ollama API."""
-        try:
-            import subprocess
-            import time
-
-            # Try to stop the model via ollama stop command
-            # This works better than keep_alive=0 for immediate unloading
-            stop_url = f"{self.ollama_base_url.replace('/v1/chat/completions', '')}/api/generate"
-
-            # Send stop command
-            import httpx
-            with httpx.Client(timeout=5) as client:
-                try:
-                    response = client.post(stop_url, json={
-                        "model": model_id,
-                        "keep_alive": 0
-                    })
-                except Exception:
-                    pass  # Ignore errors, this is best-effort cleanup
-
-            # Small delay to allow unloading
-            time.sleep(1)
-            print(f"   Explicit model unload attempted for {model_id}")
-
-        except Exception as e:
-            print(f"   Model unload warning: {e}")
 
     def _mm_to_in(self, mm: float) -> float:
         """Convert millimeters to inches for matplotlib."""
