@@ -38,7 +38,8 @@ class OllamaBenchmark:
             "gemma3": "gemma3:4b",
         }
 
-        self.ollama_base_url = "http://host.docker.internal:11434"
+        # Auto-detect environment and set appropriate Ollama URL
+        self.ollama_base_url = self._detect_ollama_url()
 
         # Chart configuration (following professional standards)
         self.figsize_mm = (160, 100)
@@ -48,7 +49,47 @@ class OllamaBenchmark:
         self.xtick_rot = 30
         self.xtick_fsize = 8
 
+    def _detect_ollama_url(self) -> str:
+        """Auto-detect the appropriate Ollama URL based on environment."""
+        import socket
+        import os
 
+        # Check if we're running inside Docker by looking for container environment
+        if os.path.exists('/.dockerenv'):
+            # Running inside Docker container - try Docker network first
+            possible_urls = [
+                "http://ollama:11434",           # Docker Compose service name
+                "http://localhost:11434",       # Local fallback
+            ]
+        else:
+            # Running on host system
+            possible_urls = [
+                "http://host.docker.internal:11434",  # Mac Docker Desktop
+                "http://localhost:11434",              # Direct/VM installation
+                "http://127.0.0.1:11434",             # Local fallback
+            ]
+
+        # Test each URL to find the working one
+        for url in possible_urls:
+            try:
+                # Quick connection test
+                import httpx
+                with httpx.Client(timeout=2) as client:
+                    response = client.get(f"{url}/api/tags")
+                    if response.status_code == 200:
+                        print(f"Detected Ollama at: {url}")
+                        return url
+            except Exception:
+                continue
+
+        # Fallback to default based on environment
+        if os.path.exists('/.dockerenv'):
+            default_url = "http://ollama:11434"
+        else:
+            default_url = "http://host.docker.internal:11434"
+
+        print(f"Could not detect Ollama, using default: {default_url}")
+        return default_url
 
     def get_test_prompts(self, num_prompts: int = 10) -> List[str]:
         """Get random questions from testset with context simulation."""
@@ -195,7 +236,38 @@ Question: """
         print(f"   LATENCY: {metrics['latency_avg_s']:.3f}s avg, {metrics['latency_p95_s']:.3f}s p95")
         print(f"   Model automatically unloaded (keep_alive=0)")
 
+        # Additional explicit model unloading for better memory management
+        self._explicit_model_unload(model_id)
+
         return metrics, all_responses
+
+    def _explicit_model_unload(self, model_id: str):
+        """Explicitly unload model from memory via Ollama API."""
+        try:
+            import subprocess
+            import time
+
+            # Try to stop the model via ollama stop command
+            # This works better than keep_alive=0 for immediate unloading
+            stop_url = f"{self.ollama_base_url.replace('/v1/chat/completions', '')}/api/generate"
+
+            # Send stop command
+            import httpx
+            with httpx.Client(timeout=5) as client:
+                try:
+                    response = client.post(stop_url, json={
+                        "model": model_id,
+                        "keep_alive": 0
+                    })
+                except Exception:
+                    pass  # Ignore errors, this is best-effort cleanup
+
+            # Small delay to allow unloading
+            time.sleep(1)
+            print(f"   Explicit model unload attempted for {model_id}")
+
+        except Exception as e:
+            print(f"   Model unload warning: {e}")
 
     def _mm_to_in(self, mm: float) -> float:
         """Convert millimeters to inches for matplotlib."""
