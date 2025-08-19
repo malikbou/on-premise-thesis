@@ -21,3 +21,6 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     container_name: ollama
+
+volumes:
+  ollama_data:
